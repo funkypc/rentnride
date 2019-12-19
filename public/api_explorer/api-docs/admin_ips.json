@@ -126,5 +126,5 @@
   "models": {},
   "swaggerVersion": "1.2",
   "apiVersion": "1",
-  "basePath": "/bookorrent/public/api"
+  "basePath": "/api/"
 }

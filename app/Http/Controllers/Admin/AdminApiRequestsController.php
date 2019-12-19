@@ -69,7 +69,7 @@ class AdminApiRequestsController extends Controller
      * @Get("/api_requests/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
-     *      @Response(200, body={"id": 1, "created_at": "2016-05-11 16:37:50", "path": "http://localhost/bookorrent/public/api/admin/api_requests", "method": "GET", "http_response_code": "200", "user_id": 1, "ip_id": 2, "User": {}, "Ip": {}}),
+     *      @Response(200, body={"id": 1, "created_at": "2016-05-11 16:37:50", "path": "http://localhost/api/admin/api_requests", "method": "GET", "http_response_code": "200", "user_id": 1, "ip_id": 2, "User": {}, "Ip": {}}),
      *      @Response(404, body={"message": "Invalid Request", "status_code": 404})
      * })
      */

@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 POST '/wallets':
   summary: 'Add amount to user wallet'

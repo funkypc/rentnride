@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 GET '/admin/pages?filter={filter}&sort={sort}&sortby={sortby}&page={page}&type={type}&field={field}&q={q}':
   summary: 'Fetch pages'  

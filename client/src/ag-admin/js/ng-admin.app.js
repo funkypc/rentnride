@@ -1,5 +1,5 @@
 var ngapp = angular.module('BookorRent', ['ng-admin', 'ng-admin.jwt-auth', 'google.places', 'mwl.calendar']);
-var admin_api_url = '/bookorrent/public';
+var admin_api_url = 'http://local.rnr:8888';
 var limit_per_page = 20;
 var no_limit_per_page = 100;
 var enabledPlugins;
@@ -1365,13 +1365,14 @@ function vehicleController($state, $scope, $http, Upload, $location, notificatio
         $scope.vehicleTypes = response.vehicle_type_list;
         $scope.vehicleMakes = response.vehicle_make_list;
         $scope.counter_locations = response.counter_location_list;
+
         $scope.fuelTypes = response.fuel_type_list;
-        $scope.seats = parseInt(response.settings.seats);
-        $scope.doors = parseInt(response.settings.doors);
-        $scope.small_bags = parseInt(response.settings.small_bags);
-        $scope.large_bags = parseInt(response.settings.large_bags);
-        $scope.gears = parseInt(response.settings.gears);
-        $scope.air_bags = parseInt(response.settings.airbags);
+        //$scope.seats = parseInt(response.settings.seats);
+        //$scope.doors = parseInt(response.settings.doors);
+        //$scope.small_bags = parseInt(response.settings.small_bags);
+        //$scope.large_bags = parseInt(response.settings.large_bags);
+        //$scope.gears = parseInt(response.settings.gears);
+        //$scope.air_bags = parseInt(response.settings.airbags);
         //covert counter location object to array
         $scope.vehicle_counter_locations = [];
         angular.forEach ($scope.counter_locations, function(value, key){
@@ -1456,6 +1457,7 @@ function vehicleController($state, $scope, $http, Upload, $location, notificatio
             });
     };
     $scope.vehicleSubmit = function ($valid, file) {
+        console.log($valid);
         if ($valid) {
             $scope.vehicle.file = file;
             Upload.upload({
@@ -1491,19 +1493,19 @@ function vehicleController($state, $scope, $http, Upload, $location, notificatio
                         'vehicle_type_id': $scope.vehicle.vehicle_type_id,
                         'pickup_counter_locations': $scope.vehicle.pickup_counter_locations,
                         'drop_counter_locations': $scope.vehicle.drop_counter_locations,
-                        'driven_kilometer': $scope.vehicle.driven_kilometer,
+                        //'driven_kilometer': $scope.vehicle.driven_kilometer,
                         'vehicle_no': $scope.vehicle.vehicle_no,
-                        'no_of_seats': $scope.vehicle.no_of_seats,
-                        'no_of_doors': $scope.vehicle.no_of_doors,
-                        'no_of_gears': $scope.vehicle.no_of_gears,
+                        //'no_of_seats': $scope.vehicle.no_of_seats,
+                        //'no_of_doors': $scope.vehicle.no_of_doors,
+                        //'no_of_gears': $scope.vehicle.no_of_gears,
                         'is_manual_transmission': $scope.vehicle.is_manual_transmission,
-                        'no_small_bags': $scope.vehicle.no_small_bags,
-                        'no_large_bags': $scope.vehicle.no_large_bags,
+                        //'no_small_bags': $scope.vehicle.no_small_bags,
+                        //'no_large_bags': $scope.vehicle.no_large_bags,
                         'is_ac': $scope.vehicle.is_ac,
                         'minimum_age_of_driver': $scope.vehicle.minimum_age_of_driver,
-                        'mileage': $scope.vehicle.mileage,
-                        'is_airbag': $scope.vehicle.mileage,
-                        'no_of_airbags': $scope.vehicle.no_of_airbags,
+                        //'mileage': $scope.vehicle.mileage,
+                        //'is_airbag': $scope.vehicle.mileage,
+                        //'no_of_airbags': $scope.vehicle.no_of_airbags,
                         'is_abs': $scope.vehicle.is_abs,
                         'per_hour_amount': $scope.vehicle.per_hour_amount,
                         'per_day_amount': $scope.vehicle.per_day_amount,
@@ -2976,16 +2978,11 @@ ngapp.config(['NgAdminConfigurationProvider', 'RestangularProvider', 'ngAdminJWT
             nga.field('name').label('')
                 .template('<a href="#/vehicle/{{entry.values.id}}/{{entry.values.slug}}">{{entry.values.name}}</a>')
                 .label('Vehicle Name'),
+            nga.field('vehicle_no').label('No.'),
             nga.field('vehicle_make.name').label('Make'),
             nga.field('vehicle_model.name').label('Model'),
             nga.field('vehicle_type.name').label('Type'),
-            nga.field('per_hour_amount', 'number').format('0.00').label('Hour Amount(' + siteCurrency + ')'),
             nga.field('per_day_amount', 'number').format('0.00').label('Day Amount(' + siteCurrency + ')'),
-            nga.field('feedback_count', 'number').label('Feedback Count').cssClasses(function () {
-                if (enabledPlugins.indexOf("VehicleFeedbacks") === -1) {
-                    return "ng-hide";
-                }
-            }),
             nga.field('is_active', 'boolean').label('Active?'),
         ])
         .filters([
@@ -7672,16 +7669,11 @@ ngapp.config(['NgAdminConfigurationProvider', 'RestangularProvider', 'ngAdminJWT
 				nga.field('name').label('')
 					.template('<a href="#/vehicle/{{entry.values.id}}/{{entry.values.slug}}">{{entry.values.name}}</a>')
 					.label('Vehicle Name'),
+                nga.field('vehicle_no').label('No.'),
 				nga.field('vehicle_make.name').label('Make'),
 				nga.field('vehicle_model.name').label('Model'),
-				nga.field('vehicle_type.name').label('Type'),
-				nga.field('per_hour_amount', 'number').format('0.00').label('Hour Amount(' + siteCurrency + ')'),
+                nga.field('vehicle_type.name').label('Type'),
 				nga.field('per_day_amount', 'number').format('0.00').label('Day Amount(' + siteCurrency + ')'),
-				nga.field('feedback_count', 'number').label('Feedback Count').cssClasses(function () {
-					if (enabledPlugins.indexOf("VehicleFeedbacks") === -1) {
-						return "ng-hide";
-					}
-				}),
 				nga.field('is_active', 'boolean').label('Active?'),
 			])
 			.listActions(['<show-vehicle selection="selection" entry="entry" entity="entity" size="sm" label="Show" ></show-vehicle>', '<edit-vehicle selection="selection" entry="entry" entity="entity" size="sm" label="Edit" ></edit-vehicle>', '<vehicle-calendar selection="selection" entry="entry" entity="entity" size="sm"></vehicle-calendar>', 'delete'])	

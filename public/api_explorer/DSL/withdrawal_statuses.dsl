@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 GET '/withdrawal_statuses':
   summary: 'Fetch all withdrawal status'  
   produces: json

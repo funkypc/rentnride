@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 GET '/admin/user_cash_withdrawals':
   summary: 'Fetch all Withdrawal Requests'  

@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 GET '/vehicles/filters':
   summary: 'Get the list of filter details needed for vehicle search'

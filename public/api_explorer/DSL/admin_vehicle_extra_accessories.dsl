@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 GET '/admin/vehicle_extra_accessories':
   summary: 'Fetch List of extra accessories'  

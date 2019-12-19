@@ -1,6 +1,6 @@
 swagger_version 1.2
 api_version 1.0
-base_path '/bookorrent/public/api'
+base_path '/api/'
 
 GET '/admin/sudopay_transaction_logs':
   summary: 'Get the list of sudopay transaction logs'

@@ -1,6 +1,6 @@
 var app = angular.module('BookorRent.Constant', [])
     .constant('GENERAL_CONFIG', {
-        'api_url': '/bookorrent/public/api',
+        'api_url': '/api',
         'preferredLanguage': 'en',
     })
     .constant('ConstWithdrawalStatuses', {

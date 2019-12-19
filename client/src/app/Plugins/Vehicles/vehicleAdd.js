@@ -44,12 +44,12 @@
                 $scope.vehicleMakes = response.vehicle_make_list;
                 $scope.counter_locations = response.counter_location_list;
                 $scope.fuelTypes = response.fuel_type_list;
-                $scope.seats = parseInt(response.settings.seats);
-                $scope.doors = parseInt(response.settings.doors);
-                $scope.small_bags = parseInt(response.settings.small_bags);
-                $scope.large_bags = parseInt(response.settings.large_bags);
-                $scope.gears = parseInt(response.settings.gears);
-                $scope.air_bags = parseInt(response.settings.airbags);
+                //$scope.seats = parseInt(response.settings.seats);
+                //$scope.doors = parseInt(response.settings.doors);
+                //$scope.small_bags = parseInt(response.settings.small_bags);
+                //$scope.large_bags = parseInt(response.settings.large_bags);
+                //$scope.gears = parseInt(response.settings.gears);
+                //$scope.air_bags = parseInt(response.settings.airbags);
 
                 //covert counter location object to array
                 $scope.vehicle_counter_locations = [];

@@ -202,7 +202,7 @@ module.exports = function (grunt) {
                 src: ['public/api_explorer/index.html', 'public/api_explorer/api-docs/*.json', 'client/src/**/*.js'],
                 actions: [{
                     name: 'Domain Replace',
-                    search: '/bookorrent/public',
+                    search: '/',
                     replace: '<%= config.api_url %>',
                     flags: 'g'
                 }]

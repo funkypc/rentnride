@@ -67,10 +67,6 @@
                                 <dd>{{vehicle.fuel_type.name}}</dd>
                             </dl>
                             <dl class="dl-horizontal">
-                                <dt>{{'Mileage'|translate}} :</dt>
-                                <dd>{{vehicle.mileage}}</dd>
-                            </dl>
-                            <dl class="dl-horizontal">
                                 <dt>{{'Vehicle Rental Count'|translate}} :</dt>
                                 <dd>{{vehicle.vehicle_rental_count}}</dd>
                             </dl>
@@ -85,26 +81,6 @@
                             <dl class="dl-horizontal" ng-show="vehicle.is_ac">
                                 <dt><span class="fa fa-asterisk fa-2x"></span> :</dt>
                                 <dd>{{'Air Conditioning' | translate }}</dd>
-                            </dl>
-                            <dl class="dl-horizontal" ng-show="vehicle.no_of_seats > 0">
-                                <dt><span class="fa fa-male fa-2x"></span> :</dt>
-                                <dd>{{vehicle.no_of_seats}} {{'People' | translate}}</dd>
-                            </dl>
-                            <dl class="dl-horizontal" ng-show="vehicle.no_small_bags > 0">
-                                <dt><span class="fa fa-briefcase fa-2x"></span> :</dt>
-                                <dd>{{vehicle.no_small_bags}} {{'Small Bags' | translate}}</dd>
-                            </dl>
-                            <dl class="dl-horizontal" ng-show="vehicle.no_large_bags > 0">
-                                <dt><span class="fa fa-briefcase fa-2x"></span> :</dt>
-                                <dd>{{vehicle.no_large_bags}} {{'Large Bags' | translate}}</dd>
-                            </dl>
-                            <dl class="dl-horizontal" ng-show="vehicle.no_of_gears > 0">
-                                <dt><span class="fa fa-gears fa-2x"></span> :</dt>
-                                <dd>{{vehicle.no_of_gears}} {{'Gears' | translate}}</dd>
-                            </dl>
-                            <dl class="dl-horizontal" ng-show="vehicle.no_of_doors > 0">
-                                <dt><span class="fa fa-gears fa-2x"></span> :</dt>
-                                <dd>{{vehicle.no_of_doors}} {{'Doors' | translate}}</dd>
                             </dl>
                         </div>
                     </div>
