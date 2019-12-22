@@ -19,48 +19,6 @@
                     <span class="help-block" ng-show="model.full_addressErr">{{model.full_addressErr}}</span>
                 </div>
             </div>
-            <input type="hidden" class="form-control" placeholder="Address" name="address" id="address" ng-model="counterLocation.address"/>
-            <div class="form-group" ng-class="{'has-error' : ((LocationAdd.$submitted || LocationAdd.latitude.$touched) && (LocationAdd.latitude.$pristine || LocationAdd.latitude.$invalid)) && LocationAdd.latitude.$error.required}">
-            	<label class="control-label">Latitude</label>
-                <input type="text" class="form-control" placeholder="Latitude" name="latitude" ng-model="counterLocation.latitude" ng-required="true">
-                <div ng-show="((LocationAdd.$submitted || LocationAdd.latitude.$touched) && (LocationAdd.latitude.$pristine || LocationAdd.latitude.$invalid))">
-                    <span class="help-block" ng-show="(LocationAdd.latitude.$error.required)">Required</span>
-                    <span class="help-block" ng-show="model.latitudeErr">{{model.latitudeErr}}</span>
-                </div>
-            </div>
-            <div class="form-group" ng-class="{'has-error' : ((LocationAdd.$submitted || LocationAdd.longitude.$touched) && (LocationAdd.longitude.$pristine || LocationAdd.longitude.$invalid)) && LocationAdd.longitude.$error.required}">
-                <label class="control-label">Longitude</label>
-                <input type="text" class="form-control" placeholder="Longitude" name="longitude" ng-model="counterLocation.longitude" ng-required="true" ng-change="model.longitudeErr=''">
-                <div ng-show="((LocationAdd.$submitted || LocationAdd.longitude.$touched) && (LocationAdd.longitude.$pristine || LocationAdd.longitude.$invalid)) || model.longitudeErr">
-                    <span class="help-block" ng-show="(LocationAdd.longitude.$error.required)">Required</span>
-                    <span class="help-block" ng-show="model.longitudeErr">{{model.longitudeErr}}</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Fax</label>
-                <input type="text" class="form-control" placeholder="Fax" name="fax" ng-model="counterLocation.fax">
-   			</div>
-            <div class="form-group">
-            	<label class="control-label">Phone</label>
-                <input type="text" class="form-control" placeholder="Phone" name="phone" ng-model="counterLocation.phone">
-            </div>
-            <div class="form-group" ng-class="{'has-error' : ((LocationAdd.$submitted || LocationAdd.mobile.$touched) && (LocationAdd.mobile.$pristine || LocationAdd.mobile.$invalid))|| model.mobileErr}">
-                <label class="control-label">Mobile</label>
-                <input type="text" class="form-control" placeholder="Mobile" name="mobile" ng-model="counterLocation.mobile" ng-required="true" ng-change="model.mobileErr=''">
-                <div ng-show="((LocationAdd.$submitted || LocationAdd.mobile.$touched) && (LocationAdd.mobile.$pristine || LocationAdd.mobile.$invalid)) || model.mobileErr">
-                    <span class="help-block" ng-show="(LocationAdd.mobile.$error.required)">Required</span>
-                    <span class="help-block" ng-show="model.mobileErr">{{model.mobileErr}}</span>
-                </div>
-            </div>
-            <div class="form-group" ng-class="{'has-error' : ((LocationAdd.$submitted || LocationAdd.email.$touched) && (LocationAdd.email.$pristine || LocationAdd.email.$invalid))|| model.emailErr}">
-                <label class="control-label">Email</label>
-                <input type="email" class="form-control" placeholder="Email" name="email" ng-model="counterLocation.email" ng-required="true" ng-change="model.emailErr=''">
-                <div ng-show="((LocationAdd.$submitted || LocationAdd.email.$touched) && (LocationAdd.email.$pristine || LocationAdd.email.$invalid)) || model.emailErr">
-                    <span class="help-block" ng-show="(LocationAdd.email.$error.required)">Required</span>
-                    <span class="help-block" ng-show="(LocationAdd.email.$error.email)">Enter valid email</span>
-                    <span class="help-block" ng-show="model.emailErr">{{model.emailErr}}</span>
-                </div>
-            </div>
             <div class="form-group mob-dc">
             	<button type="submit" class="btn btn-primary">Submit</button>
             </div>

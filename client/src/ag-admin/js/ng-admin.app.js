@@ -1,5 +1,5 @@
 var ngapp = angular.module('BookorRent', ['ng-admin', 'ng-admin.jwt-auth', 'google.places', 'mwl.calendar']);
-var admin_api_url = 'http://local.rnr:8888';
+var admin_api_url = '';
 var limit_per_page = 20;
 var no_limit_per_page = 100;
 var enabledPlugins;
