@@ -39,7 +39,7 @@ class SettingsServiceProvider extends ServiceProvider
     {
         if (Schema::hasTable('settings')) {
             $setting = Cache::rememberForever('settings_data', function () {
-                return DB::table('settings')->lists('value', 'name');
+                return DB::table('settings')->pluck('value', 'name');
             });
             foreach ($setting as $key => $value) {
                 config()->set($key, $value);

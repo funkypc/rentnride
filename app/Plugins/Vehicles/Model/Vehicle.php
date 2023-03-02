@@ -245,7 +245,7 @@ class Vehicle extends Model
             })
                 ->where('is_dummy', '!=', 1)
                 ->groupBy('vehicle_id')
-                ->lists('vehicle_id');
+                ->pluck('vehicle_id');
             $query->whereHas('unavailable_vehicle', function ($query) use ($data) {
                 $query->whereNotIN('vehicle_id', $data->toArray());
             });

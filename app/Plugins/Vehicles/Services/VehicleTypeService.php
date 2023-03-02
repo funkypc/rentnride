@@ -31,7 +31,7 @@ class VehicleTypeService
      */
     public function getVehicleTypeList()
     {
-        $vehicle_type_list = VehicleType::where('is_active', true)->lists('id', 'name');
+        $vehicle_type_list = VehicleType::where('is_active', true)->pluck('id', 'name');
         foreach($vehicle_type_list as $value=>$key) {
             $vehicle_type_list[$value] = (integer)$key;
         }

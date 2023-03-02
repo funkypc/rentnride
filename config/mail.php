@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => env('MAIL_FROM_ADDRESS', 'admin@localhost'), 'name' => env('MAIL_FROM_NAME', 'System Mail')],
 
     /*
     |--------------------------------------------------------------------------

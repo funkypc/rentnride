@@ -31,7 +31,7 @@ class VehicleSpecialPriceService
      */
     public function getVehicleSpecialPriceList()
     {
-        $vehicle_special_price_list = VehicleSpecialPrice::where('is_active', true)->lists('id', 'vehicle_type_id', 'start_date', 'end_date', 'discount_percentage');
+        $vehicle_special_price_list = VehicleSpecialPrice::where('is_active', true)->pluck('id', 'vehicle_type_id', 'start_date', 'end_date', 'discount_percentage');
         return $vehicle_special_price_list;
     }
 

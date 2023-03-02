@@ -31,7 +31,7 @@ class VehicleMakeService
      */
     public function getVehicleMakeList()
     {
-        $vehicle_make_list = VehicleMake::where('is_active', true)->lists('id', 'name');
+        $vehicle_make_list = VehicleMake::where('is_active', true)->pluck('id', 'name');
         foreach($vehicle_make_list as $value=>$key) {
             $vehicle_make_list[$value] = (integer)$key;
         }

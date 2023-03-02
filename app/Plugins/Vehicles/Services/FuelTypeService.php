@@ -31,7 +31,7 @@ class FuelTypeService
      */
     public function getFuelTypeList()
     {
-        $feul_type_list = FuelType::lists('id', 'name');
+        $feul_type_list = FuelType::pluck('id', 'name');
         foreach($feul_type_list as $value=>$key) {
             $feul_type_list[$value] = (integer)$key;
         }

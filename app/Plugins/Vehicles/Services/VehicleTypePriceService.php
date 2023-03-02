@@ -31,7 +31,7 @@ class VehicleTypePriceService
      */
     public function getVehicleTypePriceList()
     {
-        $vehicle_type_price_list = VehicleTypePrice::where('is_active', true)->lists('id', 'vehicle_type_id', 'minimum_no_of_day', 'maximum_no_of_day', 'discount_percentage');
+        $vehicle_type_price_list = VehicleTypePrice::where('is_active', true)->pluck('id', 'vehicle_type_id', 'minimum_no_of_day', 'maximum_no_of_day', 'discount_percentage');
         return $vehicle_type_price_list;
     }
 

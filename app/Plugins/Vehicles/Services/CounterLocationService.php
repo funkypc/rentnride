@@ -33,7 +33,7 @@ class CounterLocationService
      */
     public function getCounterLocationList()
     {
-        $counter_location_list = CounterLocation::lists('id', 'address');
+        $counter_location_list = CounterLocation::pluck('id', 'address');
         return $counter_location_list;
     }
 

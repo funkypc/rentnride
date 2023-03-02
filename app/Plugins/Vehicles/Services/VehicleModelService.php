@@ -32,7 +32,7 @@ class VehicleModelService
      */
     public function getVehicleModelList()
     {
-        $vehicle_model_list = VehicleModel::where('is_active', true)->lists('id', 'name');
+        $vehicle_model_list = VehicleModel::where('is_active', true)->pluck('id', 'name');
         return $vehicle_model_list;
     }
 

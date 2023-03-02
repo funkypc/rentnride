@@ -302,7 +302,7 @@ class VehicleRentalService
             '##CONTACT_MAIL##' => config('site.contact_email')
         );
         $status_arr = [$previous_status, $current_status];
-        $status = VehicleRentalStatus::whereIn('id', $status_arr)->lists('name', 'id')->all();
+        $status = VehicleRentalStatus::whereIn('id', $status_arr)->pluck('name', 'id')->all();
         $template = $this->mailService->getTemplate('Item User Change Status Alert');
         $emailFindReplace = array(
             '##SITE_NAME##' => config('site.name'),
@@ -341,7 +341,7 @@ class VehicleRentalService
             ->where('item_userable_type', 'MorphVehicle')
             ->select('item_user_status_id', DB::raw('count(*) as total'))
             ->groupBy('item_user_status_id')
-            ->lists('total', 'item_user_status_id');
+            ->pluck('total', 'item_user_status_id');
         foreach ($status_count as $key => $value) {
             VehicleRentalStatus::where('id', '=', $key)->update(['booking_count' => $value]);
         }
@@ -385,17 +385,17 @@ class VehicleRentalService
                 ->where('item_userable_type', 'MorphVehicle')
                 ->select('item_user_status_id', DB::raw('count(*) as total'))
                 ->groupBy('item_user_status_id')
-                ->lists('total', 'item_user_status_id');
+                ->pluck('total', 'item_user_status_id');
 
             // get host order count
-            $vehicle_list = Vehicle::where('user_id', $user_id)->lists('id', 'id');
+            $vehicle_list = Vehicle::where('user_id', $user_id)->pluck('id', 'id');
             $vehicle_list = $vehicle_list->toArray();
             $host_status_count = DB::table('item_users')
                 ->where('item_userable_type', 'MorphVehicle')
                 ->whereIN('item_userable_id', $vehicle_list)
                 ->select('item_user_status_id', DB::raw('count(*) as total'))
                 ->groupBy('item_user_status_id')
-                ->lists('total', 'item_user_status_id');
+                ->pluck('total', 'item_user_status_id');
 
             // response process
             $total_booking_count = 0;

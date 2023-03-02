@@ -31,7 +31,7 @@ class VehicleCompanyService
      */
     public function getVehicleCompanyList()
     {
-        $vehicle_company_list = VehicleCompany::where('is_active', true)->lists('id', 'name');
+        $vehicle_company_list = VehicleCompany::where('is_active', true)->pluck('id', 'name');
         foreach($vehicle_company_list as $value=>$key) {
             $vehicle_company_list[$value] = (integer)$key;
         }
