@@ -24,26 +24,26 @@
 |
 */
 
-$api = $app->make('Dingo\Api\Routing\Router');
+$api = app('Dingo\Api\Routing\Router');
 
 $value = config('app.timezone');
 date_default_timezone_set($value);
 
-$app->get('/', function () use ($app) {
-    return $app->version();
+$router->get('/', function () use ($router) {
+    return $router->version();
 });
 
-$app->get('robots.txt', function () use ($app) {
+$router->get('robots.txt', function () use ($router) {
     return config('site.robots');
 });
 
-$app->get('clear_cache', function () use ($app) {
+$router->get('clear_cache', function () use ($router) {
     Cache::forget('settings_data');
     Cache::forget('site_url_for_shell');
     return response()->json(['Success' => 'setting cache cleared'], 200);
 });
 
-$api->version(['v1'], function ($api) use ($app) {
+$api->version(['v1'], function ($api) use ($router) {
     $api->group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
 
         //Api Requests
