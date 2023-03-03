@@ -10,17 +10,17 @@
   "type": "project",
   "require": {
     "php": ">=7.0.0",
-    "laravel/lumen-framework": "5.5.*",
+    "laravel/lumen-framework": "5.6.*",
     "vlucas/phpdotenv": "~2.6",
     "league/flysystem": "~1.1",
     "tymon/jwt-auth": "0.5.*",
-    "illuminate/routing": "^5.5",
-    "illuminate/hashing": "^5.5",
-    "illuminate/cookie": "^5.5",
-    "dingo/api": "2.0.0-alpha1",
+    "illuminate/routing": "^5.6",
+    "illuminate/hashing": "^5.6",
+    "illuminate/cookie": "^5.6",
+    "dingo/api": "2.4.7",
     "barryvdh/laravel-cors": "^0.11.1",
     "doctrine/dbal": "v2.6.3",
-    "illuminate/mail": "~5.5",
+    "illuminate/mail": "~5.6",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "ext-fileinfo": "*",
     "intervention/image": "^2.3",
@@ -36,7 +36,7 @@
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
-    "phpunit/phpunit": "~6.0",
+    "phpunit/phpunit": "~7.0",
     "filp/whoops": "~2.0"
   },
   "autoload": {
