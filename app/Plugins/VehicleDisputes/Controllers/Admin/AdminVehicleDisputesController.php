@@ -17,7 +17,7 @@ namespace Plugins\VehicleDisputes\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleDisputes\Model\VehicleDispute;
 use Plugins\VehicleRentals\Model\VehicleRental;
@@ -46,7 +46,7 @@ class AdminVehicleDisputesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setVehicleDisputeService();
@@ -110,7 +110,7 @@ class AdminVehicleDisputesController extends Controller
      */
     public function resolve(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_dispute_data = $request->only('item_user_id', 'dispute_closed_type_id');
         // checking conditions
         $enabledIncludes = array('user');

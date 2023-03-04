@@ -18,9 +18,9 @@ namespace Plugins\VehicleFuelOptions\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Plugins\VehicleFuelOptions\Model\VehicleFuelOption;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleFuelOptions\Transformers\AdminVehicleFuelOptionTransformer;
 use Plugins\VehicleFuelOptions\Transformers\VehicleFuelOptionTransformer;
 use EasySlug\EasySlug\EasySlugFacade as EasySlug;
@@ -37,7 +37,7 @@ class AdminVehicleFuelOptionsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

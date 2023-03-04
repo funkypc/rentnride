@@ -18,7 +18,7 @@ namespace Plugins\VehicleDisputes\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleDisputes\Model\VehicleDispute;
 use Plugins\VehicleRentals\Model\VehicleRental;
@@ -49,7 +49,7 @@ class VehicleDisputesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setVehicleDisputeService();
         $this->setVehicleRentalService();
     }
@@ -103,7 +103,7 @@ class VehicleDisputesController extends Controller
      */
     public function store(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_dispute_data = $request->only('item_user_id', 'dispute_type_id', 'reason');
         // checking conditions
         $vehicle_rental = VehicleRental::with('user')->where('id', '=', $request->item_user_id)
@@ -155,7 +155,7 @@ class VehicleDisputesController extends Controller
      */
     public function getPossibleDisputeTypes($vehicle_rental_id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if (isPluginEnabled('VehicleRentals')) {
             $enabledIncludes = array('user', 'item_user_status', 'message');
             // check if plugin enabled and include

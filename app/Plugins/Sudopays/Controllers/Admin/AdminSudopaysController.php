@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Controllers\Controller;
 use Plugins\Sudopays\Model\Sudopay;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 use Plugins\Sudopays\Services\SudopayAPIService;
@@ -46,7 +46,7 @@ class AdminSudopaysController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setSudopayAPIService();

@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleCompany;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Vehicles\Transformers\VehicleCompanyTransformer;
 use EasySlug\EasySlug\EasySlugFacade as EasySlug;
@@ -36,7 +36,7 @@ class VehicleCompaniesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -74,7 +74,7 @@ class VehicleCompaniesController extends Controller
     {
         $vehicle_company_data = $request->only('name', 'address', 'latitude', 'longitude', 'phone', 'fax', 'mobile', 'email');
         $vehicle_company_data['slug'] = EasySlug::generateUniqueSlug($request->name, 'vehicle_companies');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if (!$user) {
             return $this->response->errorNotFound("Invalid Request");
         }
@@ -115,7 +115,7 @@ class VehicleCompaniesController extends Controller
      */
     public function edit()
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_company = VehicleCompany::where('user_id', $user->id)->first();
         if (!$user || !$vehicle_company || $user->id != $vehicle_company->user_id) {
             return $this->response->errorNotFound("Invalid Request");
@@ -136,7 +136,7 @@ class VehicleCompaniesController extends Controller
     public function destroy($id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if (!$user || !$vehicle_company || $user->id != $vehicle_company->user_id) {
             return $this->response->errorNotFound("Invalid Request");
         } else {
@@ -157,7 +157,7 @@ class VehicleCompaniesController extends Controller
      */
     public function show()
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_company = VehicleCompany::where('user_id', $user->id)->first();
         if (!$user || !$vehicle_company || $user->id != $vehicle_company->user_id) {
             return $this->response->errorNotFound("Invalid Request");

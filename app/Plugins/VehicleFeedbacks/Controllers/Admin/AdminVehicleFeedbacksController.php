@@ -19,7 +19,7 @@ namespace Plugins\VehicleFeedbacks\Controllers\Admin;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleFeedbacks\Model\VehicleFeedback;
 use Plugins\VehicleFeedbacks\Transformers\VehicleFeedbackTransformer;
@@ -44,7 +44,7 @@ class AdminVehicleFeedbacksController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setVehicleFeedbackService();

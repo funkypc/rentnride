@@ -21,7 +21,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\UnavailableVehicle;
 use Plugins\Vehicles\Model\Vehicle;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Vehicles\Transformers\UnavailableVehicleTransformer;
 use App\User;
@@ -39,7 +39,7 @@ class UnavailableVehiclesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -56,7 +56,7 @@ class UnavailableVehiclesController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $enabled_includes = array('vehicle');
         $vehicles = UnavailableVehicle::with($enabled_includes)->filterByRequest($request)->filterByMyVehicle($user->id)->paginate(config('constants.ConstPageLimit'));
         return $this->response->paginator($vehicles, (new UnavailableVehicleTransformer)->setDefaultIncludes($enabled_includes));
@@ -75,7 +75,7 @@ class UnavailableVehiclesController extends Controller
     public function store(Request $request)
     {
         $unavailable_vehicle_data = $request->only('vehicle_id', 'start_date', 'end_date');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle = Vehicle::with('vehicle_company', 'user')->find($request->vehicle_id);
         if (!$vehicle || !$user || $vehicle->user_id != $user->id || $vehicle->vehicle_company->user_id != $user->id) {
             return $this->response->errorNotFound("Invalid Request");
@@ -141,7 +141,7 @@ class UnavailableVehiclesController extends Controller
      */
     public function edit($id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $unavailable_vehicle = UnavailableVehicle::with(['vehicle'])->where('id', $id)->where('is_dummy', 2)->filterByMyVehicle($user->id)->find($id);
         if (!$unavailable_vehicle) {
             return $this->response->errorNotFound("Invalid Request");
@@ -161,7 +161,7 @@ class UnavailableVehiclesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $unavailable_vehicle_data = $request->only('id', 'start_date', 'end_date');
         $unavailable_vehicle = false;
         if ($request->has('id')) {
@@ -228,7 +228,7 @@ class UnavailableVehiclesController extends Controller
      */
     public function destroy($id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $unavailable_vehicle = UnavailableVehicle::with(['vehicle'])->where('is_dummy', 2)->filterByMyVehicle($user->id)->find($id);
         if (!$unavailable_vehicle) {
             return $this->response->errorNotFound("Invalid Request");

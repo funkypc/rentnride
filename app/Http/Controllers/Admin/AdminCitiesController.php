@@ -18,7 +18,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\City;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\CityTransformer;
 use App\State;
@@ -37,7 +37,7 @@ class AdminCitiesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

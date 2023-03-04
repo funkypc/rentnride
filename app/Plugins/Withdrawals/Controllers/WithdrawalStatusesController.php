@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\WithdrawalStatus;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Plugins\Withdrawals\Transformers\WithdrawalStatusTransformer;
 
 /**
@@ -36,7 +36,7 @@ class WithdrawalStatusesController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**

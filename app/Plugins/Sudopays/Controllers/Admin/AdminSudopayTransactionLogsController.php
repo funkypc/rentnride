@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Sudopays\Model\SudopayTransactionLog;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Sudopays\Transformers\SudopayTransactionLogTransformer;
 
@@ -35,7 +35,7 @@ class AdminSudopayTransactionLogsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

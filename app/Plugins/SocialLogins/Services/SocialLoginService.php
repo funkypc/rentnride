@@ -16,13 +16,13 @@
 namespace Plugins\SocialLogins\Services;
 
 use App\Services\UserService;
-use Tymon\JWTAuth\Providers\JWT\JWTInterface;
+use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\JWT;
 use App\User;
 
 class SocialLoginService
 {
     /**
-     * @var JWTInterface
+     * @var JWT
      */
     protected $jwt;
     /**
@@ -32,11 +32,11 @@ class SocialLoginService
 
     /**
      * SocialLoginService constructor.
-     * @param JWTInterface $jwt
+     * @param JWT $jwt
      * @param UserService $service
      */
 
-    public function __construct(JWTInterface $jwt, UserService $service)
+    public function __construct(JWT $jwt, UserService $service)
     {
         $this->jwt = $jwt;
         $this->service = $service;

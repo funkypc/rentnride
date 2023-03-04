@@ -21,7 +21,7 @@ use App\Http\Controllers\Controller;
 use Plugins\Pages\Model\Page;
 use App\Language;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Pages\Transformers\PageLanguageTransformer;
 use Plugins\Pages\Transformers\PageTransformer;

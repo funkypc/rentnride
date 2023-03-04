@@ -27,7 +27,8 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'api'),
+        'guard' => 'api',
+        'passwords' => 'users',
     ],
 
     /*
@@ -51,7 +52,7 @@ return [
 
     'guards' => [
         'api' => [
-            'driver' => 'session',
+            'driver' => 'jwt',
             'provider' => 'users'
         ],
     ],
@@ -76,8 +77,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            // We should get model name from JWT configuration
-            'model'  => app('config')->get('jwt.user'),
+            'model'  => App\User::class,
         ],
     ],
 

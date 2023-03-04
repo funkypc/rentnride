@@ -17,7 +17,7 @@ namespace Plugins\VehicleDisputes\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleDisputes\Model\VehicleDisputeType;
 use Plugins\VehicleDisputes\Transformers\VehicleDisputeTypeTransformer;
@@ -34,7 +34,7 @@ class AdminVehicleDisputeTypesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

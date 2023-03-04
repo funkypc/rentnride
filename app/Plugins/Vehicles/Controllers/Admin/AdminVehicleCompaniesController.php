@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleCompany;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\User;
 use Plugins\Vehicles\Transformers\AdminVehicleCompanyTransformer;
@@ -37,7 +37,7 @@ class AdminVehicleCompaniesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

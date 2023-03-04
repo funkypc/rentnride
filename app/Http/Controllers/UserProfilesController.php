@@ -19,7 +19,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\UserProfile;
 use App\Attachment;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\UserProfileTransformer;
 use Image;
@@ -37,7 +37,7 @@ class UserProfilesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -51,7 +51,7 @@ class UserProfilesController extends Controller
      */
     public function edit()
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $user_profile = UserProfile::with('User.attachments')->where('user_id', '=', $user->id)->first();
         if (!$user_profile) {
             UserProfile::create(['first_name' => $user->username, 'user_id' => $user->id]);
@@ -80,7 +80,7 @@ class UserProfilesController extends Controller
         $user_profile_data['linkedin_profile_link'] = ($user_profile_data['linkedin_profile_link'] == null || $user_profile_data['linkedin_profile_link'] == 'null') ? "" : $user_profile_data['linkedin_profile_link'];
         $user_profile_data['youtube_profile_link'] = ($user_profile_data['youtube_profile_link'] == null || $user_profile_data['youtube_profile_link'] == 'null') ? "" : $user_profile_data['youtube_profile_link'];
         $validator = Validator::make($user_profile_data, UserProfile::GetValidationRule(), UserProfile::GetValidationMessage());
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($user) {
             if ($validator->passes()) {
                 $user_profile = UserProfile::where('user_id', '=', $user->id)->first();

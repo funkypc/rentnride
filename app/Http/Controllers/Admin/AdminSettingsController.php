@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Setting;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use File;
 use Cache;
@@ -41,7 +41,7 @@ class AdminSettingsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth', ['except' => [
+        $this->middleware('auth:api', ['except' => [
             'show'
         ]]);
         // Check the logged user role.

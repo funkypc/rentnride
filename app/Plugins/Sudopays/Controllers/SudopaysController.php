@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use DB;
 use App\Http\Controllers\Controller;
 use Plugins\Sudopays\Model\Sudopay;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 use Plugins\Sudopays\Services\SudopayAPIService;

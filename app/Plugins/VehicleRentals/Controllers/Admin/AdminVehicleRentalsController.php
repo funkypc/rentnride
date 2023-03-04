@@ -18,9 +18,9 @@ namespace Plugins\VehicleRentals\Controllers\Admin;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleRentals\Transformers\VehicleRentalTransformer;
 use Plugins\VehicleRentals\Model\VehicleRental;
 use Plugins\VehicleRentals\Model\VehicleRentalStatus;
@@ -58,7 +58,7 @@ class AdminVehicleRentalsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setVehicleRentalService();

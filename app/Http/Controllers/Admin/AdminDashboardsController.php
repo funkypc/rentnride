@@ -22,7 +22,7 @@ use App\Http\Controllers\Controller;
 
 use App\Dashboard;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 use App\Services\UserService;
 use App\Services\UserLoginService;
@@ -53,7 +53,7 @@ class AdminDashboardsController extends Controller
     public function __construct(UserService $user_service)
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->UserService = $user_service;

@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Plugins\SocialLogins\Model\Provider;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\SocialLogins\Transformers\ProviderTransformer;
 

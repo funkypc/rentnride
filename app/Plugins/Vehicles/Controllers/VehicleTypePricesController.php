@@ -18,7 +18,7 @@ namespace Plugins\Vehicles\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleTypePrice;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Vehicles\Transformers\VehicleTypePriceTransformer;
 
@@ -34,7 +34,7 @@ class VehicleTypePricesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**

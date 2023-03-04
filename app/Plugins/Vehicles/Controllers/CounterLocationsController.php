@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\CounterLocation;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Vehicles\Transformers\CounterLocationTransformer;
 
@@ -35,7 +35,7 @@ class CounterLocationsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth', ['except' => ['index']]);
+        $this->middleware('auth:api', ['except' => ['index']]);
     }
 
     /**

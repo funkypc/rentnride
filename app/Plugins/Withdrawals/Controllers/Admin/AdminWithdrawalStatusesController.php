@@ -19,8 +19,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\WithdrawalStatus;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Auth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\Withdrawals\Transformers\WithdrawalStatusTransformer;
 
 /**
@@ -37,7 +37,7 @@ class AdminWithdrawalStatusesController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

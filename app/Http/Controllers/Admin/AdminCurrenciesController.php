@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Currency;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\CurrencyTransformer;
 
@@ -37,7 +37,7 @@ class AdminCurrenciesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

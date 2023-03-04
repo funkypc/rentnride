@@ -20,9 +20,9 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\UserCashWithdrawal;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
 use App\User;
 use App\Services\TransactionService;
@@ -50,7 +50,7 @@ class AdminUserCashWithdrawalsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setTransactionService();

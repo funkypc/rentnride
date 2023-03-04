@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\UserCashWithdrawal;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
 use Plugins\Withdrawals\Services\MoneyTransferAccountService;
@@ -46,7 +46,7 @@ class UserCashWithdrawalsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setMoneyTransferAccountService();
         $this->setTransactionService();
     }
@@ -92,7 +92,7 @@ class UserCashWithdrawalsController extends Controller
     public function store(Request $request)
     {
         $user_cash_withdrawal_data = $request->only('amount', 'user_id', 'money_transfer_account_id');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($user) {
             $user_cash_withdrawal_data['user_id'] = $user->id;
         }

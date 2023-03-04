@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Plugins\VehicleTaxes\Model\VehicleTypeTax;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleTaxes\Transformers\VehicleTypeTaxTransformer;
 use DB;
@@ -36,7 +36,7 @@ class AdminVehicleTypeTaxesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

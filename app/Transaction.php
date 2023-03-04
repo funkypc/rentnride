@@ -18,8 +18,8 @@ namespace App;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 use App\User;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Auth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use App\TransactionType;
 use Carbon;
 

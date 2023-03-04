@@ -17,7 +17,6 @@ namespace App\Transformers;
 
 use League\Fractal;
 use App\Transaction;
-use JWTAuth;
 use Illuminate\Support\Facades\Auth;
 
 /**

@@ -17,7 +17,7 @@ namespace App\Http\Controllers;
 
 use Carbon;
 use Illuminate\Http\Request;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use App\Message;
 use App\MessageContent;
 use Validator;
@@ -37,7 +37,7 @@ class MessagesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setMessageService();
         if (isPluginEnabled('VehicleDisputes')) {
             $this->setVehicleDisputeService();
@@ -78,7 +78,7 @@ class MessagesController extends Controller
     public function inbox(Request $request)
     {
         $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'message_folder_id' => config('constants.ConstMessageFolder.Inbox')];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
         $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
@@ -101,7 +101,7 @@ class MessagesController extends Controller
     public function sentMessage(Request $request)
     {
         $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'message_folder_id' => config('constants.ConstMessageFolder.SentMail')];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
         $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
@@ -123,7 +123,7 @@ class MessagesController extends Controller
     public function starMessage(Request $request)
     {
         $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'is_starred' => 1];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
         $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
@@ -162,7 +162,7 @@ class MessagesController extends Controller
      */
     public function bookerActivities($item_user_id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $enabledIncludes = array('user', 'message', 'item_user_status');
         (isPluginEnabled('VehicleFeedbacks')) ? $enabledIncludes[] = 'vehicle_feedback' : '';
         $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::with($enabledIncludes)->where('id', $item_user_id)->first();
@@ -185,7 +185,7 @@ class MessagesController extends Controller
         $message_data = $request->only('to_user_id', 'message', 'subject');
         $validator = Validator::make($message_data, Message::GetValidationRule(), Message::GetValidationMessage());
         if ($validator->passes()) {
-            $user = $this->auth->user();
+            $user = Auth::guard()->user();
             //if to user and current user equal could not send message
             if ($user->id == $request->to_user_id) {
                 return $this->response->errorNotFound("Message could not be sent");
@@ -224,7 +224,7 @@ class MessagesController extends Controller
      */
     public function show($id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $message = Message::with($enabledIncludes)->find($id);
         if (!$message || ($user->role_id != config('constans.ConstUserTypes.Admin') && ($user->id != $message->user_id && $user->id != $message->to_user_id))) {
@@ -253,7 +253,7 @@ class MessagesController extends Controller
         $message_data = $request->only('message', 'subject');
         $validator = Validator::make($message_data, Message::GetValidationRule(), Message::GetValidationMessage());
         if ($validator->passes()) {
-            $user = $this->auth->user();
+            $user = Auth::guard()->user();
             //if to user and current user equal could not send message
             if ($user->id == $request->to_user_id) {
                 return $this->response->errorNotFound("Message could not be sent");
@@ -294,7 +294,7 @@ class MessagesController extends Controller
      */
     public function privateNote(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $private_note_data = $request->only('message');
         $validator = Validator::make($private_note_data, Message::GetValidationRule($private_note_data), Message::GetValidationMessage($private_note_data));
         if ($validator->passes()) {

@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\TransactionTransformer;
 use App\Transaction;
@@ -34,7 +34,7 @@ class TransactionsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setTransactionService();
     }
     public function setTransactionService()
@@ -57,7 +57,7 @@ class TransactionsController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $transactions = Transaction::with('from_user','to_user', 'transaction_type')->where('user_id', $user->id)->orWhere('receiver_user_id', $user->id)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
         $converted_transactions = $this->transactionService->transactionDescription($transactions);
         $transaction_details = $this->response->paginator($converted_transactions, (new TransactionTransformer)->setDefaultIncludes(['from_user','to_user', 'transaction_type']));

@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\TransactionTypeTransformer;
 use App\TransactionType;
@@ -33,7 +33,7 @@ class TransactionTypesController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**

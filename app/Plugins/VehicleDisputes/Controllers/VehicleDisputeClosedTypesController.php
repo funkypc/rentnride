@@ -17,7 +17,7 @@ namespace Plugins\VehicleDisputes\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Plugins\VehicleDisputes\Model\VehicleDisputeClosedType;
 use Plugins\VehicleDisputes\Transformers\VehicleDisputeClosedTypeTransformer;
 
@@ -33,7 +33,7 @@ class VehicleDisputeClosedTypesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**

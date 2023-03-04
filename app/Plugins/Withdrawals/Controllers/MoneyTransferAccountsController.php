@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\MoneyTransferAccount;
 use Plugins\Withdrawals\Transformers\MoneyTransferAccountTransformer;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
@@ -37,7 +37,7 @@ class MoneyTransferAccountsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
     }
 
     /**
@@ -51,7 +51,7 @@ class MoneyTransferAccountsController extends Controller
      */
     public function index()
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $money_transfer_accounts = MoneyTransferAccount::with('user')->where('user_id', '=', $user->id)->get();
         return $this->response->collection($money_transfer_accounts, (new MoneyTransferAccountTransformer)->setDefaultIncludes(['user']));
     }
@@ -69,7 +69,7 @@ class MoneyTransferAccountsController extends Controller
     public function store(Request $request)
     {
         $money_transfer_account_data = $request->only('account');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($user) {
             $money_transfer_account_data['user_id'] = $user->id;
         }
@@ -99,7 +99,7 @@ class MoneyTransferAccountsController extends Controller
     public function destroy($id)
     {
         $money_transfer_account = MoneyTransferAccount::find($id);
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($money_transfer_account && $money_transfer_account->user_id == $user->id) {
             $money_transfer_account_verify = MoneyTransferAccount::with('user_cash_withdrawal')->where("id", $id)->whereHas('user_cash_withdrawal', function ($query) {
                 $query->whereIn('withdrawal_status_id', [config('constants.ConstWithdrawalStatus.Pending'), config('constants.ConstWithdrawalStatus.Approved')]);

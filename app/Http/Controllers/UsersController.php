@@ -17,9 +17,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use App\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -56,7 +56,7 @@ class UsersController extends Controller
      */
     public function __construct(UserService $user_Service)
     {
-        $this->middleware('jwt.auth', ['only' => ['change_password', 'getAuth', 'getStats']]);
+        $this->middleware('auth:api', ['only' => ['change_password', 'getAuth', 'getStats']]);
         $this->UserService = $user_Service;
         $this->setIpService();
         $this->setUserLoginService();
@@ -89,7 +89,7 @@ class UsersController extends Controller
         if ($request->has('username')) {
             $user = User::with($enabledIncludes)->where("username", $request->username)->first();
         } else {
-            $auth_user = $this->auth->user();
+            $auth_user = $this->guard()->user();
             $user = User::with($enabledIncludes)->find($auth_user->id);
         }
         if (!$user) {
@@ -167,7 +167,7 @@ class UsersController extends Controller
             return response()->json(['error' => 'Account does not exist.'], 404);
         }
         try {
-            if (!$userToken = JWTAuth::attempt($credentials)) {
+            if (!$userToken = $this->guard()->attempt($credentials)) {
                 return $this->response->errorUnauthorized();
             }
         } catch (JWTException $e) {
@@ -309,7 +309,7 @@ class UsersController extends Controller
      */
     public function getAuth()
     {
-        $user = $this->auth->user();
+        $user = $this->guard()->user();
         if ($user) {
             return $this->response->item($user, (new UserAuthTransformer)->setDefaultIncludes(['user_profile', 'attachmentable', 'provider_user', 'vehicle_company']));
         }
@@ -325,7 +325,7 @@ class UsersController extends Controller
      */
     public function getUserUploadAttachment()
     {
-        $user = $this->auth->user();
+        $user = $this->guard()->user();
         if ($user) {
             if ($user->attachments) {
                 return $this->item($user->attachments, new UploadAttachmentTransformer());
@@ -347,7 +347,7 @@ class UsersController extends Controller
      */
     public function getStats()
     {
-        $user = $this->auth->user();
+        $user = $this->guard()->user();
         if (isPluginEnabled('VehicleRentals') && $user) {
             $vehicle_rental_service = new \Plugins\VehicleRentals\Services\VehicleRentalService();
             $response = $vehicle_rental_service->getBookAndOrderCount($user->id);
@@ -355,4 +355,29 @@ class UsersController extends Controller
         }
     }
 
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => $this->guard()->factory()->getTTL() * 60
+        ]);
+    }
+
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\Guard
+     */
+    public function guard()
+    {
+        return Auth::guard();
+    }
 }

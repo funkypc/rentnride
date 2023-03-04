@@ -15,14 +15,14 @@
  
 namespace App\Services;
 
-use Tymon\JWTAuth\Providers\JWT\JWTInterface;
+use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\JWT;
 
 class TokenService
 {
     /**
      * TokenService constructor.
      */
-    public function __construct(JWTInterface $jwt)
+    public function __construct(JWT $jwt)
     {
         $this->jwt = $jwt;
     }

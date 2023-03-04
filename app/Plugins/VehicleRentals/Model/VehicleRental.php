@@ -18,10 +18,10 @@ namespace Plugins\VehicleRentals\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Plugins\VehicleFeedbacks\Model\VehicleFeedback;
 use Plugins\Vehicles\Model\UnavailableVehicle;
-use Tymon\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use App\User;
 use Plugins\Vehicles\Model\CounterLocation;
 use Illuminate\Support\Facades\Auth;

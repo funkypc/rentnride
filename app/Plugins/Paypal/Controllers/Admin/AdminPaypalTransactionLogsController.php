@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Paypal\Model\PaypalTransactionLog;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Paypal\Transformers\PaypalTransactionLogTransformer;
 
@@ -37,7 +37,7 @@ class AdminPaypalTransactionLogsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
     }

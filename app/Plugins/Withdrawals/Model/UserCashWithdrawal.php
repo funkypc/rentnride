@@ -19,7 +19,7 @@ use App\Message;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Transaction;
 

@@ -18,7 +18,7 @@ namespace Plugins\VehicleFeedbacks\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Plugins\VehicleRentals\Services\VehicleRentalService;
 use Validator;
 use App\Services\IpService;
@@ -70,7 +70,7 @@ class VehicleFeedbacksController extends Controller
     public function __construct(UserService $userService)
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth', ['except' => ['index']]);
+        $this->middleware('auth:api', ['except' => ['index']]);
         $this->setIpService();
         $this->setMessageService();
         $this->setVehicleFeedbackService();
@@ -169,7 +169,7 @@ class VehicleFeedbacksController extends Controller
     {
         $feedback_data = $request->only('item_user_id', 'feedback', 'rating');
         $validator = Validator::make($feedback_data, VehicleFeedback::GetValidationRule(), VehicleFeedback::GetValidationMessage());
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($validator->passes()) {
             $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::find($request->item_user_id);
             $item = $vehicle_rental->item_userable;
@@ -239,7 +239,7 @@ class VehicleFeedbacksController extends Controller
     {
         $feedback_data = $request->only('item_user_id', 'feedback', 'rating');
         $validator = Validator::make($feedback_data, VehicleFeedback::GetValidationRule(), VehicleFeedback::GetValidationMessage());
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         //Check if user is authenticated
         if (!$user) {
             return $this->response->errorNotFound("Unauthorized");

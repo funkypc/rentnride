@@ -22,7 +22,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use Plugins\Contacts\Model\Contact;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
@@ -80,7 +80,7 @@ class ContactsController extends Controller
         $validator = Validator::make($contact_data, Contact::GetValidationRule(), Contact::GetValidationMessage());
         if ($validator->passes()) {
             $contact_data['ip_id'] = $this->IpService->getIpId($request->ip());
-            $user = $this->auth->user();
+            $user = Auth::guard()->user();
             if ($user) {
                 $contact_data['user_id'] = $user->id;
             }

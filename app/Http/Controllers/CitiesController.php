@@ -17,7 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\City;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use App\Transformers\CityTransformer;
 
 /**

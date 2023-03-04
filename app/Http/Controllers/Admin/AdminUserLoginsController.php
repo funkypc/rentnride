@@ -22,7 +22,7 @@ use App\Http\Controllers\Controller;
 
 use App\UserLogin;
 
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Transformers\UserLoginTransformer;
 use App\Services\UserLoginService;
@@ -45,7 +45,7 @@ class AdminUserLoginsController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         // Check the logged user role.
         $this->middleware('role');
         $this->setUserLoginService();

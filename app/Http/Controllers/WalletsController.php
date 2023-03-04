@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Wallet;
 use App\Services\WalletService;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
@@ -44,7 +44,7 @@ class WalletsController extends Controller
     public function __construct()
     {
         // Check the logged user authentication.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setWalletService();
     }
 
@@ -65,7 +65,7 @@ class WalletsController extends Controller
      */
     public function addToWallet(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $request_amount = $request->only('amount');
         $request->sudopay_gateway_id = ($request->has('payment_id')) ? (int)$request->payment_id : 0;
         $validator = Validator::make($request_amount, Wallet::GetValidationRule(), Wallet::GetValidationMessage());

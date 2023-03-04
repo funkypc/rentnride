@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 
 use App\Http\Controllers\Controller;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 
 use Validator;
 use App\User;
@@ -64,7 +64,7 @@ class SocialLoginsController extends Controller
     public function __construct(SocialLoginService $service, UserService $userService)
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth', ['only' => ['unlink', 'getProviderUsers']]);
+        $this->middleware('auth:api', ['only' => ['unlink', 'getProviderUsers']]);
         $this->setIpService();
         $this->setUserLoginService();
         $this->SocialLoginService = $service;
@@ -91,7 +91,7 @@ class SocialLoginsController extends Controller
      */
     public function getProviderUsers()
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $provider_user = ProviderUser::where('user_id', $user->id)->get();
         if (!$provider_user) {
             return $this->response->array($provider_user->toArray());
@@ -111,7 +111,7 @@ class SocialLoginsController extends Controller
     public function unlink(Request $request)
     {
         $provider_id = config(ucfirst($request->provider))['id'];
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $provider = ProviderUser::where(['user_id' => $user->id, 'provider_id' => $provider_id])->get();
         if (!$provider) {
             return $this->response->errorNotFound("Invalid Request");
@@ -134,7 +134,7 @@ class SocialLoginsController extends Controller
      */
     public function update_profile(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $get_user = User::where('id', $user->id)->first();
         if (!$get_user) {
             return $this->response->errorNotFound("Invalid Request");
@@ -183,7 +183,7 @@ class SocialLoginsController extends Controller
         // Step 3a. If user is already signed in then link accounts.
         if ($request->header('Authorization')) {
             $provider_user = ProviderUser::where('foreign_id', '=', $profile['id'])->first();
-            $auth_user = $this->auth->user();
+            $auth_user = Auth::guard()->user();
             if ($provider_user) {
                 if ($auth_user->id != $provider_user->user_id) {
                     return response()->json(['message' => 'There is already a Facebook account registered by other user'], 409);
@@ -282,7 +282,7 @@ class SocialLoginsController extends Controller
         if ($request->header('Authorization')) {
             // check provider user already exists
             $provider_user = ProviderUser::where('foreign_id', '=', $profile['sub'])->first();
-            $auth_user = $this->auth->user();
+            $auth_user = Auth::guard()->user();
             if ($provider_user) {
                 if ($auth_user->id != $provider_user->user_id) {
                     return response()->json(['message' => 'There is already a Google account registered by other user'], 409);
@@ -417,7 +417,7 @@ class SocialLoginsController extends Controller
             if ($request->header('Authorization')) {
                 // check provider user already exists
                 $provider_user = ProviderUser::where('foreign_id', '=', $profile['id'])->first();
-                $auth_user = $this->auth->user();
+                $auth_user = Auth::guard()->user();
                 if ($provider_user) {
                     if ($auth_user->id != $provider_user->user_id) {
                         return response()->json(['message' => 'There is already a Twitter account registered by other user'], 409);
@@ -502,7 +502,7 @@ class SocialLoginsController extends Controller
         // Step 3a. If user is already signed in then link accounts.
         if ($request->header('Authorization')) {
             $provider_user = ProviderUser::where('foreign_id', '=', $profile['id'])->first();
-            $auth_user = $this->auth->user();
+            $auth_user = Auth::guard()->user();
             if ($provider_user) {
                 if ($auth_user->id != $provider_user->user_id) {
                     return response()->json(['message' => 'There is already a account registered by other user'], 409);

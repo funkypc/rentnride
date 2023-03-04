@@ -23,7 +23,7 @@ use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\Vehicle;
 use Plugins\Vehicles\Model\VehicleMake;
 use Plugins\Vehicles\Model\VehicleModel;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\Vehicles\Transformers\VehicleTransformer;
 use Plugins\Vehicles\Services\VehicleService;
@@ -82,7 +82,7 @@ class VehiclesController extends Controller
     public function __construct()
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth', ['except' => ['search', 'getVehicleRelatedFilters', 'show']]);
+        $this->middleware('auth:api', ['except' => ['search', 'getVehicleRelatedFilters', 'show']]);
         $this->setVehicleService();
         $this->setVehicleCompanyService();
         $this->setVehicleMakeService();
@@ -187,7 +187,7 @@ class VehiclesController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $enabled_includes = array('vehicle_type', 'fuel_type', 'counter_location', 'vehicle_company', 'vehicle_make', 'vehicle_model', 'attachments');
         $vehicles = Vehicle::with($enabled_includes)->filterByRequest($request)->filterByMyVehicle($request, $user->id)->paginate(config('constants.ConstPageLimit'));
         return $this->response->paginator($vehicles, (new VehicleTransformer)->setDefaultIncludes($enabled_includes));
@@ -206,7 +206,7 @@ class VehiclesController extends Controller
     public function store(Request $request)
     {
         $vehicle_data = $request->only('vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'pickup_counter_locations', 'drop_counter_locations', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'feedback_count');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $user = User::with('vehicle_company')->where('id', $user->id)->first();
         if (!$user || !$user->vehicle_company) {
             return $this->response->errorNotFound("Invalid Request");
@@ -313,7 +313,7 @@ class VehiclesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_data = $request->only('id', 'vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'feedback_count');
         $vehicle = false;
         $valid_user = false;
@@ -471,7 +471,7 @@ class VehiclesController extends Controller
      */
     public function payNow(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $listing_fee = config('vehicle.listing_fee');
         if ($request->has('vehicle_id')) {
             $vehicle = Vehicle::where('id', $request->vehicle_id)->first();

@@ -31,7 +31,7 @@ use Plugins\Vehicles\Model\VehicleType;
 use Plugins\Vehicles\Services\VehicleService;
 use Plugins\Vehicles\Services\UnavailableVehicleService;
 use App\Services\UserService;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 use Plugins\VehicleRentals\Transformers\VehicleRentalTransformer;
 use Carbon;
@@ -95,7 +95,7 @@ class VehicleRentalsController extends Controller
     public function __construct(UserService $userservice)
     {
         // check whether the user is logged in or not.
-        $this->middleware('jwt.auth');
+        $this->middleware('auth:api');
         $this->setVehicleRentalService();
         $this->setVehicleService();
         $this->setUnavailableVehicleService();
@@ -149,7 +149,7 @@ class VehicleRentalsController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $enabledIncludes = array('user', 'item_user_status');
         // check if plugin enabled and include
         (isPluginEnabled('VehicleCoupons')) ? $enabledIncludes[] = 'vehicle_coupon' : '';
@@ -182,7 +182,7 @@ class VehicleRentalsController extends Controller
      */
     public function itemOrders(Request $request)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicles = Vehicle::with('user')->where('user_id', $user->id)->pluck('id')->all();
         $status_arr = array();
         if ($request->has('item_user_status_id') && $request->item_user_status_id == config('constants.ConstItemUserStatus.WaitingForReview')) {
@@ -262,7 +262,7 @@ class VehicleRentalsController extends Controller
         $vehicle_rental_data = $request->only('vehicle_id', 'item_booking_start_date', 'item_booking_end_date', 'pickup_counter_location_id', 'drop_counter_location_id');
         $vehicle_rental_data['item_booking_start_date'] = $request->item_booking_start_date = date("Y-m-d H:i:s", strtotime($vehicle_rental_data['item_booking_start_date']));
         $vehicle_rental_data['item_booking_end_date'] = $request->item_booking_end_date = date("Y-m-d H:i:s", strtotime($vehicle_rental_data['item_booking_end_date']));
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if (isPluginEnabled('Vehicles')) {
             $vehicle = Vehicle::with(['vehicle_type'])->find($request->vehicle_id);
             if (!$vehicle) {
@@ -352,7 +352,7 @@ class VehicleRentalsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_rental_data = array();
         try {
             $vehicle_rental = VehicleRental::with('vehicle_rental_additional_chargable')->where('id', $request->id)->first();
@@ -426,7 +426,7 @@ class VehicleRentalsController extends Controller
         if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
             return $this->response->errorNotFound("Invalid Request");
         }
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($vehicle_rental->item_userable->user_id != $user->id) {
             return $this->response->errorNotFound("Invalid Request");
         }
@@ -526,7 +526,7 @@ class VehicleRentalsController extends Controller
     public function cancel($id)
     {
         $enabledIncludes = $this->vehicleRentalService->getEnableGateway();
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_rental = VehicleRental::with($enabledIncludes)->where(['item_user_status_id' => config('constants.ConstItemUserStatus.WaitingForAcceptance'), 'user_id' => $user->id, 'id' => $id])->first();
         if (!$vehicle_rental || !$vehicle_rental->item_userable) {
             return $this->response->errorNotFound("Invalid Request");
@@ -630,7 +630,7 @@ class VehicleRentalsController extends Controller
         if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
             return $this->response->errorNotFound("Invalid Request");
         }
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         if ($vehicle_rental->item_userable->user_id != $user->id) {
             return $this->response->errorNotFound("Invalid Request");
         }
@@ -711,7 +711,7 @@ class VehicleRentalsController extends Controller
      */
     public function payNow(Request $request, $vehicle_rental_id)
     {
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $request_amount = $request->only('amount');
         if ($request->has('gateway_id') && ((isPluginEnabled('Paypal') && $request->gateway_id == config('constants.ConstPaymentGateways.PayPal')) || (isPluginEnabled('Sudopays') && $request->gateway_id == config('constants.ConstPaymentGateways.SudoPay')) || ($request->gateway_id == config('constants.ConstPaymentGateways.Wallet')))) {
             $data['amount'] = $request->amount;
@@ -816,7 +816,7 @@ class VehicleRentalsController extends Controller
     public function checkin($id)
     {
         $enabledIncludes = array('item_user_status');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_rental = VehicleRental::with($enabledIncludes)->filterByStatus($id, config('constants.ConstItemUserStatus.Confirmed'))->first();
         if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
             return $this->response->errorNotFound("Invalid Request");
@@ -842,7 +842,7 @@ class VehicleRentalsController extends Controller
     public function checkout(Request $request, $id)
     {
         $enabledIncludes = array('item_user_status', 'late_payment_detail', 'unavailable_vehicle');
-        $user = $this->auth->user();
+        $user = Auth::guard()->user();
         $vehicle_rental = VehicleRental::with($enabledIncludes)->filterByStatus($id, config('constants.ConstItemUserStatus.Attended'))->first();
         if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
             return $this->response->errorNotFound("Invalid Request");

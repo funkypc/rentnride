@@ -49,8 +49,6 @@ $app->configure('filesystems');
 $app->configure('mail');
 $app->configure('services');
 $app->configure('paypal');
-class_alias(Tymon\JWTAuth\Facades\JWTAuth::class, 'JWTAuth');
-class_alias(Tymon\JWTAuth\Facades\JWTFactory::class, 'JWTFactory');
 class_alias(Intervention\Image\Facades\Image::class, 'Image');
 class_alias(Illuminate\Support\Facades\File::class, 'File');
 class_alias(Illuminate\Support\Facades\Storage::class, 'Storage');
@@ -120,8 +118,6 @@ $app->singleton(
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
-    'jwt.auth' => Tymon\JWTAuth\Middleware\GetUserFromToken::class,
-    'jwt.refresh' => Tymon\JWTAuth\Middleware\RefreshToken::class,
     'apitracking' => App\Http\Middleware\Tracking::class,
     'role' => App\Http\Middleware\AuthenticateRole::class
 ]);
@@ -138,14 +134,14 @@ $app->routeMiddleware([
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /* todo: */
 // JWTAuth Dependencies
 $app->register(Illuminate\Session\SessionServiceProvider::class);
 $app->register(Illuminate\Cookie\CookieServiceProvider::class);
-$app->register(\Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class);
+$app->register(\PHPOpenSourceSaver\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(\Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(\App\Providers\SettingsServiceProvider::class);
 $app->register(\App\Providers\MessageServiceProvider::class);
@@ -158,9 +154,6 @@ $app->register(Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 $app->register(EasySlug\EasySlug\EasySlugServiceProvider::class);
 $app->register(Netshell\Paypal\PaypalServiceProvider::class);
 
-$app->make(\Dingo\Api\Auth\Auth::class)->extend('jwt', function ($app) {
-    return new Dingo\Api\Auth\Provider\JWT($app->make(Tymon\JWTAuth\JWTAuth::class));
-});
 /* todo: */
 
 $app['Dingo\Api\Transformer\Factory']->setAdapter(function ($app) {
