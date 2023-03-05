@@ -5,29 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 /**
  * Class Language
- * @package App
  */
 class Language extends Model
 {
     /**
      * @var string
      */
-    protected $table = "languages";
+    protected $table = 'languages';
 
     /**
      * The attributes that are mass assignable.
@@ -35,7 +34,7 @@ class Language extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'iso2', 'iso3', 'is_active'
+        'name', 'iso2', 'iso3', 'is_active',
     ];
 
     /**
@@ -47,8 +46,8 @@ class Language extends Model
     }
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -62,12 +61,11 @@ class Language extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%' . $request->input('q') . '%')
-                ->orWhere('iso2', 'LIKE', '%' . $request->input('q') . '%');
+            $query->where('name', 'LIKE', '%'.$request->input('q').'%')
+                ->orWhere('iso2', 'LIKE', '%'.$request->input('q').'%');
         }
+
         return $query;
-
-
     }
 
     /**
@@ -78,7 +76,7 @@ class Language extends Model
         return [
             'name' => 'required|min:2',
             'iso2' => 'required|min:2|max:2',
-            'iso3' => 'required|min:3|max:3'
+            'iso3' => 'required|min:3|max:3',
         ];
     }
 

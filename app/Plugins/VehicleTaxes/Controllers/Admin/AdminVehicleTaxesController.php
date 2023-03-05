@@ -5,29 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
 
 namespace Plugins\VehicleTaxes\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
 use Plugins\VehicleTaxes\Model\VehicleTax;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleTaxes\Transformers\AdminVehicleTaxTransformer;
 use Plugins\VehicleTaxes\Transformers\VehicleTaxTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * VehicleTaxes resource representation.
+ *
  * @Resource("Admin/AdminVehicleTaxes")
  */
 class AdminVehicleTaxesController extends Controller
@@ -57,12 +55,14 @@ class AdminVehicleTaxesController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('limit') && $request->limit == 'all') {
+        if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_tax_count = VehicleTax::count();
             $vehicle_taxes = VehicleTax::filterByActiveRecord($request)->filterByRequest($request)->select('id', 'name')->paginate($vehicle_tax_count);
+
             return $this->response->paginator($vehicle_taxes, new VehicleTaxTransformer);
         } else {
             $vehicle_taxes = VehicleTax::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
             return $this->response->paginator($vehicle_taxes, new AdminVehicleTaxTransformer);
         }
     }
@@ -70,6 +70,7 @@ class AdminVehicleTaxesController extends Controller
     /**
      * Edit the specified vehicle_tax.
      * Edit the vehicle_tax with a `id`.
+     *
      * @Get("/admin/vehicle_taxes/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -80,15 +81,17 @@ class AdminVehicleTaxesController extends Controller
     public function edit($id)
     {
         $vehicle_tax = VehicleTax::find($id);
-        if (!$vehicle_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_tax, (new AdminVehicleTaxTransformer));
     }
 
     /**
      * Show the specified vehicle_tax.
      * Show the vehicle_tax with a `id`.
+     *
      * @Get("/admin/vehicle_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -99,15 +102,17 @@ class AdminVehicleTaxesController extends Controller
     public function show($id)
     {
         $vehicle_tax = VehicleTax::find($id);
-        if (!$vehicle_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_tax, (new AdminVehicleTaxTransformer));
     }
 
     /**
      * Store a new vehicle_tax.
      * Store a new vehicle_tax with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_taxes")
      * @Transaction({
      *      @Request({"name": "Service Tax", "short_description": "The costs of service needed to support our business operations have escalated considerably.", "description": "The costs of service needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,"}),
@@ -133,10 +138,10 @@ class AdminVehicleTaxesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_tax
      * Update the vehicle_tax with a `id`.
+     *
      * @Put("/admin/vehicle_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Energy Tax", "short_description": "The costs of energy needed to support our business operations have escalated considerably.", "description": "The costs of energy needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,", "is_active": 1}),
@@ -159,6 +164,7 @@ class AdminVehicleTaxesController extends Controller
         if ($validator->passes() && $vehicle_tax) {
             try {
                 $vehicle_tax->update($vehicle_tax_data);
+
                 return response()->json(['Success' => 'VehicleTax has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleTax could not be updated. Please, try again.');
@@ -171,6 +177,7 @@ class AdminVehicleTaxesController extends Controller
     /**
      * Delete the specified vehicle_tax.
      * Delete the vehicle_tax with a `id`.
+     *
      * @Delete("/admin/vehicle_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -181,11 +188,12 @@ class AdminVehicleTaxesController extends Controller
     public function destroy($id)
     {
         $vehicle_tax = VehicleTax::find($id);
-        if (!$vehicle_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_tax->delete();
         }
+
         return response()->json(['Success' => 'VehicleTax deleted'], 200);
     }
 }

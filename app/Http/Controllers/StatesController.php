@@ -5,22 +5,23 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\State;
 use App\Transformers\StateTransformer;
+use Illuminate\Http\Request;
 
 /**
  * States resource representation.
+ *
  * @Resource("States")
  */
 class StatesController extends Controller
@@ -41,6 +42,7 @@ class StatesController extends Controller
     public function index(Request $request)
     {
         $states = State::filterByRequest($request)->get();
+
         return $this->response->collection($states, new StateTransformer);
     }
 }

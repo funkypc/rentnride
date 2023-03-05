@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateUserAddWalletAmountsTable extends Migration
 {
@@ -13,8 +13,8 @@ class CreateUserAddWalletAmountsTable extends Migration
     public function up()
     {
         //
-		 Schema::create("user_add_wallet_amounts", function(Blueprint $table){
-           $table->bigIncrements('id')->index();
+        Schema::create('user_add_wallet_amounts', function (Blueprint $table) {
+            $table->bigIncrements('id')->index();
             $table->timestamps();
             $table->bigInteger('user_id')->unsigned()->nullable()->index();
             $table->foreign('user_id')
@@ -30,7 +30,7 @@ class CreateUserAddWalletAmountsTable extends Migration
             $table->double('sudopay_revised_amount', 10, 2)->default(0.00);
             $table->string('sudopay_token');
             $table->boolean('is_success');
-        });		
+        });
     }
 
     /**

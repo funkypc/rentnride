@@ -5,23 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App;
 
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Laravel\Lumen\Auth\Authorizable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 class User extends Model implements AuthenticatableContract, JWTSubject
 {
@@ -29,14 +28,16 @@ class User extends Model implements AuthenticatableContract, JWTSubject
 
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
-        'role_id', 'username', 'email', 'password', 'available_wallet_amount', 'blocked_amount', 'Vehicle_count', 'vehicle_rental_count', 'vehicle_rental_order_count', 'user_login_count', 'is_agree_terms_conditions', 'is_active', 'is_email_confirmed', 'register_ip_id', 'last_login_ip_id', 'user_avatar_source_id', 'activate_hash'
+        'role_id', 'username', 'email', 'password', 'available_wallet_amount', 'blocked_amount', 'Vehicle_count', 'vehicle_rental_count', 'vehicle_rental_order_count', 'user_login_count', 'is_agree_terms_conditions', 'is_active', 'is_email_confirmed', 'register_ip_id', 'last_login_ip_id', 'user_avatar_source_id', 'activate_hash',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
+     *
      * @var array
      */
     protected $hidden = [
@@ -44,8 +45,8 @@ class User extends Model implements AuthenticatableContract, JWTSubject
     ];
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -72,17 +73,18 @@ class User extends Model implements AuthenticatableContract, JWTSubject
         if ($request->has('role_id')) {
             if ($request->input('role_id') == 'userpass') {
                 $query->where('role_id', '=', config('constants.ConstUserTypes.User'));
-            } else if ($request->input('role_id') == 'admin') {
+            } elseif ($request->input('role_id') == 'admin') {
                 $query->where('role_id', '=', config('constants.ConstUserTypes.Admin'));
             }
         }
         if ($request->has('q')) {
-            $query->where('username', 'LIKE', '%' . $request->input('q') . '%')
-                ->orWhere('email', 'LIKE', '%' . $request->input('q') . '%');
+            $query->where('username', 'LIKE', '%'.$request->input('q').'%')
+                ->orWhere('email', 'LIKE', '%'.$request->input('q').'%');
         }
         if ($request->has('username')) {
-            $query->where('username', 'LIKE', '%' . $request->input('q') . '%');
+            $query->where('username', 'LIKE', '%'.$request->input('q').'%');
         }
+
         return $query;
     }
 
@@ -195,7 +197,7 @@ class User extends Model implements AuthenticatableContract, JWTSubject
             'is_agree_terms_conditions' => 'sometimes|required',
             'is_active' => 'sometimes|boolean',
             'is_email_confirmed' => 'sometimes|boolean',
-            'role_id' => 'sometimes|required|integer'
+            'role_id' => 'sometimes|required|integer',
         ];
     }
 
@@ -216,7 +218,7 @@ class User extends Model implements AuthenticatableContract, JWTSubject
     public function scopeGetForgotPasswordValidationRule()
     {
         return [
-            'email' => 'required|email'
+            'email' => 'required|email',
         ];
     }
 

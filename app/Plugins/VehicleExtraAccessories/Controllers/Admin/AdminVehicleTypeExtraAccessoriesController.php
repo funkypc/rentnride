@@ -5,27 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleExtraAccessories\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Plugins\VehicleExtraAccessories\Model\VehicleTypeExtraAccessory;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\VehicleExtraAccessories\Transformers\VehicleTypeExtraAccessoryTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\VehicleExtraAccessories\Model\VehicleTypeExtraAccessory;
+use Plugins\VehicleExtraAccessories\Transformers\VehicleTypeExtraAccessoryTransformer;
+use Validator;
 
 /**
  * VehicleTypeExtraAccessories resource representation.
+ *
  * @Resource("Admin/AdminVehicleTypeExtraAccessories")
  */
 class AdminVehicleTypeExtraAccessoriesController extends Controller
@@ -55,7 +54,7 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = array('vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_extra_accessories = VehicleTypeExtraAccessory::with($enabled_includes)
             ->select(DB::raw('vehicle_type_extra_accessories.*'))
             ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_type_extra_accessories.vehicle_type_id')
@@ -63,12 +62,14 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
             ->leftJoin(DB::raw('(select id,type from discount_types) as discount_type'), 'discount_type.id', '=', 'vehicle_type_extra_accessories.discount_type_id')
             ->leftJoin(DB::raw('(select id,name from duration_types) as duration_type'), 'duration_type.id', '=', 'vehicle_type_extra_accessories.duration_type_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_type_extra_accessories, (new VehicleTypeExtraAccessoryTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Edit the specified vehicle_type_extra_accessory.
      * Edit the vehicle_type_extra_accessory with a `id`.
+     *
      * @Get("/admin/vehicle_type_extra_accessories/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -78,17 +79,19 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
      */
     public function edit($id)
     {
-        $enabled_includes = array('vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_extra_accessory = VehicleTypeExtraAccessory::with($enabled_includes)->find($id);
-        if (!$vehicle_type_extra_accessory) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_extra_accessory) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_extra_accessory, (new VehicleTypeExtraAccessoryTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Show the specified vehicle_type_extra_accessory.
      * Show the vehicle_type_extra_accessory with a `id`.
+     *
      * @Get("/admin/vehicle_type_extra_accessories/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,17 +101,19 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = array('vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_extra_accessory = VehicleTypeExtraAccessory::with($enabled_includes)->find($id);
-        if (!$vehicle_type_extra_accessory) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_extra_accessory) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_extra_accessory, (new VehicleTypeExtraAccessoryTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Store a new vehicle_type_extra_accessory.
      * Store a new vehicle_type_extra_accessory with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_type_extra_accessories")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "extra_accessory_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -121,7 +126,7 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
         $vehicle_type_extra_accessory_data = $request->only('vehicle_type_id', 'extra_accessory_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'deposit_amount', 'is_active');
         $validator = Validator::make($vehicle_type_extra_accessory_data, VehicleTypeExtraAccessory::GetValidationRule(), VehicleTypeExtraAccessory::GetValidationMessage());
         if ($validator->passes()) {
-			$vehicle_type_extra_accessory_data['is_active'] = true;
+            $vehicle_type_extra_accessory_data['is_active'] = true;
             $vehicle_type_extra_accessory = VehicleTypeExtraAccessory::create($vehicle_type_extra_accessory_data);
             if ($vehicle_type_extra_accessory) {
                 return response()->json(['Success' => 'VehicleTypeExtraAccessory has been added'], 200);
@@ -133,10 +138,10 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_type_extra_accessory
      * Update the vehicle_type_extra_accessory with a `id`.
+     *
      * @Put("/admin/vehicle_type_extra_accessories/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "extra_accessory_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -156,6 +161,7 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
         if ($validator->passes() && $vehicle_type_extra_accessory) {
             try {
                 $vehicle_type_extra_accessory->update($vehicle_type_extra_accessory_data);
+
                 return response()->json(['Success' => 'VehicleTypeExtraAccessory has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleTypeExtraAccessory could not be updated. Please, try again.');
@@ -168,6 +174,7 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
     /**
      * Delete the specified vehicle_type_extra_accessory.
      * Delete the vehicle_type_extra_accessory with a `id`.
+     *
      * @Delete("/admin/vehicle_type_extra_accessories/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -178,11 +185,12 @@ class AdminVehicleTypeExtraAccessoriesController extends Controller
     public function destroy($id)
     {
         $vehicle_type_extra_accessory = VehicleTypeExtraAccessory::find($id);
-        if (!$vehicle_type_extra_accessory) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_extra_accessory) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_type_extra_accessory->delete();
         }
+
         return response()->json(['Success' => 'VehicleTypeExtraAccessory deleted'], 200);
     }
 }

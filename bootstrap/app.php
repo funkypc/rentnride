@@ -5,18 +5,17 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    Dotenv\Dotenv::create(__DIR__ . '/../')->load();
+    Dotenv\Dotenv::create(__DIR__.'/../')->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
@@ -33,7 +32,7 @@ try {
 */
 
 $app = new Laravel\Lumen\Application(
-    realpath(__DIR__ . '/../')
+    realpath(__DIR__.'/../')
 );
 
 $app->withFacades();
@@ -100,7 +99,6 @@ $app->singleton(
 );
 /* todo: */
 
-
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -119,7 +117,7 @@ $app->singleton(
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'apitracking' => App\Http\Middleware\Tracking::class,
-    'role' => App\Http\Middleware\AuthenticateRole::class
+    'role' => App\Http\Middleware\AuthenticateRole::class,
 ]);
 
 /*
@@ -159,21 +157,22 @@ $app->register(Netshell\Paypal\PaypalServiceProvider::class);
 $app['Dingo\Api\Transformer\Factory']->setAdapter(function ($app) {
     $fractal = new League\Fractal\Manager;
     $fractal->setSerializer(new League\Fractal\Serializer\ArraySerializer);
+
     return new \Dingo\Api\Transformer\Adapter\Fractal($fractal);
 });
 
 function getFolderList($dir)
 {
-    $subFolders = array();
+    $subFolders = [];
     $paths = scandir($dir);
     foreach ($paths as $path) {
         if ($path != '.' && $path != '..') {
-            if (is_dir($dir . '/' . $path)) {
+            if (is_dir($dir.'/'.$path)) {
                 $subFolders[] = $path;
             }
-            
         }
     }
+
     return $subFolders;
 }
 
@@ -189,8 +188,7 @@ function getFolderList($dir)
 */
 
 $app->router->group(['namespace' => 'App\Http\Controllers'], function ($router) {
-    require __DIR__ . '/../routes/web.php';
+    require __DIR__.'/../routes/web.php';
 });
 
 return $app;
-

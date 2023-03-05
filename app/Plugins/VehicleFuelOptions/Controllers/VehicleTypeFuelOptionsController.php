@@ -5,26 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleFuelOptions\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\VehicleFuelOptions\Model\VehicleTypeFuelOption;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleFuelOptions\Transformers\VehicleTypeFuelOptionTransformer;
 
 /**
  * VehicleFuelOptions resource representation.
+ *
  * @Resource("VehicleFuelOptions")
  */
 class VehicleTypeFuelOptionsController extends Controller
@@ -52,8 +50,9 @@ class VehicleTypeFuelOptionsController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = array('vehicle_fuel_option', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_fuel_option', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_fuel_options = VehicleTypeFuelOption::with($enabled_includes)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_type_fuel_options, (new VehicleTypeFuelOptionTransformer)->setDefaultIncludes($enabled_includes));
     }
 }

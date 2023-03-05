@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -33,17 +33,18 @@ $router->get('/', function () use ($router) {
     return $router->version();
 });
 
-$router->get('robots.txt', function () use ($router) {
+$router->get('robots.txt', function () {
     return config('site.robots');
 });
 
-$router->get('clear_cache', function () use ($router) {
+$router->get('clear_cache', function () {
     Cache::forget('settings_data');
     Cache::forget('site_url_for_shell');
+
     return response()->json(['Success' => 'setting cache cleared'], 200);
 });
 
-$api->version(['v1'], function ($api) use ($router) {
+$api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
 
         //Api Requests
@@ -57,7 +58,7 @@ $api->version(['v1'], function ($api) use ($router) {
         $api->get('cities/{id}/edit', 'AdminCitiesController@edit');
         $api->get('cities/{id}', 'AdminCitiesController@edit');
         $api->post('cities', 'AdminCitiesController@store');
-        $api->put('cities/{id}', 'AdminCitiesController@update');				
+        $api->put('cities/{id}', 'AdminCitiesController@update');
         $api->put('cities/{id}/deactive', 'AdminCitiesController@deactive');
         $api->put('cities/{id}/active', 'AdminCitiesController@active');
 
@@ -67,7 +68,7 @@ $api->version(['v1'], function ($api) use ($router) {
         $api->get('countries/{id}/edit', 'AdminCountriesController@edit');
         $api->get('countries/{id}', 'AdminCountriesController@edit');
         $api->post('countries', 'AdminCountriesController@store');
-        $api->put('countries/{id}', 'AdminCountriesController@update');		
+        $api->put('countries/{id}', 'AdminCountriesController@update');
         $api->put('countries/{id}/deactive', 'AdminCountriesController@deactive');
         $api->put('countries/{id}/active', 'AdminCountriesController@active');
 

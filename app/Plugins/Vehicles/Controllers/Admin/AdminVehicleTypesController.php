@@ -5,34 +5,29 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers\Admin;
 
-
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
 use Plugins\Vehicles\Model\VehicleType;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Vehicles\Transformers\AdminVehicleTypeTransformer;
 use Plugins\Vehicles\Transformers\VehicleTypeSimpleTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * Class AdminVehicleTypesController
- * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminVehicleTypesController extends Controller
 {
-
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -62,9 +57,11 @@ class AdminVehicleTypesController extends Controller
         if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_type_count = VehicleType::count();
             $vehicle_types = VehicleType::filterByRequest($request)->filterByActiveRecord($request)->select('id', 'name')->paginate($vehicle_type_count);
+
             return $this->response->paginator($vehicle_types, new VehicleTypeSimpleTransformer);
         } else {
             $vehicle_types = VehicleType::filterByRequest($request)->paginate($vehicle_type_count);
+
             return $this->response->paginator($vehicle_types, new AdminVehicleTypeTransformer);
         }
     }
@@ -72,6 +69,7 @@ class AdminVehicleTypesController extends Controller
     /**
      * Store a new vehicle type.
      * Store a new vehicle type with a 'name'.
+     *
      * @Post("/vehicle_types")
      * @Transaction({
      *      @Request({}),
@@ -100,7 +98,7 @@ class AdminVehicleTypesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle type could not be added. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle type could not be updated. Please, try again.', $validator->errors());
@@ -110,6 +108,7 @@ class AdminVehicleTypesController extends Controller
     /**
      * Edit the specified vehicle type.
      * Edit the vehicle type with a `id`.
+     *
      * @Get("/vehicle_types/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -120,15 +119,17 @@ class AdminVehicleTypesController extends Controller
     public function edit($id)
     {
         $vehicle_type = VehicleType::find($id);
-        if (!$vehicle_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type, (new AdminVehicleTypeTransformer));
     }
 
     /**
      * Update the specified vehicle type.
      * Update the vehicle type with a `id`.
+     *
      * @Put("/vehicle_types/{id}")
      * @Transaction({
      *      @Response(200, body={"success": "Record has been updated."}),
@@ -158,10 +159,11 @@ class AdminVehicleTypesController extends Controller
         if ($validator->passes() && $vehicle_type) {
             try {
                 $vehicle_type->update($vehicle_type_data);
+
                 return response()->json(['Success' => 'VehicleType has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle type could not be updated. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleType could not be updated. Please, try again.', $validator->errors());
@@ -171,6 +173,7 @@ class AdminVehicleTypesController extends Controller
     /**
      * Delete the specified vehicle type.
      * Delete the vehicle type with a `id`.
+     *
      * @Delete("/vehicle_types/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -181,17 +184,19 @@ class AdminVehicleTypesController extends Controller
     public function destroy($id)
     {
         $vehicle_type = VehicleType::find($id);
-        if (!$vehicle_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_type->delete();
         }
+
         return response()->json(['Success' => 'Vehicle type deleted'], 200);
     }
 
     /**
      * Show the specified vehicle type.
      * Show the vehicle type with a `id`.
+     *
      * @Get("/vehicle_types/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -202,9 +207,10 @@ class AdminVehicleTypesController extends Controller
     public function show($id)
     {
         $vehicle_type = VehicleType::find($id);
-        if (!$vehicle_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type, (new AdminVehicleTypeTransformer));
     }
 }

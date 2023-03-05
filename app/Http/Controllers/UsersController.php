@@ -5,35 +5,33 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-use App\User;
-use Illuminate\Support\Facades\Hash;
-
-use App\Transformers\UserTransformer;
-use App\Transformers\UserAuthTransformer;
-use App\Transformers\UploadAttachmentTransformer;
-
-use App\Services\UserService;
+use App\Attachment;
 use App\Services\IpService;
 use App\Services\UserLoginService;
-use App\Attachment;
+use App\Services\UserService;
+use App\Transformers\UploadAttachmentTransformer;
+use App\Transformers\UserAuthTransformer;
+use App\Transformers\UserTransformer;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use Validator;
 
 /**
  * Users resource representation.
+ *
  * @Resource("Users")
  */
 class UsersController extends Controller
@@ -42,10 +40,12 @@ class UsersController extends Controller
      * @var UserService
      */
     protected $UserService;
+
     /**
      * @var IpService
      */
     protected $IpService;
+
     /**
      * @var UserLoginService
      */
@@ -75,6 +75,7 @@ class UsersController extends Controller
     /**
      * Show the specified user.
      * Show the user with a `id`.
+     *
      * @Get("/users/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -84,16 +85,16 @@ class UsersController extends Controller
      */
     public function show(Request $request)
     {
-        $enabledIncludes = array('user_profile', 'attachments');
+        $enabledIncludes = ['user_profile', 'attachments'];
         (isPluginEnabled('SocialLogins')) ? $enabledIncludes[] = 'provider_user' : '';
         if ($request->has('username')) {
-            $user = User::with($enabledIncludes)->where("username", $request->username)->first();
+            $user = User::with($enabledIncludes)->where('username', $request->username)->first();
         } else {
             $auth_user = $this->guard()->user();
             $user = User::with($enabledIncludes)->find($auth_user->id);
         }
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         if ($request->has('username')) {
             return $this->response->item($user, (new UserTransformer)->setDefaultIncludes(['user_profile', 'providerUser', 'attachmentable']));
@@ -105,6 +106,7 @@ class UsersController extends Controller
     /**
      * Store a new user.
      * Store a new user with a `username`, `email`, `password`, `confirm_password` and `is_agree_terms_conditions`.
+     *
      * @Post("/users/register")
      * @Transaction({
      *      @Request({"name": "XXXXXX", "email": "XXXXX@gmail.com", "password": "XXXXXX", "confirm_password": "XXXXXX", "is_agree_terms_conditions": 1}),
@@ -127,7 +129,7 @@ class UsersController extends Controller
             $user_data['user_avatar_source_id'] = config('constants.ConstSocialLogin.User');
             if (config('user.is_email_verification_for_register')) {
                 $user_data['is_email_confirmed'] = 0;
-                $user_data['activate_hash'] = rand(1,100);
+                $user_data['activate_hash'] = rand(1, 100);
             }
             if (config('user.is_admin_activate_after_register')) {
                 $user_data['is_active'] = 0;
@@ -150,6 +152,7 @@ class UsersController extends Controller
 
     /**
      * User Authentication.
+     *
      * @Post("/users/login")
      * @Transaction({
      *      @Request({"email": "guest@gmail.com", "password": "XXXXXX"}),
@@ -163,11 +166,11 @@ class UsersController extends Controller
         $credentials['is_active'] = true;
         $credentials['is_email_confirmed'] = true;
         $chk_user = User::where('email', $request->email)->first();
-        if(empty($chk_user)) {
+        if (empty($chk_user)) {
             return response()->json(['error' => 'Account does not exist.'], 404);
         }
         try {
-            if (!$userToken = $this->guard()->attempt($credentials)) {
+            if (! $userToken = $this->guard()->attempt($credentials)) {
                 return $this->response->errorUnauthorized();
             }
         } catch (JWTException $e) {
@@ -179,10 +182,10 @@ class UsersController extends Controller
         $role = $this->UserLoginService->saveUserLogin($request, $ip_id);
         // Admin End Token varaiable should be need. so we assign two variable
         $token = $userToken;
-        $message = "Admin login successfully";
+        $message = 'Admin login successfully';
         $enabled_plugins_arr = enabled_plugins();
-        $enabled_plugins = array();
-        foreach($enabled_plugins_arr as $key=>$value) {
+        $enabled_plugins = [];
+        foreach ($enabled_plugins_arr as $key => $value) {
             $enabled_plugins[] = $value;
         }
         // if no errors are encountered we can return a JWT
@@ -191,6 +194,7 @@ class UsersController extends Controller
 
     /**
      * Activate user.
+     *
      * @Put("/users/{id}/activate/{hash}")
      * @Transaction({
      *      @Request({"id": 1, "hash": "XXXXXXXXXXX"}),
@@ -201,17 +205,17 @@ class UsersController extends Controller
     public function activate($hash, $id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         if ($user) {
             $user_valid = $this->UserService->validateHash($user->id, $hash, $user->activate_hash);
             if ($user_valid === false) {
-                return $this->response->errorNotFound("Invalid Activation Request");
+                return $this->response->errorNotFound('Invalid Activation Request');
             }
             $user->is_email_confirmed = 1;
-            $user->activate_hash = rand(1,100);
-            if (!config('user.is_admin_activate_after_register')) {
+            $user->activate_hash = rand(1, 100);
+            if (! config('user.is_admin_activate_after_register')) {
                 $user->is_active = 1;
             }
             if ($user->save()) {
@@ -222,6 +226,7 @@ class UsersController extends Controller
 
     /**
      * Change Password.
+     *
      * @Put("/users/{id}/change_password")
      * @Transaction({
      *      @Request({"id": 1, "old_password": "XXXXXX", "password": "XXXXXX", "confirm_password": "XXXXXX"}),
@@ -234,14 +239,14 @@ class UsersController extends Controller
     public function changePassword(Request $request, $id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        if (!$password = Hash::check($request->old_password, $user->password)) {
-            $this->response->errorNotFound("Your old password is incorrect, please try again");
+        if (! $password = Hash::check($request->old_password, $user->password)) {
+            $this->response->errorNotFound('Your old password is incorrect, please try again');
         }
         if ($password == Hash::check($request->password, $user->password)) {
-            $this->response->errorNotFound("Your new password is same as old password");
+            $this->response->errorNotFound('Your new password is same as old password');
         }
         $user_data = $request->only('password', 'confirm_password');
         $validator = Validator::make($user_data, User::GetValidationRule(), User::GetValidationMessage());
@@ -257,6 +262,7 @@ class UsersController extends Controller
 
     /**
      * Forgot Password.
+     *
      * @Put("/users/forgot_password")
      * @Transaction({
      *      @Request({"email": "guest@gmail.com"}),
@@ -271,13 +277,13 @@ class UsersController extends Controller
         $validator = Validator::make($user_data, User::GetForgotPasswordValidationRule());
         if ($validator->passes()) {
             $user = User::where('email', $request->email)->first();
-            if($user) {
+            if ($user) {
                 if ($user->is_email_confirmed == 0 || $user->is_active == 0) {
-                    return $this->response->errorNotFound("This email address is not verified.");
+                    return $this->response->errorNotFound('This email address is not verified.');
                 }
             }
-            if (!$user) {
-                return $this->response->errorNotFound("This email address is not in our registered users.");
+            if (! $user) {
+                return $this->response->errorNotFound('This email address is not in our registered users.');
             }
             $user_data['id'] = $user->id;
             $new_password = uniqid();
@@ -286,7 +292,8 @@ class UsersController extends Controller
             if ($user->update($user_data)) {
                 try {
                     $this->UserService->sendForgotPasswordMail($new_password, $user->email, $user->username);
-                    return response()->json(['Success' => 'We have sent an email to ' . $user->email . ' with further instructions'], 200);
+
+                    return response()->json(['Success' => 'We have sent an email to '.$user->email.' with further instructions'], 200);
                 } catch (\Exception $e) {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Password could not be updated. Please, try again.');
                 }
@@ -296,7 +303,6 @@ class UsersController extends Controller
         } else {
             throw new \Dingo\Api\Exception\UpdateResourceFailedException('Password could not be updated.', $validator->errors());
         }
-
     }
 
     /*
@@ -332,6 +338,7 @@ class UsersController extends Controller
             } else {
                 $user->attachments = Attachment::where('id', '=', config('constants.ConstAttachment.UserAvatar'))->first();
                 $user->attachments->attachmentable_id = $user->id;
+
                 return $this->item($user->attachments, new UploadAttachmentTransformer());
             }
         }
@@ -351,6 +358,7 @@ class UsersController extends Controller
         if (isPluginEnabled('VehicleRentals') && $user) {
             $vehicle_rental_service = new \Plugins\VehicleRentals\Services\VehicleRentalService();
             $response = $vehicle_rental_service->getBookAndOrderCount($user->id);
+
             return response()->json(compact('response'), 200);
         }
     }
@@ -358,8 +366,7 @@ class UsersController extends Controller
     /**
      * Get the token array structure.
      *
-     * @param  string $token
-     *
+     * @param  string  $token
      * @return \Illuminate\Http\JsonResponse
      */
     protected function respondWithToken($token)
@@ -367,7 +374,7 @@ class UsersController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
         ]);
     }
 

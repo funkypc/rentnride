@@ -5,16 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 return [
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -120,6 +120,6 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
-	
-    'license_key' => '53621-11538-199-1473418553-8d7d8ee0'
+
+    'license_key' => '53621-11538-199-1473418553-8d7d8ee0',
 ];

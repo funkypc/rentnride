@@ -5,36 +5,29 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Sudopays\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
-use DB;
 use App\Http\Controllers\Controller;
-use Plugins\Sudopays\Model\Sudopay;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-
-use Plugins\Sudopays\Services\SudopayAPIService;
+use DB;
 use Plugins\Sudopays\Model\SudopayPaymentGateway;
 use Plugins\Sudopays\Model\SudopayPaymentGroup;
+use Plugins\Sudopays\Services\SudopayAPIService;
 
 /**
  * Money Transfer Accounts resource representation.
+ *
  * @Resource("Sudopays")
  */
 class AdminSudopaysController extends Controller
 {
-
     /**
      * @var
      */
@@ -63,18 +56,18 @@ class AdminSudopaysController extends Controller
     public function synchronize()
     {
         try {
-            $this->SudopayAPIService->_doDeleteCache(array('supported_actions' => 'auth,capture'));
-            $gateway_response = $this->SudopayAPIService->callGateways(array('supported_actions' => 'auth,capture'));
-            if (!$gateway_response) {
-                return $this->response->errorNotFound("Invalid Request");
+            $this->SudopayAPIService->_doDeleteCache(['supported_actions' => 'auth,capture']);
+            $gateway_response = $this->SudopayAPIService->callGateways(['supported_actions' => 'auth,capture']);
+            if (! $gateway_response) {
+                return $this->response->errorNotFound('Invalid Request');
             } else {
-                $enabled_gateways = array();
+                $enabled_gateways = [];
                 DB::table('sudopay_payment_groups')->delete();
                 DB::table('sudopay_payment_gateways')->delete();
                 if (empty($gateway_response['error']['message'])) {
                     $i = 0;
                     foreach ($gateway_response['gateways'] as $key => $gateway_group) {
-                        $group_data = array();
+                        $group_data = [];
                         $group_data['sudopay_group_id'] = $gateway_group['id'];
                         $group_data['name'] = $gateway_group['name'];
                         $group_data['thumb_url'] = $gateway_group['thumb_url'];
@@ -100,11 +93,11 @@ class AdminSudopaysController extends Controller
                         }
                     }
                 }
+
                 return response()->json(['Success' => 'ZazPay synchronized successfully'], 200);
             }
         } catch (\Exception $e) {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('ZazPay could not be synchronized. Please, try again.');
         }
     }
-
 }

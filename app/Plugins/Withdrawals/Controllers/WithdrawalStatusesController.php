@@ -5,25 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Withdrawals\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Withdrawals\Model\WithdrawalStatus;
-use Illuminate\Support\Facades\Auth;
 use Plugins\Withdrawals\Transformers\WithdrawalStatusTransformer;
 
 /**
  * WithdrawalStatuses resource representation.
+ *
  * @Resource("WithdrawalStatuses")
  */
 class WithdrawalStatusesController extends Controller
@@ -54,6 +53,7 @@ class WithdrawalStatusesController extends Controller
     public function index(Request $request)
     {
         $withdrawal_statuses = WithdrawalStatus::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($withdrawal_statuses, (new WithdrawalStatusTransformer));
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateVehicleTypesTable extends Migration
 {
@@ -25,8 +25,8 @@ class CreateVehicleTypesTable extends Migration
             $table->double('drop_location_differ_additional_fee', 10, 2)->default(0.00)->nullable();
             $table->double('deposit_amount', 10, 2)->default(0.00)->nullable();
             $table->bigInteger('vehicle_count')->default(0)->nullable();
-            $table->double('late_checkout_addtional_fee', 10, 2)->default(0.00)->nullable();            
-			$table->bigInteger('duration_type_id')->unsigned()->index()->nullable();
+            $table->double('late_checkout_addtional_fee', 10, 2)->default(0.00)->nullable();
+            $table->bigInteger('duration_type_id')->unsigned()->index()->nullable();
             $table->foreign('duration_type_id')
                 ->references('id')->on('duration_types')
                 ->onDelete('set null');

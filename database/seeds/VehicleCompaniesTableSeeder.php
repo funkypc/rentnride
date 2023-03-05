@@ -5,18 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 use Plugins\Vehicles\Model\VehicleCompany;
-use Illuminate\Support\Facades\Hash;
 
 class VehicleCompaniesTableSeeder extends Seeder
 {
@@ -39,7 +37,7 @@ class VehicleCompaniesTableSeeder extends Seeder
             'mobile' => '865865865956',
             'email' => 'agriya@gmail.com',
             'vehicle_count' => '2',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
         VehicleCompany::create([
             'user_id' => '1',
@@ -53,7 +51,7 @@ class VehicleCompaniesTableSeeder extends Seeder
             'mobile' => '85685568556',
             'email' => 'ahsan@gmail.com',
             'vehicle_count' => '2',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
     }
 }

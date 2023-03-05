@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -25,7 +25,6 @@
 */
 $api = $this->app->make('Dingo\Api\Routing\Router');
 $api->version(['v1'], function ($api) {
-
     $api->group(['prefix' => 'admin', 'namespace' => 'Plugins\Sudopays\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
         $api->get('sudopay_transaction_logs', 'AdminSudopayTransactionLogsController@index');
         $api->get('sudopay_transaction_logs/{id}', 'AdminSudopayTransactionLogsController@show');

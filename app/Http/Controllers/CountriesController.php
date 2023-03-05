@@ -5,23 +5,23 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Country;
 use App\Transformers\CountryTransformer;
+use Illuminate\Http\Request;
 
 /**
  * Countries resource representation.
+ *
  * @Resource("Countries")
  */
 class CountriesController extends Controller
@@ -40,6 +40,7 @@ class CountriesController extends Controller
     /**
      * Show all countries
      * Get a JSON representation of all the countries.
+     *
      * @Get("/countries?sort={sort}")
      * @Parameters({
      *      @Parameter("sort", type="string", required=false, description="Sort the countries list by sort ley.", default=null),
@@ -48,7 +49,7 @@ class CountriesController extends Controller
     public function index(Request $request)
     {
         $countries = Country::filterByRequest($request)->get();
+
         return $this->response->collection($countries, new CountryTransformer);
     }
-
 }

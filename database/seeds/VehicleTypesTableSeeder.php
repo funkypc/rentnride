@@ -5,18 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 use Plugins\Vehicles\Model\VehicleType;
-use Illuminate\Support\Facades\Hash;
 
 class VehicleTypesTableSeeder extends Seeder
 {
@@ -37,7 +35,7 @@ class VehicleTypesTableSeeder extends Seeder
             'drop_location_differ_unit_price' => '100',
             'drop_location_differ_additional_fee' => '100',
             'deposit_amount' => '1000',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
         VehicleType::create([
             'name' => 'SUV',
@@ -49,7 +47,7 @@ class VehicleTypesTableSeeder extends Seeder
             'drop_location_differ_unit_price' => '50',
             'drop_location_differ_additional_fee' => '100',
             'deposit_amount' => '500',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
         VehicleType::create([
             'name' => 'Sedan',
@@ -61,7 +59,7 @@ class VehicleTypesTableSeeder extends Seeder
             'drop_location_differ_unit_price' => '75',
             'drop_location_differ_additional_fee' => '80',
             'deposit_amount' => '700',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
         VehicleType::create([
             'name' => 'Mini',
@@ -73,7 +71,7 @@ class VehicleTypesTableSeeder extends Seeder
             'drop_location_differ_unit_price' => '50',
             'drop_location_differ_additional_fee' => '50',
             'deposit_amount' => '100',
-            'is_active' => '1'
+            'is_active' => '1',
         ]);
     }
 }

@@ -5,28 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleFuelOptions\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
 use Plugins\VehicleFuelOptions\Model\VehicleFuelOption;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleFuelOptions\Transformers\AdminVehicleFuelOptionTransformer;
 use Plugins\VehicleFuelOptions\Transformers\VehicleFuelOptionTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * VehicleFuelOptions resource representation.
+ *
  * @Resource("Admin/AdminVehicleFuelOptions")
  */
 class AdminVehicleFuelOptionsController extends Controller
@@ -56,12 +55,14 @@ class AdminVehicleFuelOptionsController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('limit') && $request->limit == 'all') {
+        if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_fuel_option_count = VehicleFuelOption::count();
             $vehicle_fuel_options = VehicleFuelOption::filterByActiveRecord($request)->filterByRequest($request)->select('id', 'name')->paginate($vehicle_fuel_option_count);
+
             return $this->response->paginator($vehicle_fuel_options, new VehicleFuelOptionTransformer);
         } else {
             $vehicle_fuel_options = VehicleFuelOption::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
             return $this->response->paginator($vehicle_fuel_options, new AdminVehicleFuelOptionTransformer);
         }
     }
@@ -69,6 +70,7 @@ class AdminVehicleFuelOptionsController extends Controller
     /**
      * Edit the specified vehicle_fuel_option.
      * Edit the vehicle_fuel_option with a `id`.
+     *
      * @Get("/admin/vehicle_fuel_options/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -79,15 +81,17 @@ class AdminVehicleFuelOptionsController extends Controller
     public function edit($id)
     {
         $vehicle_fuel_option = VehicleFuelOption::find($id);
-        if (!$vehicle_fuel_option) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_fuel_option) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_fuel_option, (new AdminVehicleFuelOptionTransformer));
     }
 
     /**
      * Show the specified vehicle_fuel_option.
      * Show the vehicle_fuel_option with a `id`.
+     *
      * @Get("/admin/vehicle_fuel_options/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,15 +102,17 @@ class AdminVehicleFuelOptionsController extends Controller
     public function show($id)
     {
         $vehicle_fuel_option = VehicleFuelOption::find($id);
-        if (!$vehicle_fuel_option) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_fuel_option) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_fuel_option, (new AdminVehicleFuelOptionTransformer));
     }
 
     /**
      * Store a new vehicle_fuel_option.
      * Store a new vehicle_fuel_option with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_fuel_options")
      * @Transaction({
      *      @Request({"name": "Service FuelOption", "short_description": "The costs of service needed to support our business operations have escalated considerably.", "description": "The costs of service needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,"}),
@@ -132,10 +138,10 @@ class AdminVehicleFuelOptionsController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_fuel_option
      * Update the vehicle_fuel_option with a `id`.
+     *
      * @Put("/admin/vehicle_fuel_options/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Energy FuelOption", "short_description": "The costs of energy needed to support our business operations have escalated considerably.", "description": "The costs of energy needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,", "is_active": 1}),
@@ -158,6 +164,7 @@ class AdminVehicleFuelOptionsController extends Controller
         if ($validator->passes() && $vehicle_fuel_option) {
             try {
                 $vehicle_fuel_option->update($vehicle_fuel_option_data);
+
                 return response()->json(['Success' => 'VehicleFuelOption has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleFuelOption could not be updated. Please, try again.');
@@ -170,6 +177,7 @@ class AdminVehicleFuelOptionsController extends Controller
     /**
      * Delete the specified vehicle_fuel_option.
      * Delete the vehicle_fuel_option with a `id`.
+     *
      * @Delete("/admin/vehicle_fuel_options/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -180,11 +188,12 @@ class AdminVehicleFuelOptionsController extends Controller
     public function destroy($id)
     {
         $vehicle_fuel_option = VehicleFuelOption::find($id);
-        if (!$vehicle_fuel_option) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_fuel_option) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_fuel_option->delete();
         }
+
         return response()->json(['Success' => 'VehicleFuelOption deleted'], 200);
     }
 }

@@ -5,18 +5,19 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Sudopays\Services;
 
-use Plugins\Sudopays\Model\SudopayIpnLog;
 use App\Services\IpService;
+use Plugins\Sudopays\Model\SudopayIpnLog;
+
 class SudopayIpnService
 {
     /**
@@ -35,7 +36,8 @@ class SudopayIpnService
     /**
      * Ipservice object created
      */
-    public function setIpService() {
+    public function setIpService()
+    {
         $this->ipService = new IpService();
     }
 
@@ -46,11 +48,10 @@ class SudopayIpnService
      */
     public function log($request, $ip)
     {
-        $log = array();
+        $log = [];
         $log['ip'] = $this->ipService->getIpId($ip);
         $log['post_variable'] = serialize($request);
+
         return SudopayIpnLog::create($log);
     }
 }
-
-?>

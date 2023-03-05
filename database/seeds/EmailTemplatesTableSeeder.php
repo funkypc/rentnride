@@ -5,22 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
+
 use App\EmailTemplate;
+use Illuminate\Database\Seeder;
 
 class EmailTemplatesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
      * @return void
      */
     public function run()
@@ -32,7 +32,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail, when user submit the forgot password form.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -42,7 +42,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail, when user registering an account he/she will get an activation request.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -52,7 +52,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail, when user register in this site and get activate.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -62,7 +62,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail to admin, when a new user registered in the site. For this you have to enable "admin mail after register" in the settings page.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -72,7 +72,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail to user, when a admin add a new user.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -82,7 +82,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when user active by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -92,7 +92,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when user active by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -102,7 +102,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when user delete by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -112,7 +112,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this mail to user, when admin change user\'s password.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -122,7 +122,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to admin, when user submit any contact form.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -132,7 +132,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##CONTACT_FROM_EMAIL##',
             'info' => 'we will send this mail to user, when user submit the contact us form.',
-            'reply_to' => ''
+            'reply_to' => '',
         ]);
 
         EmailTemplate::create([
@@ -142,7 +142,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Your new item has been approved and activated now',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -152,7 +152,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Internal message will be sent to the Booker mentioning the security deposit was refunded, when the booked item checkout without any due within the auto refund limit.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -162,7 +162,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'we will send this when a item user status change.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -172,7 +172,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'When new rental was made, an internal message will be sent to the owner of the item notify new rental.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -183,7 +183,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Internal mail sent to the booker when he makes a new rental.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -193,7 +193,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Internal message will be sent to the Host, when the rented item was accepted by the host.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -203,7 +203,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Internal message will be sent to the Booker, when the rented item was accepted by the host.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
         // dipute related email templates
         EmailTemplate::create([
@@ -213,7 +213,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Notification mail when dispute is opened.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -223,7 +223,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Notification mail sent during dispute conversation',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
         EmailTemplate::create([
             'name' => 'Dispute Resolved Notification',
@@ -232,7 +232,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Notification mail to be sent on closing dispute',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
         EmailTemplate::create([
             'name' => 'Discussion Threshold for Admin Decision',
@@ -241,7 +241,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'Admin will take decision, after no of conversation to booker and host.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
         // withdraw related templates
         EmailTemplate::create([
@@ -251,7 +251,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when withdraw request is approved by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -261,7 +261,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when withdraw request is rejected by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -271,7 +271,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'When new booking was made, an internal message will be sent to the owner of the item notify new booking.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -281,7 +281,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when withdraw request is rejected by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
 
         EmailTemplate::create([
@@ -291,7 +291,7 @@ class EmailTemplatesTableSeeder extends Seeder
             'filename' => '',
             'from_name' => '##FROM_EMAIL##',
             'info' => 'We will send this mail to user, when withdraw request is rejected by administrator.',
-            'reply_to' => '##REPLY_TO_EMAIL##'
+            'reply_to' => '##REPLY_TO_EMAIL##',
         ]);
     }
 }

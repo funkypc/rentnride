@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleInsurances\Transformers;
 
 use App\Transformers\DiscountTypeTransformer;
@@ -22,7 +22,6 @@ use Plugins\VehicleInsurances\Model\VehicleTypeInsurance;
 
 /**
  * Class VehicleInsuranceTransformer
- * @package VehicleInsurances\Transformers
  */
 class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
 {
@@ -32,22 +31,23 @@ class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'VehicleInsurance', 'VehicleType', 'DurationType', 'DiscountType'
+        'VehicleInsurance', 'VehicleType', 'DurationType', 'DiscountType',
     ];
 
     /**
-     * @param VehicleTypeInsurance $vehicle_type_insurance
+     * @param  VehicleTypeInsurance  $vehicle_type_insurance
      * @return array
      */
     public function transform(VehicleTypeInsurance $vehicle_type_insurance)
     {
         $output = array_only($vehicle_type_insurance->toArray(), ['id', 'created_at', 'vehicle_type_id', 'insurance_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'is_active']);
         $output['is_active'] = ($output['is_active']) ? true : false;
+
         return $output;
     }
 
     /**
-     * @param VehicleTypeInsurance $vehicle_type_insurance
+     * @param  VehicleTypeInsurance  $vehicle_type_insurance
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleInsurance(VehicleTypeInsurance $vehicle_type_insurance)
@@ -57,11 +57,10 @@ class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeInsurance $vehicle_type_insurance
+     * @param  VehicleTypeInsurance  $vehicle_type_insurance
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleType(VehicleTypeInsurance $vehicle_type_insurance)
@@ -71,11 +70,10 @@ class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeInsurance $vehicle_type_insurance
+     * @param  VehicleTypeInsurance  $vehicle_type_insurance
      * @return Fractal\Resource\Item|null
      */
     public function includeDiscountType(VehicleTypeInsurance $vehicle_type_insurance)
@@ -85,11 +83,10 @@ class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeInsurance $vehicle_type_insurance
+     * @param  VehicleTypeInsurance  $vehicle_type_insurance
      * @return Fractal\Resource\Item|null
      */
     public function includeDurationType(VehicleTypeInsurance $vehicle_type_insurance)
@@ -99,6 +96,5 @@ class VehicleTypeInsuranceTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 }

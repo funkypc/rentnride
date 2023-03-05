@@ -5,28 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleInsurances\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
 use Plugins\VehicleInsurances\Model\VehicleInsurance;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleInsurances\Transformers\AdminVehicleInsuranceTransformer;
 use Plugins\VehicleInsurances\Transformers\VehicleInsuranceTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * VehicleInsurances resource representation.
+ *
  * @Resource("Admin/AdminVehicleInsurances")
  */
 class AdminVehicleInsurancesController extends Controller
@@ -56,12 +55,14 @@ class AdminVehicleInsurancesController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('limit') && $request->limit == 'all') {
+        if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_insurance_count = VehicleInsurance::count();
             $vehicle_insurances = VehicleInsurance::filterByActiveRecord($request)->filterByRequest($request)->select('id', 'name')->paginate($vehicle_insurance_count);
+
             return $this->response->paginator($vehicle_insurances, new VehicleInsuranceTransformer);
         } else {
             $vehicle_insurances = VehicleInsurance::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
             return $this->response->paginator($vehicle_insurances, new AdminVehicleInsuranceTransformer);
         }
     }
@@ -69,6 +70,7 @@ class AdminVehicleInsurancesController extends Controller
     /**
      * Edit the specified vehicle_insurance.
      * Edit the vehicle_insurance with a `id`.
+     *
      * @Get("/admin/vehicle_insurances/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -79,15 +81,17 @@ class AdminVehicleInsurancesController extends Controller
     public function edit($id)
     {
         $vehicle_insurance = VehicleInsurance::find($id);
-        if (!$vehicle_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_insurance, (new AdminVehicleInsuranceTransformer));
     }
 
     /**
      * Show the specified vehicle_insurance.
      * Show the vehicle_insurance with a `id`.
+     *
      * @Get("/admin/vehicle_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,15 +102,17 @@ class AdminVehicleInsurancesController extends Controller
     public function show($id)
     {
         $vehicle_insurance = VehicleInsurance::find($id);
-        if (!$vehicle_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_insurance, (new AdminVehicleInsuranceTransformer));
     }
 
     /**
      * Store a new vehicle_insurance.
      * Store a new vehicle_insurance with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_insurances")
      * @Transaction({
      *      @Request({"name": "Service Insurance", "short_description": "The costs of service needed to support our business operations have escalated considerably.", "description": "The costs of service needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,"}),
@@ -132,10 +138,10 @@ class AdminVehicleInsurancesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_insurance
      * Update the vehicle_insurance with a `id`.
+     *
      * @Put("/admin/vehicle_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Energy Insurance", "short_description": "The costs of energy needed to support our business operations have escalated considerably.", "description": "The costs of energy needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,", "is_active": 1}),
@@ -158,6 +164,7 @@ class AdminVehicleInsurancesController extends Controller
         if ($validator->passes() && $vehicle_insurance) {
             try {
                 $vehicle_insurance->update($vehicle_insurance_data);
+
                 return response()->json(['Success' => 'VehicleInsurance has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleInsurance could not be updated. Please, try again.');
@@ -170,6 +177,7 @@ class AdminVehicleInsurancesController extends Controller
     /**
      * Delete the specified vehicle_insurance.
      * Delete the vehicle_insurance with a `id`.
+     *
      * @Delete("/admin/vehicle_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -180,11 +188,12 @@ class AdminVehicleInsurancesController extends Controller
     public function destroy($id)
     {
         $vehicle_insurance = VehicleInsurance::find($id);
-        if (!$vehicle_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_insurance->delete();
         }
+
         return response()->json(['Success' => 'VehicleInsurance deleted'], 200);
     }
 }

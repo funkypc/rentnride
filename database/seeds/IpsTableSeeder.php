@@ -5,17 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
+
 use App\Ip;
+use Illuminate\Database\Seeder;
 
 class IpsTableSeeder extends Seeder
 {
@@ -31,7 +30,7 @@ class IpsTableSeeder extends Seeder
             'city_id' => 33,
             'state_id' => 8,
             'country_id' => 102,
-            'host' => 'localhost'
+            'host' => 'localhost',
         ]);
 
         Ip::create([
@@ -39,7 +38,7 @@ class IpsTableSeeder extends Seeder
             'city_id' => 33,
             'state_id' => 8,
             'country_id' => 102,
-            'host' => 'localhost'
+            'host' => 'localhost',
         ]);
     }
 }

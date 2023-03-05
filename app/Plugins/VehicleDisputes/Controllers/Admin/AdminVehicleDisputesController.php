@@ -5,28 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleDisputes\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\VehicleDisputes\Model\VehicleDispute;
-use Plugins\VehicleRentals\Model\VehicleRental;
-use Plugins\VehicleDisputes\Transformers\VehicleDisputeTransformer;
-use Plugins\VehicleDisputes\Services\VehicleDisputeService;
-use Plugins\VehicleDisputes\Services\VehicleDisputeClosedTypeService;
 use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Plugins\VehicleDisputes\Model\VehicleDispute;
+use Plugins\VehicleDisputes\Services\VehicleDisputeClosedTypeService;
+use Plugins\VehicleDisputes\Services\VehicleDisputeService;
+use Plugins\VehicleDisputes\Transformers\VehicleDisputeTransformer;
+use Plugins\VehicleRentals\Model\VehicleRental;
+use Validator;
+
 /**
  * VehicleDisputes resource representation.
+ *
  * @Resource("Admin/AdminVehicleDisputess")
  */
 class AdminVehicleDisputesController extends Controller
@@ -35,6 +37,7 @@ class AdminVehicleDisputesController extends Controller
      * @var vehicleDisputeService
      */
     protected $vehicleDisputeService;
+
     /**
      * @var
      */
@@ -84,7 +87,7 @@ class AdminVehicleDisputesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabledIncludes = array('user', 'dispute_type', 'dispute_closed_type', 'dispute_status');
+        $enabledIncludes = ['user', 'dispute_type', 'dispute_closed_type', 'dispute_status'];
         $vehicle_disputes = VehicleDispute::with($enabledIncludes)
             ->select(DB::raw('item_user_disputes.*'))
             ->leftJoin(DB::raw('(select id,username from users) as user'), 'user.id', '=', 'item_user_disputes.user_id')
@@ -94,13 +97,15 @@ class AdminVehicleDisputesController extends Controller
             ->leftJoin(DB::raw('(select id, name from vehicles) as item_userable'), 'item_userable.id', '=', 'item_user_disputable.id')
             ->leftJoin(DB::raw('(select id, name from item_user_statuses) as item_user_status'), 'item_user_status.id', '=', 'item_userable.id')
             ->filterByVehicleRental()->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, array('item_user_disputable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['item_user_disputable']);
+
         return $this->response->paginator($vehicle_disputes, (new VehicleDisputeTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Store a new dispute.
      * Store a new dispute with a `item_user_id`, 'dispute_closed_type_id', 'discount', 'discount_type', 'no_of_quantity',  'validity_start_date', 'validity_end_date', 'maximum_discount_amount'.
+     *
      * @Post("/vehicle_disputes")
      * @Transaction({
      *      @Request({"item_id":1, "dispute_closed_type_id": 1}),
@@ -113,23 +118,23 @@ class AdminVehicleDisputesController extends Controller
         $user = Auth::guard()->user();
         $vehicle_dispute_data = $request->only('item_user_id', 'dispute_closed_type_id');
         // checking conditions
-        $enabledIncludes = array('user');
+        $enabledIncludes = ['user'];
         // check if plugin enabled and include
         (isPluginEnabled('VehicleFeedbacks')) ? $enabledIncludes[] = 'vehicle_feedback' : '';
         $vehicle_rental = VehicleRental::with($enabledIncludes)->where('id', '=', $request->item_user_id)
             ->where('is_dispute', '=', 1)->first();
-        if (!$vehicle_rental) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         $booker_id = $vehicle_rental->user_id;
         if ($vehicle_rental->item_user_dispute->dispute_status_id === config('constants.ConstDisputeStatuses.Closed')) {
-            return $this->response->errorNotFound("Invalid Request");
+            return $this->response->errorNotFound('Invalid Request');
         }
         ($user->id === $booker_id) ? $vehicle_dispute_data['is_booker'] = 1 : $vehicle_dispute_data['is_booker'] = 0;
         $dispute_closed_types = $this->disputeClosedTypeService->getClosedTypeByDisputeType($vehicle_rental->item_user_dispute->dispute_type_id);
-        $dispute_closed_type_id = (int)$request->dispute_closed_type_id;
-        if (!in_array($dispute_closed_type_id, $dispute_closed_types)) {
-            return $this->response->errorNotFound("Invalid Request");
+        $dispute_closed_type_id = (int) $request->dispute_closed_type_id;
+        if (! in_array($dispute_closed_type_id, $dispute_closed_types)) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         $validator = Validator::make($vehicle_dispute_data, VehicleDispute::GetValidationRule(), VehicleDispute::GetValidationMessage());
         if ($validator->passes() && $vehicle_rental) {
@@ -138,7 +143,7 @@ class AdminVehicleDisputesController extends Controller
                 $this->vehicleDisputeService->resolveByRefund($vehicle_rental);
             } elseif ($dispute_closed_type_id === config('constants.ConstDisputeClosedTypes.FeedbackFavourHost') || $request->dispute_closed_type_id === config('constants.ConstDisputeClosedTypes.FeedbackResponseFavourHost')) {
                 $is_favour_booker = 0;
-                if (isPluginEnabled('VehicleFeedbacks') && !empty($vehicle_rental->vehicle_feedback)) {
+                if (isPluginEnabled('VehicleFeedbacks') && ! empty($vehicle_rental->vehicle_feedback)) {
                     $vehicleFeedbackService = new \Plugins\VehicleFeedbacks\Services\VehicleFeedbackService();
                     $vehicleFeedbackService->feedBackUpdate($request, $vehicle_rental->vehicle_feedback[0]->id, $vehicle_rental);
                 } else {
@@ -157,6 +162,7 @@ class AdminVehicleDisputesController extends Controller
             }
             // Closing Dispute //
             $this->vehicleDisputeService->closeDispute($request, $vehicle_rental, $is_favour_booker);
+
             return response()->json(['Success' => 'VehicleDispute has been Closed'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleDispute could not be resolved. Please, try again.', $validator->errors());

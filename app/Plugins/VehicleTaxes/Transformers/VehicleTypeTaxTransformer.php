@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleTaxes\Transformers;
 
 use App\Transformers\DiscountTypeTransformer;
@@ -22,7 +22,6 @@ use Plugins\VehicleTaxes\Model\VehicleTypeTax;
 
 /**
  * Class VehicleTaxTransformer
- * @package VehicleTaxes\Transformers
  */
 class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
 {
@@ -32,22 +31,23 @@ class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'VehicleTax', 'VehicleType', 'DurationType', 'DiscountType'
+        'VehicleTax', 'VehicleType', 'DurationType', 'DiscountType',
     ];
 
     /**
-     * @param VehicleTypeTax $vehicle_type_tax
+     * @param  VehicleTypeTax  $vehicle_type_tax
      * @return array
      */
     public function transform(VehicleTypeTax $vehicle_type_tax)
     {
         $output = array_only($vehicle_type_tax->toArray(), ['id', 'created_at', 'vehicle_type_id', 'tax_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'is_active']);
         $output['is_active'] = ($output['is_active']) ? true : false;
+
         return $output;
     }
 
     /**
-     * @param VehicleTypeTax $vehicle_type_tax
+     * @param  VehicleTypeTax  $vehicle_type_tax
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleTax(VehicleTypeTax $vehicle_type_tax)
@@ -57,11 +57,10 @@ class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeTax $vehicle_type_tax
+     * @param  VehicleTypeTax  $vehicle_type_tax
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleType(VehicleTypeTax $vehicle_type_tax)
@@ -71,11 +70,10 @@ class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeTax $vehicle_type_tax
+     * @param  VehicleTypeTax  $vehicle_type_tax
      * @return Fractal\Resource\Item|null
      */
     public function includeDiscountType(VehicleTypeTax $vehicle_type_tax)
@@ -85,11 +83,10 @@ class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeTax $vehicle_type_tax
+     * @param  VehicleTypeTax  $vehicle_type_tax
      * @return Fractal\Resource\Item|null
      */
     public function includeDurationType(VehicleTypeTax $vehicle_type_tax)
@@ -99,6 +96,5 @@ class VehicleTypeTaxTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 }

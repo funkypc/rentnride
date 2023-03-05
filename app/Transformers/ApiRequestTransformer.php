@@ -5,22 +5,21 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App\Transformers;
 
-use League\Fractal;
 use App\ApiRequest;
+use League\Fractal;
 
 /**
  * Class ApiRequestTransformer
- * @package App\Transformers
  */
 class ApiRequestTransformer extends Fractal\TransformerAbstract
 {
@@ -30,21 +29,22 @@ class ApiRequestTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'User', 'Ip'
+        'User', 'Ip',
     ];
 
     /**
-     * @param ApiRequest $api_request
+     * @param  ApiRequest  $api_request
      * @return array
      */
     public function transform(ApiRequest $api_request)
     {
         $output = array_only($api_request->toArray(), ['id', 'created_at', 'user_id', 'ip_id', 'path', 'method', 'http_response_code']);
+
         return $output;
     }
 
     /**
-     * @param ApiRequest $api_request
+     * @param  ApiRequest  $api_request
      * @return Fractal\Resource\Item
      */
     public function includeUser(ApiRequest $api_request)
@@ -54,11 +54,10 @@ class ApiRequestTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param ApiRequest $api_request
+     * @param  ApiRequest  $api_request
      * @return Fractal\Resource\Item
      */
     public function includeIp(ApiRequest $api_request)
@@ -68,6 +67,5 @@ class ApiRequestTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 }

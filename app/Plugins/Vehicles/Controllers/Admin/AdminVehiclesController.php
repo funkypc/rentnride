@@ -5,44 +5,40 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers\Admin;
 
-
-use Illuminate\Http\Request;
-use App\Http\Requests;
+use App\Attachment;
 use App\Http\Controllers\Controller;
+use DB;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use File;
+use Illuminate\Http\Request;
+use Image;
 use Plugins\Vehicles\Model\Vehicle;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\Vehicles\Transformers\AdminVehicleTransformer;
-use Plugins\Vehicles\Transformers\VehicleSimpleTransformer;
-use Plugins\Vehicles\Services\VehicleService;
+use Plugins\Vehicles\Model\VehicleCompany;
+use Plugins\Vehicles\Model\VehicleMake;
+use Plugins\Vehicles\Model\VehicleModel;
+use Plugins\Vehicles\Services\CounterLocationService;
+use Plugins\Vehicles\Services\FuelTypeService;
 use Plugins\Vehicles\Services\VehicleCompanyService;
 use Plugins\Vehicles\Services\VehicleMakeService;
 use Plugins\Vehicles\Services\VehicleModelService;
+use Plugins\Vehicles\Services\VehicleService;
 use Plugins\Vehicles\Services\VehicleTypeService;
-use Plugins\Vehicles\Services\CounterLocationService;
-use Plugins\Vehicles\Services\FuelTypeService;
-use Plugins\Vehicles\Model\VehicleMake;
-use Plugins\Vehicles\Model\VehicleModel;
-use Plugins\Vehicles\Model\VehicleCompany;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
-use File;
-use Image;
-use App\Attachment;
-use DB;
+use Plugins\Vehicles\Transformers\AdminVehicleTransformer;
+use Plugins\Vehicles\Transformers\VehicleSimpleTransformer;
+use Validator;
 
 /**
  * Class AdminVehiclesController
- * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminVehiclesController extends Controller
 {
@@ -50,28 +46,34 @@ class AdminVehiclesController extends Controller
      * @var
      */
     protected $vehicleService;
+
     /**
-     * @var $vehicleCompanyService
+     * @var
      */
     protected $vehicleCompanyService;
+
     /**
-     * @var $vehicleMakeService
+     * @var
      */
     protected $vehicleMakeService;
+
     /**
-     * @var $vehicleModelService
+     * @var
      */
     protected $vehicleModelService;
+
     /**
-     * @var $vehicleTypeService
+     * @var
      */
     protected $vehicleTypeService;
+
     /**
-     * @var $counterLocationService
+     * @var
      */
     protected $counterLocationService;
+
     /**
-     * @var $fuelTypeService
+     * @var
      */
     protected $fuelTypeService;
 
@@ -146,7 +148,7 @@ class AdminVehiclesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = array('counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments');
+        $enabled_includes = ['counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments'];
         $vehicle_count = config('constants.ConstPageLimit');
         if ($request->has('type') && $request->type == 'list') {
             $vehicle_count = Vehicle::count();
@@ -154,8 +156,9 @@ class AdminVehiclesController extends Controller
         if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_count = Vehicle::count();
             $vehicles = Vehicle::filterByRequest($request)->select('id', 'name')->paginate($vehicle_count);
+
             return $this->response->paginator($vehicles, new VehicleSimpleTransformer);
-        } else if ($request->has('limit') && $request->limit != 'all') {
+        } elseif ($request->has('limit') && $request->limit != 'all') {
             $vehicle_count = $request->limit;
             $vehicles = Vehicle::with($enabled_includes)
                         ->select(DB::raw('vehicles.*'))
@@ -164,6 +167,7 @@ class AdminVehiclesController extends Controller
                         ->leftJoin(DB::raw('(select id,name from vehicle_models) as vehicle_model'), 'vehicle_model.id', '=', 'vehicles.vehicle_model_id')
                         ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicles.vehicle_type_id')
                         ->filterByRequest($request)->paginate($vehicle_count);
+
             return $this->response->paginator($vehicles, (new AdminVehicleTransformer)->setDefaultIncludes($enabled_includes));
         } else {
             $vehicles = Vehicle::with($enabled_includes)
@@ -173,6 +177,7 @@ class AdminVehiclesController extends Controller
                         ->leftJoin(DB::raw('(select id,name from vehicle_models) as vehicle_model'), 'vehicle_model.id', '=', 'vehicles.vehicle_model_id')
                         ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicles.vehicle_type_id')
                         ->filterByRequest($request)->paginate($vehicle_count);
+
             return $this->response->paginator($vehicles, (new AdminVehicleTransformer)->setDefaultIncludes($enabled_includes));
         }
     }
@@ -180,6 +185,7 @@ class AdminVehiclesController extends Controller
     /**
      * Store a new vehicle.
      * Store a new vehicle with a 'amount', 'user_id', 'name', 'booking_type_id', 'description'.
+     *
      * @Post("/vehicles")
      * @Transaction({
      *      @Request({"vehicle_company_id": 1, "vehicle_make_id":1, "vehicle_model_id":1, "vehicle_type_id":!, "driven_kilometer":100, "vehicle_no":"tn109879", "no_of_seats":10, "no_of_doors":10, "no_of_gears":5, "is_manual_transmission":1, "no_small_bags":4, "no_large_bags":4, "is_ac":1, "minimum_age_of_driver":20, "mileage":200, "is_km":1, "is_airbag":1, "no_of_airbags":10, "is_abs":1, "per_hour_amount":100, "per_day_amount":500, "fuel_type_id":1, "feedback_count":20, "is_active":1}),
@@ -199,16 +205,16 @@ class AdminVehiclesController extends Controller
                 $vehicle_data['user_id'] = $vehicle_company->user_id;
                 $vehicle_make = VehicleMake::where('id', $request->vehicle_make_id)->first();
                 $vehicle_model = VehicleModel::where('id', $request->vehicle_model_id)->first();
-                $vehicle_data['name'] = $vehicle_make->name . ':' . $vehicle_model->name;
+                $vehicle_data['name'] = $vehicle_make->name.':'.$vehicle_model->name;
                 $vehicle_data['slug'] = EasySlug::generateUniqueSlug($vehicle_data['name'], 'vehicles');
                 $vehicle = Vehicle::create($vehicle_data);
                 if ($vehicle) {
-                    $vehicle_data['name'] = $vehicle_make->name . ':' . $vehicle_model->name . ' #' . $vehicle->id;
+                    $vehicle_data['name'] = $vehicle_make->name.':'.$vehicle_model->name.' #'.$vehicle->id;
                     $vehicle_data['slug'] = EasySlug::generateUniqueSlug($vehicle_data['name'], 'vehicles');
                     $vehicle->update($vehicle_data);
                     // afterSave count updatae & dummy record put
                     $this->vehicleService->afterSave($vehicle);
-                    if (!empty($request->pickup_counter_locations) || !empty($request->drop_counter_locations)) {
+                    if (! empty($request->pickup_counter_locations) || ! empty($request->drop_counter_locations)) {
                         $common_loctions = array_intersect($request->pickup_counter_locations, $request->drop_counter_locations);
                         $diff_in_pickup = array_diff($request->pickup_counter_locations, $request->drop_counter_locations);
                         $diff_in_drop = array_diff($request->drop_counter_locations, $request->pickup_counter_locations);
@@ -229,16 +235,16 @@ class AdminVehiclesController extends Controller
                         }
                     }
                     if ($request->hasFile('file')) {
-                        $path = storage_path('app/Vehicle/' . $vehicle->id . '/');
-                        if (!File::isDirectory($path)) {
+                        $path = storage_path('app/Vehicle/'.$vehicle->id.'/');
+                        if (! File::isDirectory($path)) {
                             File::makeDirectory($path, 0777, true);
                         }
                         $img = Image::make($_FILES['file']['tmp_name']);
-                        $path = storage_path('app/Vehicle/' . $vehicle->id . '/' . $_FILES['file']['name']);
+                        $path = storage_path('app/Vehicle/'.$vehicle->id.'/'.$_FILES['file']['name']);
                         if ($img->save($path)) {
-                            $attachment = array();
+                            $attachment = [];
                             $attachment['filename'] = $_FILES['file']['name'];
-                            $attachment['dir'] = 'app/Vehicle/' . $vehicle->id . '/';
+                            $attachment['dir'] = 'app/Vehicle/'.$vehicle->id.'/';
                             $attachment['mimetype'] = $request->file('file')->getClientMimeType();
                             $attachment['filesize'] = $request->file('file')->getClientSize();
                             $att = Attachment::create($attachment);
@@ -246,13 +252,14 @@ class AdminVehiclesController extends Controller
                             $curuser->attachments()->save($att);
                         }
                     }
+
                     return response()->json(['Success' => 'Vehicle has been added', 'id' => $vehicle->id], 200);
                 } else {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle could not be added. Please, try again.');
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle could not be added. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle could not be added. Please, try again.', $validator->errors());
@@ -262,6 +269,7 @@ class AdminVehiclesController extends Controller
     /**
      * Edit the specified vehicle.
      * Edit the vehicle with a `id`.
+     *
      * @Get("/vehicles/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -271,17 +279,19 @@ class AdminVehiclesController extends Controller
      */
     public function edit($id)
     {
-        $enabled_includes = array('counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments');
+        $enabled_includes = ['counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments'];
         $vehicle = Vehicle::with($enabled_includes)->find($id);
-        if (!$vehicle) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle, (new AdminVehicleTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Update the specified vehicle.
      * Update the vehicle with a `id`.
+     *
      * @Put("/vehicles/{id}")
      * @Transaction({
      *      @Request({"id":1,"vehicle_company_id": 1, "vehicle_make_id":1, "vehicle_model_id":1, "vehicle_type_id":!, "driven_kilometer":100, "vehicle_no":"tn109879", "no_of_seats":10, "no_of_doors":10, "no_of_gears":5, "is_manual_transmission":1, "no_small_bags":4, "no_large_bags":4, "is_ac":1, "minimum_age_of_driver":20, "mileage":200, "is_km":1, "is_airbag":1, "no_of_airbags":10, "is_abs":1, "per_hour_amount":100, "per_day_amount":500, "fuel_type_id":1, "feedback_count":20, "is_active":1}),
@@ -300,18 +310,18 @@ class AdminVehiclesController extends Controller
             $vehicle = ($request->id != $id) ? false : $vehicle;
         }
         $validator = Validator::make($vehicle_data, Vehicle::GetValidationRule(), Vehicle::GetValidationMessage());
-        if ($validator->passes() && $vehicle && (($request->hasFile('file') && $request->file('file')->isValid()) || (!$request->hasFile('file')))) {
+        if ($validator->passes() && $vehicle && (($request->hasFile('file') && $request->file('file')->isValid()) || (! $request->hasFile('file')))) {
             try {
                 $vehicle_company = VehicleCompany::where('id', $request->vehicle_company_id)->first();
                 $vehicle_data['user_id'] = $vehicle_company->user_id;
                 $vehicle_make = VehicleMake::where('id', $request->vehicle_make_id)->first();
                 $vehicle_model = VehicleModel::where('id', $request->vehicle_model_id)->first();
-                $vehicle_data['name'] = $vehicle_make->name . ':' . $vehicle_model->name. '#'.$vehicle->id;;
+                $vehicle_data['name'] = $vehicle_make->name.':'.$vehicle_model->name.'#'.$vehicle->id;
                 $vehicle_data['slug'] = EasySlug::generateUniqueSlug($vehicle_data['name'], 'vehicles');
                 $vehicle->update($vehicle_data);
                 // afterSave count updatae & dummy record put
                 $this->vehicleService->afterSave($vehicle);
-                if (!empty($request->pickup_counter_locations) || !empty($request->drop_counter_locations)) {
+                if (! empty($request->pickup_counter_locations) || ! empty($request->drop_counter_locations)) {
                     $common_loctions = array_intersect($request->pickup_counter_locations, $request->drop_counter_locations);
                     $diff_in_pickup = array_diff($request->pickup_counter_locations, $request->drop_counter_locations);
                     $diff_in_drop = array_diff($request->drop_counter_locations, $request->pickup_counter_locations);
@@ -333,17 +343,17 @@ class AdminVehiclesController extends Controller
                     }
                 }
                 if ($request->hasFile('file')) {
-                    $path = storage_path('app/Vehicle/' . $vehicle->id . '/');
-                    if (!File::isDirectory($path)) {
+                    $path = storage_path('app/Vehicle/'.$vehicle->id.'/');
+                    if (! File::isDirectory($path)) {
                         File::makeDirectory($path, 0777, true);
                     }
                     $img = Image::make($_FILES['file']['tmp_name']);
-                    $path = storage_path('app/Vehicle/' . $vehicle->id . '/' . $_FILES['file']['name']);
+                    $path = storage_path('app/Vehicle/'.$vehicle->id.'/'.$_FILES['file']['name']);
                     if ($img->save($path)) {
                         $curVehicle = Vehicle::with(['attachments'])->where('id', '=', $vehicle->id)->first();
-                        $attachment = array();
+                        $attachment = [];
                         $attachment['filename'] = $_FILES['file']['name'];
-                        $attachment['dir'] = 'app/Vehicle/' . $vehicle->id . '/';
+                        $attachment['dir'] = 'app/Vehicle/'.$vehicle->id.'/';
                         $attachment['mimetype'] = $request->file('file')->getClientMimeType();
                         $attachment['filesize'] = $request->file('file')->getClientSize();
                         if ($curVehicle->attachments) {
@@ -355,10 +365,11 @@ class AdminVehiclesController extends Controller
                         }
                     }
                 }
+
                 return response()->json(['Success' => 'Vehicle has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle could not be updated. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle could not be updated. Please, try again.', $validator->errors());
@@ -368,6 +379,7 @@ class AdminVehiclesController extends Controller
     /**
      * Delete the specified vehicle.
      * Delete the vehicle with a `id`.
+     *
      * @Delete("/vehicles/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -378,17 +390,19 @@ class AdminVehiclesController extends Controller
     public function destroy($id)
     {
         $vehicle = Vehicle::find($id);
-        if (!$vehicle) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle->delete();
         }
+
         return response()->json(['Success' => 'Vehicle deleted'], 200);
     }
 
     /**
      * Show the specified vehicle.
      * Show the vehicle with a `id`.
+     *
      * @Get("/vehicles/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -398,11 +412,12 @@ class AdminVehiclesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = array('counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments');
+        $enabled_includes = ['counter_location', 'vehicle_make', 'vehicle_model', 'vehicle_type', 'vehicle_company', 'fuel_type', 'attachments'];
         $vehicle = Vehicle::with($enabled_includes)->find($id);
-        if (!$vehicle) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle, (new AdminVehicleTransformer)->setDefaultIncludes($enabled_includes));
     }
 
@@ -414,18 +429,20 @@ class AdminVehiclesController extends Controller
         $vehicle_type_list = $this->vehicleTypeService->getVehicleTypeList();
         $counter_location_list = $this->counterLocationService->getCounterLocationList();
         $fuel_type_list = $this->fuelTypeService->getFuelTypeList();
-        $settings = array();
+        $settings = [];
         $settings['seats'] = config('vehicle.no_of_seats');
         $settings['doors'] = config('vehicle.no_of_doors');
         $settings['gears'] = config('vehicle.no_of_gears');
         $settings['small_bags'] = config('vehicle.no_small_bags');
         $settings['large_bags'] = config('vehicle.no_large_bags');
         $settings['airbags'] = config('vehicle.no_of_airbags');
+
         return response()->json(compact('vehicle_company_list', 'vehicle_make_list', 'vehicle_model_list', 'vehicle_type_list', 'counter_location_list', 'fuel_type_list', 'settings'));
     }
 
     /**
      * Deactivate the vehicle.
+     *
      * @Put("/vehicles/{id}/deactive")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -436,13 +453,14 @@ class AdminVehiclesController extends Controller
     public function deactive(Request $request, $id)
     {
         $vehicle = Vehicle::find($id);
-        if (!$vehicle) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_data['is_active'] = false;
             if ($vehicle->update($vehicle_data)) {
-				// vehicle count update to realted table
-				$this->vehicleService->updateVehicleCount($vehicle->vehicle_make_id, $vehicle->vehicle_model_id, $vehicle->vehicle_type_id, $vehicle->vehicle_company_id);
+                // vehicle count update to realted table
+                $this->vehicleService->updateVehicleCount($vehicle->vehicle_make_id, $vehicle->vehicle_model_id, $vehicle->vehicle_type_id, $vehicle->vehicle_company_id);
+
                 return response()->json(['Success' => 'Record has been deactivated!'], 200);
             }
         }
@@ -450,6 +468,7 @@ class AdminVehiclesController extends Controller
 
     /**
      * Activate the vehicle.
+     *
      * @Put("/vehicles/{id}/active")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -460,12 +479,13 @@ class AdminVehiclesController extends Controller
     public function active(Request $request, $id)
     {
         $vehicle = Vehicle::find($id);
-        if (!$vehicle) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_data['is_active'] = true;
             if ($vehicle->update($vehicle_data)) {
                 $this->vehicleService->afterSave($vehicle);
+
                 return response()->json(['Success' => 'Record has been activated!'], 200);
             }
         }

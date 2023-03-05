@@ -5,32 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers;
 
-
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Vehicles\Model\VehicleType;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Vehicles\Transformers\VehicleTypeTransformer;
 
 /**
  * Class VehicleTypesController
- * @package Plugins\Vehicles\Controllers
  */
 class VehicleTypesController extends Controller
 {
-
     /**
      * Show all vehicle types.
      * Get a JSON representation of all the vehicle types.
@@ -50,12 +44,14 @@ class VehicleTypesController extends Controller
             $vehicle_type_count = VehicleType::count();
         }
         $vehicle_types = VehicleType::filterByRequest($request)->paginate($vehicle_type_count);
+
         return $this->response->paginator($vehicle_types, new VehicleTypeTransformer);
     }
 
     /**
      * Show the specified vehicle.
      * Show the vehicle_types with a `id`.
+     *
      * @Get("/vehicle_types/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -65,15 +61,15 @@ class VehicleTypesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = array();
+        $enabled_includes = [];
         (isPluginEnabled('VehicleExtraAccessories')) ? $enabled_includes[] = 'vehicle_type_extra_accessory' : '';
         (isPluginEnabled('VehicleInsurances')) ? $enabled_includes[] = 'vehicle_type_insurance' : '';
         (isPluginEnabled('VehicleFuelOptions')) ? $enabled_includes[] = 'vehicle_type_fuel_option' : '';
         $vehicle_type = VehicleType::with($enabled_includes)->find($id);
-        if (!$vehicle_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type, (new VehicleTypeTransformer)->setDefaultIncludes($enabled_includes));
     }
-
 }

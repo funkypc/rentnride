@@ -5,31 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\CurrencyConversions\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
-
-use Plugins\CurrencyConversions\Model\CurrencyConversionHistory;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-use Plugins\CurrencyConversions\Transformers\CurrencyConversionHistoryTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\CurrencyConversions\Model\CurrencyConversionHistory;
+use Plugins\CurrencyConversions\Transformers\CurrencyConversionHistoryTransformer;
 
 /**
  * CurrencyConversionHistories resource representation.
+ *
  * @Resource("Admin/AdminCurrencyConversionHistories")
  */
 class AdminCurrencyConversionHistoriesController extends Controller

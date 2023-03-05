@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -32,7 +32,6 @@ $api->version(['v1'], function ($api) {
         $api->get('vehicle_feedbacks/{id}/edit', 'AdminVehicleFeedbacksController@edit');
         $api->get('vehicle_feedbacks/{id}', 'AdminVehicleFeedbacksController@show');
         $api->delete('vehicle_feedbacks/{id}', 'AdminVehicleFeedbacksController@destroy');
-
     });
     $api->group(['namespace' => 'Plugins\VehicleFeedbacks\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         //Vehicle feedbacks user side

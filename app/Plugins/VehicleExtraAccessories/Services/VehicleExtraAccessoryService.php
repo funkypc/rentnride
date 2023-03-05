@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleExtraAccessories\Services;
 
 use Plugins\VehicleExtraAccessories\Model\VehicleTypeExtraAccessory;
@@ -39,16 +39,16 @@ class VehicleExtraAccessoryService
         $res_amount = 0;
         $vehicle_type_extra_accessories = VehicleTypeExtraAccessory::whereIn('id', $extra_accessories)->get();
         foreach ($vehicle_type_extra_accessories as $vehicle_type_extra_accessory) {
-            if (!empty($vehicle_type_extra_accessory->rate)) {
-                if (!empty($vehicle_type_extra_accessory->discount_type_id) && $vehicle_type_extra_accessory->discount_type_id == 1) {
+            if (! empty($vehicle_type_extra_accessory->rate)) {
+                if (! empty($vehicle_type_extra_accessory->discount_type_id) && $vehicle_type_extra_accessory->discount_type_id == 1) {
                     $extra_accessory_amount = $amount * $vehicle_type_extra_accessory->rate / 100;
-                } else if (!empty($vehicle_type_extra_accessory->discount_type_id) && $vehicle_type_extra_accessory->discount_type_id == 2) {
+                } elseif (! empty($vehicle_type_extra_accessory->discount_type_id) && $vehicle_type_extra_accessory->discount_type_id == 2) {
                     $extra_accessory_amount = $vehicle_type_extra_accessory->rate;
                 }
-                if (!empty($vehicle_type_extra_accessory->duration_type_id) && $vehicle_type_extra_accessory->duration_type_id == 1) {
+                if (! empty($vehicle_type_extra_accessory->duration_type_id) && $vehicle_type_extra_accessory->duration_type_id == 1) {
                     $extra_accessory_amount = $extra_accessory_amount * $no_of_days;
                 }
-                if (!empty($vehicle_type_extra_accessory->max_allowed_amount)) {
+                if (! empty($vehicle_type_extra_accessory->max_allowed_amount)) {
                     if ($extra_accessory_amount > $vehicle_type_extra_accessory->max_allowed_amount) {
                         $extra_accessory_amount = $vehicle_type_extra_accessory->max_allowed_amount;
                     }
@@ -61,7 +61,7 @@ class VehicleExtraAccessoryService
             $vehicle_extra_accessory->vehicle_rental_additional_charges()->save($vehicle_rental_additional_charge);
             $res_amount = $res_amount + $extra_accessory_amount;
         }
+
         return $res_amount;
     }
-
 }

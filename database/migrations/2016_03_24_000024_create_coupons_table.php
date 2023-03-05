@@ -1,12 +1,13 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCouponsTable extends Migration
 {
     /**
      * Run the migrations.
+     *
      * @return void
      */
     public function up()
@@ -19,7 +20,7 @@ class CreateCouponsTable extends Migration
             $table->bigInteger('model_type');
             $table->string('name', 100)->unique();
             $table->text('description');
-            $table->double('discount', 10, 2)->default(0.00);;
+            $table->double('discount', 10, 2)->default(0.00);
             $table->bigInteger('discount_type_id')->unsigned()->nullable()->index();
             $table->foreign('discount_type_id')
                 ->references('id')->on('discount_types')
@@ -38,6 +39,7 @@ class CreateCouponsTable extends Migration
 
     /**
      * Reverse the migrations.
+     *
      * @return void
      */
     public function down()
@@ -45,4 +47,3 @@ class CreateCouponsTable extends Migration
         Schema::drop('coupons');
     }
 }
-

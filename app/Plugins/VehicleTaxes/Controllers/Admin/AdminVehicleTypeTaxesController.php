@@ -5,27 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleTaxes\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Plugins\VehicleTaxes\Model\VehicleTypeTax;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\VehicleTaxes\Transformers\VehicleTypeTaxTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\VehicleTaxes\Model\VehicleTypeTax;
+use Plugins\VehicleTaxes\Transformers\VehicleTypeTaxTransformer;
+use Validator;
 
 /**
  * VehicleTypeTaxes resource representation.
+ *
  * @Resource("Admin/AdminVehicleTypeTaxes")
  */
 class AdminVehicleTypeTaxesController extends Controller
@@ -55,7 +54,7 @@ class AdminVehicleTypeTaxesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = array('vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_taxes = VehicleTypeTax::with($enabled_includes)
             ->select(DB::raw('vehicle_type_taxes.*'))
             ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_type_taxes.vehicle_type_id')
@@ -63,12 +62,14 @@ class AdminVehicleTypeTaxesController extends Controller
             ->leftJoin(DB::raw('(select id,type from discount_types) as discount_type'), 'discount_type.id', '=', 'vehicle_type_taxes.discount_type_id')
             ->leftJoin(DB::raw('(select id,name from duration_types) as duration_type'), 'duration_type.id', '=', 'vehicle_type_taxes.duration_type_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_type_taxes, (new VehicleTypeTaxTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Edit the specified vehicle_type_tax.
      * Edit the vehicle_type_tax with a `id`.
+     *
      * @Get("/admin/vehicle_type_taxes/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -78,17 +79,19 @@ class AdminVehicleTypeTaxesController extends Controller
      */
     public function edit($id)
     {
-        $enabled_includes = array('vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_tax = VehicleTypeTax::with($enabled_includes)->find($id);
-        if (!$vehicle_type_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_tax, (new VehicleTypeTaxTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Show the specified vehicle_type_tax.
      * Show the vehicle_type_tax with a `id`.
+     *
      * @Get("/admin/vehicle_type_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,17 +101,19 @@ class AdminVehicleTypeTaxesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = array('vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_tax', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_tax = VehicleTypeTax::with($enabled_includes)->find($id);
-        if (!$vehicle_type_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_tax, (new VehicleTypeTaxTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Store a new vehicle_type_tax.
      * Store a new vehicle_type_tax with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_type_taxes")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "tax_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -133,10 +138,10 @@ class AdminVehicleTypeTaxesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_type_tax
      * Update the vehicle_type_tax with a `id`.
+     *
      * @Put("/admin/vehicle_type_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "tax_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -156,6 +161,7 @@ class AdminVehicleTypeTaxesController extends Controller
         if ($validator->passes() && $vehicle_type_tax) {
             try {
                 $vehicle_type_tax->update($vehicle_type_tax_data);
+
                 return response()->json(['Success' => 'VehicleTypeTax has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleTypeTax could not be updated. Please, try again.');
@@ -168,6 +174,7 @@ class AdminVehicleTypeTaxesController extends Controller
     /**
      * Delete the specified vehicle_type_tax.
      * Delete the vehicle_type_tax with a `id`.
+     *
      * @Delete("/admin/vehicle_type_taxes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -178,11 +185,12 @@ class AdminVehicleTypeTaxesController extends Controller
     public function destroy($id)
     {
         $vehicle_type_tax = VehicleTypeTax::find($id);
-        if (!$vehicle_type_tax) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_tax) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_type_tax->delete();
         }
+
         return response()->json(['Success' => 'VehicleTypeTax deleted'], 200);
     }
 }

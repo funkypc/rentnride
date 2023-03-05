@@ -5,28 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleSurcharges\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
 use Plugins\VehicleSurcharges\Model\VehicleSurcharge;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleSurcharges\Transformers\AdminVehicleSurchargeTransformer;
 use Plugins\VehicleSurcharges\Transformers\VehicleSurchargeTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * VehicleSurcharges resource representation.
+ *
  * @Resource("Admin/AdminVehicleSurcharges")
  */
 class AdminVehicleSurchargesController extends Controller
@@ -56,12 +55,14 @@ class AdminVehicleSurchargesController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('limit') && $request->limit == 'all') {
+        if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_count = VehicleSurcharge::count();
             $vehicles = VehicleSurcharge::filterByActiveRecord($request)->filterByRequest($request)->select('id', 'name')->paginate($vehicle_count);
+
             return $this->response->paginator($vehicles, new VehicleSurchargeTransformer);
         } else {
             $vehicle_surcharges = VehicleSurcharge::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
             return $this->response->paginator($vehicle_surcharges, new AdminVehicleSurchargeTransformer);
         }
     }
@@ -69,6 +70,7 @@ class AdminVehicleSurchargesController extends Controller
     /**
      * Edit the specified vehicle_surcharge.
      * Edit the vehicle_surcharge with a `id`.
+     *
      * @Get("/admin/vehicle_surcharges/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -79,15 +81,17 @@ class AdminVehicleSurchargesController extends Controller
     public function edit($id)
     {
         $vehicle_surcharge = VehicleSurcharge::find($id);
-        if (!$vehicle_surcharge) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_surcharge) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_surcharge, (new AdminVehicleSurchargeTransformer));
     }
 
     /**
      * Show the specified vehicle_surcharge.
      * show the vehicle_surcharge with a `id`.
+     *
      * @Get("/admin/vehicle_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,15 +102,17 @@ class AdminVehicleSurchargesController extends Controller
     public function show($id)
     {
         $vehicle_surcharge = VehicleSurcharge::find($id);
-        if (!$vehicle_surcharge) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_surcharge) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_surcharge, (new AdminVehicleSurchargeTransformer));
     }
 
     /**
      * Store a new vehicle_surcharge.
      * Store a new vehicle_surcharge with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_surcharges")
      * @Transaction({
      *      @Request({"name": "Energy Surcharge", "short_description": "The costs of energy needed to support our business operations have escalated considerably.", "description": "The costs of energy needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,"}),
@@ -132,10 +138,10 @@ class AdminVehicleSurchargesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_surcharge
      * Update the vehicle_surcharge with a `id`.
+     *
      * @Put("/admin/vehicle_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Energy Surcharge", "short_description": "The costs of energy needed to support our business operations have escalated considerably.", "description": "The costs of energy needed to support our business operations have escalated considerably. To offset the increasing costs of utilities, bus fuel, oil and grease, etc.,", "is_active": 1}),
@@ -158,6 +164,7 @@ class AdminVehicleSurchargesController extends Controller
         if ($validator->passes() && $vehicle_surcharge) {
             try {
                 $vehicle_surcharge->update($vehicle_surcharge_data);
+
                 return response()->json(['Success' => 'VehicleSurcharge has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleSurcharge could not be updated. Please, try again.');
@@ -170,6 +177,7 @@ class AdminVehicleSurchargesController extends Controller
     /**
      * Delete the specified vehicle_surcharge.
      * Delete the vehicle_surcharge with a `id`.
+     *
      * @Delete("/admin/vehicle_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -180,11 +188,12 @@ class AdminVehicleSurchargesController extends Controller
     public function destroy($id)
     {
         $vehicle_surcharge = VehicleSurcharge::find($id);
-        if (!$vehicle_surcharge) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_surcharge) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_surcharge->delete();
         }
+
         return response()->json(['Success' => 'VehicleSurcharge deleted'], 200);
     }
 }

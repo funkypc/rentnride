@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,7 +26,7 @@
 $api = $this->app->make('Dingo\Api\Routing\Router');
 $api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'Plugins\VehicleInsurances\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
-        // Insurances admin side        
+        // Insurances admin side
         $api->get('vehicle_insurances', 'AdminVehicleInsurancesController@index');
         $api->post('vehicle_insurances', 'AdminVehicleInsurancesController@store');
         $api->put('vehicle_insurances/{id}', 'AdminVehicleInsurancesController@update');
@@ -41,7 +41,6 @@ $api->version(['v1'], function ($api) {
         $api->get('vehicle_type_insurances/{id}/edit', 'AdminVehicleTypeInsurancesController@edit');
         $api->get('vehicle_type_insurances/{id}', 'AdminVehicleTypeInsurancesController@show');
         $api->delete('vehicle_type_insurances/{id}', 'AdminVehicleTypeInsurancesController@destroy');
-
     });
     $api->group(['namespace' => 'Plugins\VehicleInsurances\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         //insurances user side
