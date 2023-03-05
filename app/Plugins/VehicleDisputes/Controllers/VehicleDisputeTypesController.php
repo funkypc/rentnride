@@ -5,27 +5,23 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleDisputes\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Http\Request;
 use Plugins\VehicleDisputes\Model\VehicleDisputeType;
 use Plugins\VehicleDisputes\Transformers\VehicleDisputeTypeTransformer;
 
 /**
  * Class VehicleDisputeTypesController
- * @package Plugins\VehicleDisputes\Controllers
  */
 class VehicleDisputeTypesController extends Controller
 {
@@ -51,6 +47,7 @@ class VehicleDisputeTypesController extends Controller
     public function index(Request $request)
     {
         $vehicle_dispute_types = VehicleDisputeType::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_dispute_types, (new VehicleDisputeTypeTransformer));
     }
 }

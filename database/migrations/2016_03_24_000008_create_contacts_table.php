@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateContactsTable extends Migration
 {
@@ -23,8 +23,8 @@ class CreateContactsTable extends Migration
             $table->foreign('ip_id')
                 ->references('id')->on('ips')
                 ->onDelete('set null');
-            $table->string('first_name',100);
-            $table->string('last_name',100);
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
             $table->string('email');
             $table->string('subject');
             $table->text('message');

@@ -5,24 +5,23 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use App\Transformers\TransactionTypeTransformer;
 use App\TransactionType;
+use App\Transformers\TransactionTypeTransformer;
+use Illuminate\Http\Request;
 
 /**
  * TransactionTypes resource representation.
+ *
  * @Resource("TransactionTypes")
  */
 class TransactionTypesController extends Controller
@@ -50,6 +49,7 @@ class TransactionTypesController extends Controller
     public function index(Request $request)
     {
         $transaction_types = TransactionType::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($transaction_types, (new TransactionTypeTransformer));
     }
 }

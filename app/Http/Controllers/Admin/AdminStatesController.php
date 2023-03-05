@@ -5,29 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
 use App\State;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use App\Transformers\StateTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Validator;
 
 /**
  * States resource representation.
+ *
  ** @Resource("Admin/AdminStates")
  */
 class AdminStatesController extends Controller
@@ -62,12 +59,14 @@ class AdminStatesController extends Controller
             ->leftJoin(DB::raw('(select id,name as country_name from countries) as countries'), 'countries.id', '=', 'states.country_id')
             ->filterByRequest($request)
             ->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($states, (new StateTransformer)->setDefaultIncludes(['Country']));
     }
 
     /**
      * Store a new state.
      * Store a new state with a `name`, `country_id`.
+     *
      * @Post("/states")
      * @Transaction({
      *      @Request({"name": "Tamilnadu", "country_id": 1}),
@@ -95,6 +94,7 @@ class AdminStatesController extends Controller
     /**
      * Edit the specified state.
      * Edit the state with a `id`.
+     *
      * @Get("/states/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -105,15 +105,17 @@ class AdminStatesController extends Controller
     public function edit($id)
     {
         $state = State::with('Country')->find($id);
-        if (!$state) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $state) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($state, (new StateTransformer)->setDefaultIncludes(['Country']));
     }
 
     /**
      * Update the specified state
      * Update the state with a `id`.
+     *
      * @Put("/states/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Tamilnadu", "country_id": 1}),
@@ -133,6 +135,7 @@ class AdminStatesController extends Controller
         if ($validator->passes() && $state) {
             try {
                 $state->update($state_data);
+
                 return response()->json(['Success' => 'State has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('State could not be updated. Please, try again.');
@@ -145,6 +148,7 @@ class AdminStatesController extends Controller
     /**
      * Delete the specified state
      * Delete the state with a `id`.
+     *
      * @Delete("/states/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -155,15 +159,18 @@ class AdminStatesController extends Controller
     public function destroy($id)
     {
         $state = State::find($id);
-        if (!$state) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $state) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $state->delete();
         }
+
         return response()->json(['Success' => 'State deleted'], 200);
     }
-	/**
+
+    /**
      * Deactivate the state.
+     *
      * @Put("/states/{id}/deactive")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -174,8 +181,8 @@ class AdminStatesController extends Controller
     public function deactive(Request $request, $id)
     {
         $state = State::find($id);
-        if (!$state) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $state) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $state_data['is_active'] = false;
             if ($state->update($state_data)) {
@@ -186,6 +193,7 @@ class AdminStatesController extends Controller
 
     /**
      * Activate the state.
+     *
      * @Put("/states/{id}/active")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -196,8 +204,8 @@ class AdminStatesController extends Controller
     public function active(Request $request, $id)
     {
         $state = State::find($id);
-        if (!$state) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $state) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $state_data['is_active'] = true;
             if ($state->update($state_data)) {

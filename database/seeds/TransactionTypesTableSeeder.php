@@ -5,18 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
-use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
+
 use App\TransactionType;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 
 class TransactionTypesTableSeeder extends Seeder
 {
@@ -37,7 +35,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Amount added to wallet',
             'message_for_receiver' => '',
             'message_for_admin' => '##USER## added amount to own wallet',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         /*TransactionType::create([
             'id' => 2,
@@ -121,7 +119,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Rent ###ORDER_NO## a item ##ITEM##',
             'message_for_receiver' => '##BOOKER## booked ###ORDER_NO## item ##ITEM##',
             'message_for_admin' => '##BOOKER## booked ###ORDER_NO## a item ##ITEM##',
-            'transaction_variables' => 'BOOKER, ITEM, ORDER_NO'
+            'transaction_variables' => 'BOOKER, ITEM, ORDER_NO',
         ]);
         TransactionType::create([
             'id' => 9,
@@ -133,7 +131,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'renting ###ORDER_NO## expired for item ##ITEM##',
             'message_for_receiver' => 'renting ###ORDER_NO## expired for item ##ITEM##',
             'message_for_admin' => 'renting ###ORDER_NO## expired for item ##ITEM##',
-            'transaction_variables' => 'ITEM, ORDER_NO'
+            'transaction_variables' => 'ITEM, ORDER_NO',
         ]);
         TransactionType::create([
             'id' => 10,
@@ -145,7 +143,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'You have rejected renting ###ORDER_NO## for item ##ITEM##',
             'message_for_receiver' => '##HOST## rejected renting ###ORDER_NO## for item ##ITEM##',
             'message_for_admin' => '##HOST## rejected renting ###ORDER_NO## for item ##ITEM##',
-            'transaction_variables' => 'ITEM, ORDER_NO, HOST'
+            'transaction_variables' => 'ITEM, ORDER_NO, HOST',
         ]);
         TransactionType::create([
             'id' => 11,
@@ -157,7 +155,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Cancelled renting ###ORDER_NO## for item ##ITEM##',
             'message_for_receiver' => 'Cancelled renting ###ORDER_NO## for item ##ITEM##',
             'message_for_admin' => 'Cancelled booking ###ORDER_NO## for item ##ITEM##',
-            'transaction_variables' => 'ITEM, ORDER_NO'
+            'transaction_variables' => 'ITEM, ORDER_NO',
         ]);
         TransactionType::create([
             'id' => 12,
@@ -169,7 +167,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Administrator cancelled renting ###ORDER_NO## for item ##ITEM##',
             'message_for_receiver' => 'Administrator cancelled renting ###ORDER_NO## for item ##ITEM##',
             'message_for_admin' => 'Cancelled renting ###ORDER_NO## for item ##ITEM##',
-            'transaction_variables' => 'ITEM, ORDER_NO'
+            'transaction_variables' => 'ITEM, ORDER_NO',
         ]);
         TransactionType::create([
             'id' => 13,
@@ -181,7 +179,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Vehicle Rental ###ORDER_NO## amount cleared to ##HOST## for item ##ITEM##',
             'message_for_receiver' => 'Vehicle Rental ###ORDER_NO## amount cleared for item ##ITEM##',
             'message_for_admin' => 'Vehicle Rental ###ORDER_NO## amount cleared to ##HOST## for item ##ITEM##',
-            'transaction_variables' => 'ITEM, ORDER_NO, HOST'
+            'transaction_variables' => 'ITEM, ORDER_NO, HOST',
         ]);
         TransactionType::create([
             'id' => 14,
@@ -193,7 +191,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Cash withdrawal request made by you',
             'message_for_receiver' => '',
             'message_for_admin' => 'Cash withdrawal request made by ##USER##',
-            'transaction_variables' => ''
+            'transaction_variables' => '',
         ]);
         TransactionType::create([
             'id' => 15,
@@ -205,7 +203,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Your cash withdrawal request approved by Administrator',
             'message_for_receiver' => '',
             'message_for_admin' => 'You (Administrator) have approved ##USER## cash withdrawal request',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 16,
@@ -217,7 +215,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Amount refunded for rejected cash withdrawal request',
             'message_for_receiver' => '',
             'message_for_admin' => 'Amount refunded to ##USER## for rejected cash withdrawal request',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 17,
@@ -229,7 +227,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Cash withdraw request amount paid to you',
             'message_for_receiver' => '',
             'message_for_admin' => 'Cash withdraw request amount paid to ##USER##',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 18,
@@ -241,7 +239,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Amount refunded for failed cash withdrawal request',
             'message_for_receiver' => '',
             'message_for_admin' => 'Amount refunded to ##USER## for failed cash withdrawal request',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 19,
@@ -253,7 +251,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Administrator added fund to your wallet',
             'message_for_receiver' => 'Administrator added fund to your wallet',
             'message_for_admin' => 'Added fund to ##USER## wallet',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 20,
@@ -265,7 +263,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Administrator deducted fund from your wallet',
             'message_for_receiver' => 'Administrator deducted fund from your wallet',
             'message_for_admin' => 'Deducted fund from ##USER## wallet',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 21,
@@ -277,7 +275,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Specifications dispute resolved favor to ##BOOKER## for Item ##ITEM##, booking ###ORDER_NO##.',
             'message_for_receiver' => 'Specifications dispute resolved favor to you for Item ##ITEM##, booking ###ORDER_NO##.',
             'message_for_admin' => 'Specifications dispute resolved favor to ##BOOKER## for Item ##ITEM##, booking ###ORDER_NO##.',
-            'transaction_variables' => 'BOOKER, ITEM, ORDER_NO'
+            'transaction_variables' => 'BOOKER, ITEM, ORDER_NO',
         ]);
         TransactionType::create([
             'id' => 22,
@@ -289,7 +287,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Amount refunded to your account',
             'message_for_receiver' => 'Amount refunded to your account',
             'message_for_admin' => 'Amount refunded to ##USER## account',
-            'transaction_variables' => 'USER'
+            'transaction_variables' => 'USER',
         ]);
         TransactionType::create([
             'id' => 23,
@@ -301,7 +299,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => '##ITEM## Vehicle Listing Fee Paid',
             'message_for_receiver' => '##ITEM## vehicle listing fee paid',
             'message_for_admin' => '##ITEM## vehicle listing fee paid',
-            'transaction_variables' => 'ITEM'
+            'transaction_variables' => 'ITEM',
         ]);
         TransactionType::create([
             'id' => 24,
@@ -313,7 +311,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Security deposit dispute resolved favor to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_receiver' => 'Security deposit dispute resolved favor to you for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_admin' => 'Security deposit dispute resolved favor to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
-            'transaction_variables' => 'ITEM, ORDER_NO, HOST'
+            'transaction_variables' => 'ITEM, ORDER_NO, HOST',
         ]);
         TransactionType::create([
             'id' => 25,
@@ -325,7 +323,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Security deposit dispute resolved favor to ##BOOKER## for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_receiver' => 'Security deposit dispute resolved favor to you for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_admin' => 'Security deposit amount refunded to ##BOOKER## for Item ##ITEM##, booking# ##ORDER_NO##.',
-            'transaction_variables' => 'ITEM, ORDER_NO, BOOKER'
+            'transaction_variables' => 'ITEM, ORDER_NO, BOOKER',
         ]);
 
         TransactionType::create([
@@ -338,7 +336,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Manually transferred claiming amount to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_receiver' => 'Manually transferred for claiming amount to you for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_admin' => 'Manually transferred for claiming amount to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
-            'transaction_variables' => 'HOST, ITEM, ORDER_NO'
+            'transaction_variables' => 'HOST, ITEM, ORDER_NO',
         ]);
 
         TransactionType::create([
@@ -351,7 +349,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Manually transferred late fee amount to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_receiver' => 'Manually transferred late fee amount to you for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_admin' => 'Manually transferred late fee amount to ##HOST## for Item ##ITEM##, booking# ##ORDER_NO##.',
-            'transaction_variables' => 'HOST, ITEM, ORDER_NO'
+            'transaction_variables' => 'HOST, ITEM, ORDER_NO',
         ]);
 
         TransactionType::create([
@@ -364,8 +362,7 @@ class TransactionTypesTableSeeder extends Seeder
             'message' => 'Admin Commission for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_receiver' => 'Admin Commission for Item ##ITEM##, booking# ##ORDER_NO##.',
             'message_for_admin' => 'Admin Commission for Item ##ITEM##, booking# ##ORDER_NO##.',
-            'transaction_variables' => 'ITEM, ORDER_NO'
+            'transaction_variables' => 'ITEM, ORDER_NO',
         ]);
-
     }
 }

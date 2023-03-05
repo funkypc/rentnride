@@ -5,29 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Pages\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Pages\Model\Page;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Pages\Transformers\PageTransformer;
-
+use Validator;
 
 /**
  * Pages resource representation.
+ *
  * @Resource("Admin/AdminPages")
  */
 class AdminPagesController extends Controller
@@ -57,12 +53,14 @@ class AdminPagesController extends Controller
     public function index(Request $request)
     {
         $pages = Page::with('language')->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($pages, (new PageTransformer)->setDefaultIncludes(['language']));
     }
 
     /**
      * Store a new page.
      * Store a new page with a `language_id`, `title`, `slug`, `page_content` and `is_active`.
+     *
      * @Post("/pages")
      * @Transaction({
      *      @Request({"language_id": 1, "title": "FAQ", "slug": "faq", "page_content": "Coming Soon", "is_avtive": 1}),
@@ -72,7 +70,7 @@ class AdminPagesController extends Controller
      */
     public function store(Request $request)
     {
-        $pages_arr = array();
+        $pages_arr = [];
         $pages_arr['pages'] = $request->all();
         $pages_arr['slug'] = $request->slug;
         $validator = Validator::make($pages_arr, Page::GetBulkAddValidationRule(), Page::GetValidationMessage());
@@ -82,21 +80,22 @@ class AdminPagesController extends Controller
                 if ($key == 'slug') {
                     continue;
                 }
-                $pages = Page::create(is_array($data) ? $data : array($data));
-                if (!$pages) {
+                $pages = Page::create(is_array($data) ? $data : [$data]);
+                if (! $pages) {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Page could not be updated. Please, try again.');
                 }
             }
+
             return response()->json(['Success' => 'Page has been added'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Page could not be updated. Please, try again.', $validator->errors());
         }
-
     }
 
     /**
      * Edit the specified page.
      * Edit the page with a `id`.
+     *
      * @Get("/pages/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -107,15 +106,17 @@ class AdminPagesController extends Controller
     public function edit($id)
     {
         $page = Page::with('language')->find($id);
-        if (!$page) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $page) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($page, (new PageTransformer)->setDefaultIncludes(['language']));
     }
 
     /**
      * Show the specified page.
      * Show the page with a `id`.     *
+     *
      * @Get("/pages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -126,15 +127,17 @@ class AdminPagesController extends Controller
     public function show($id)
     {
         $page = Page::with('language')->find($id);
-        if (!$page) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $page) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($page, (new PageTransformer)->setDefaultIncludes(['language']));
     }
 
     /**
      * Update the specified page.
      * Update the page with a `id`.
+     *
      * @Put("/pages/{id}")
      * @Transaction({
      *      @Request({"id": 1, "title": "FAQ", "slug": "faq", "page_content": "Coming Soon", "is_avtive": 1}),
@@ -154,6 +157,7 @@ class AdminPagesController extends Controller
         if ($validator->passes() && $page) {
             try {
                 $page->update($page_data);
+
                 return response()->json(['Success' => 'Page has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Page could not be updated. Please, try again.');
@@ -166,6 +170,7 @@ class AdminPagesController extends Controller
     /**
      * Delete the specified page.
      * Delete the page with a `id`.
+     *
      * @Delete("/pages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -176,11 +181,12 @@ class AdminPagesController extends Controller
     public function destroy($id)
     {
         $page = Page::find($id);
-        if (!$page) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $page) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $page->delete();
         }
+
         return response()->json(['Success' => 'Page deleted'], 200);
     }
 }

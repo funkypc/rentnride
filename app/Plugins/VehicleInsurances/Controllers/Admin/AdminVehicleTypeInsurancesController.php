@@ -5,32 +5,31 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleInsurances\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Plugins\VehicleInsurances\Model\VehicleTypeInsurance;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\VehicleInsurances\Transformers\VehicleTypeInsuranceTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\VehicleInsurances\Model\VehicleTypeInsurance;
+use Plugins\VehicleInsurances\Transformers\VehicleTypeInsuranceTransformer;
+use Validator;
 
 /**
  * VehicleTypeInsurances resource representation.
+ *
  * @Resource("Admin/AdminVehicleTypeInsurances")
  */
 class AdminVehicleTypeInsurancesController extends Controller
 {
-   /**
+    /**
      * AdminVehicleTypeInsurancesController constructor.
      */
     public function __construct()
@@ -56,12 +55,13 @@ class AdminVehicleTypeInsurancesController extends Controller
     public function index(Request $request)
     {
         $vehicle_type_insurances_count = config('constants.ConstPageLimit');
-        if($request->has('limit') && $request->limit == 'all') {
+        if ($request->has('limit') && $request->limit == 'all') {
             $vehicle_type_insurances_count = VehicleModel::count();
             $vehicle_type_insurances = VehicleTypeInsurance::filterByActiveRecord($request)->filterByRequest($request)->paginate($vehicle_type_insurances_count);
+
             return $this->response->paginator($vehicle_type_insurances, new VehicleTypeInsuranceTransformer);
-        }else{
-            $enabled_includes = array('vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type');
+        } else {
+            $enabled_includes = ['vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type'];
             $vehicle_type_insurances = VehicleTypeInsurance::with($enabled_includes)
                 ->select(DB::raw('vehicle_type_insurances.*'))
                 ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_type_insurances.vehicle_type_id')
@@ -69,14 +69,15 @@ class AdminVehicleTypeInsurancesController extends Controller
                 ->leftJoin(DB::raw('(select id,type from discount_types) as discount_type'), 'discount_type.id', '=', 'vehicle_type_insurances.discount_type_id')
                 ->leftJoin(DB::raw('(select id,name from duration_types) as duration_type'), 'duration_type.id', '=', 'vehicle_type_insurances.duration_type_id')
                 ->filterByRequest($request)->paginate($vehicle_type_insurances_count);
+
             return $this->response->paginator($vehicle_type_insurances, (new VehicleTypeInsuranceTransformer)->setDefaultIncludes($enabled_includes));
         }
-
     }
 
     /**
      * Edit the specified vehicle_type_insurance.
      * Edit the vehicle_type_insurance with a `id`.
+     *
      * @Get("/admin/vehicle_type_insurances/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -86,17 +87,19 @@ class AdminVehicleTypeInsurancesController extends Controller
      */
     public function edit($id)
     {
-        $enabled_includes = array('vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_insurance = VehicleTypeInsurance::with($enabled_includes)->find($id);
-        if (!$vehicle_type_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_insurance, (new VehicleTypeInsuranceTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Show the specified vehicle_type_insurance.
      * Show the vehicle_type_insurance with a `id`.
+     *
      * @Get("/admin/vehicle_type_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -106,17 +109,19 @@ class AdminVehicleTypeInsurancesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = array('vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_insurance = VehicleTypeInsurance::with($enabled_includes)->find($id);
-        if (!$vehicle_type_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type_insurance, (new VehicleTypeInsuranceTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Store a new vehicle_type_insurance.
      * Store a new vehicle_type_insurance with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_type_insurances")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "insurance_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -141,10 +146,10 @@ class AdminVehicleTypeInsurancesController extends Controller
         }
     }
 
-
     /**
      * Update the specified vehicle_type_insurance
      * Update the vehicle_type_insurance with a `id`.
+     *
      * @Put("/admin/vehicle_type_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "insurance_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -164,6 +169,7 @@ class AdminVehicleTypeInsurancesController extends Controller
         if ($validator->passes() && $vehicle_type_insurance) {
             try {
                 $vehicle_type_insurance->update($vehicle_type_insurance_data);
+
                 return response()->json(['Success' => 'VehicleTypeInsurance has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleTypeInsurance could not be updated. Please, try again.');
@@ -176,6 +182,7 @@ class AdminVehicleTypeInsurancesController extends Controller
     /**
      * Delete the specified vehicle_type_insurance.
      * Delete the vehicle_type_insurance with a `id`.
+     *
      * @Delete("/admin/vehicle_type_insurances/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -186,11 +193,12 @@ class AdminVehicleTypeInsurancesController extends Controller
     public function destroy($id)
     {
         $vehicle_type_insurance = VehicleTypeInsurance::find($id);
-        if (!$vehicle_type_insurance) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type_insurance) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_type_insurance->delete();
         }
+
         return response()->json(['Success' => 'VehicleTypeInsurance deleted'], 200);
     }
 }

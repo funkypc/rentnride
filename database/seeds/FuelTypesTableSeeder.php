@@ -5,18 +5,16 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Eloquent\Model;
 use Plugins\Vehicles\Model\FuelType;
-use Illuminate\Support\Facades\Hash;
 
 class FuelTypesTableSeeder extends Seeder
 {
@@ -29,23 +27,23 @@ class FuelTypesTableSeeder extends Seeder
     {
         FuelType::create([
             'id' => 1,
-            'name' => 'Petrol'
+            'name' => 'Petrol',
         ]);
         FuelType::create([
             'id' => 2,
-            'name' => 'Diesel'
+            'name' => 'Diesel',
         ]);
-		FuelType::create([
+        FuelType::create([
             'id' => 3,
-            'name' => 'CNG'
+            'name' => 'CNG',
         ]);
-		FuelType::create([
+        FuelType::create([
             'id' => 4,
-            'name' => 'LPG'
+            'name' => 'LPG',
         ]);
-		FuelType::create([
+        FuelType::create([
             'id' => 5,
-            'name' => 'Electric'
+            'name' => 'Electric',
         ]);
     }
 }

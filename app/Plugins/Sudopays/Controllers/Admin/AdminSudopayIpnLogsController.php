@@ -5,28 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Sudopays\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Sudopays\Model\SudopayIpnLog;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Sudopays\Transformers\SudopayIpnLogTransformer;
 
 /**
  * Money Transfer Accounts resource representation.
+ *
  * @Resource("Sudopays")
  */
 class AdminSudopayIpnLogsController extends Controller
@@ -53,17 +49,17 @@ class AdminSudopayIpnLogsController extends Controller
      *      @Parameter("page", type="integer", required=false, description="The page of results to view.", default=1),
      * })
      */
-
     public function index(Request $request)
     {
         $sudopay_ipn_logs = SudopayIpnLog::paginate(config('constants.ConstPageLimit'));
-        return $this->response->paginator($sudopay_ipn_logs, (new SudopayIpnLogTransformer));
 
+        return $this->response->paginator($sudopay_ipn_logs, (new SudopayIpnLogTransformer));
     }
 
     /**
      * Show the sudopay transaction log.
      * Show the sudopay transaction log with a `id`.
+     *
      * @Get("/sudopay_transaction_logs/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -74,9 +70,10 @@ class AdminSudopayIpnLogsController extends Controller
     public function show($id)
     {
         $sudopay_ipn_log = SudopayIpnLog::find($id);
-        if (!$sudopay_ipn_log) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $sudopay_ipn_log) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($sudopay_ipn_log, (new SudopayIpnLogTransformer));
     }
 }

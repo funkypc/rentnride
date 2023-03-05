@@ -5,30 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleRentals\Services;
 
 use App\Services\MailService;
 use App\Services\MessageService;
 use App\Services\TransactionService;
 use App\User;
-use Plugins\VehicleRentals\Model\VehicleRental;
-use Plugins\VehicleRentals\Model\VehicleRentalStatus;
-use Plugins\Vehicles\Services\VehicleService;
-use Plugins\Vehicles\Services\UnavailableVehicleService;
-use Plugins\Vehicles\Model\Vehicle;
+use Cache;
 use Carbon;
 use DB;
 use Log;
-use Cache;
+use Plugins\VehicleRentals\Model\VehicleRental;
+use Plugins\VehicleRentals\Model\VehicleRentalStatus;
 use Plugins\Vehicles\Model\UnavailableVehicle;
+use Plugins\Vehicles\Model\Vehicle;
+use Plugins\Vehicles\Services\UnavailableVehicleService;
+use Plugins\Vehicles\Services\VehicleService;
 
 class VehicleRentalService
 {
@@ -112,18 +112,20 @@ class VehicleRentalService
 
     /**
      * get last vehicle_rental record for admin dashboard
+     *
      * @param $request
      * @return VehicleRental created_at
      */
     public function getLastVehicleRental()
     {
         $vehicle_rental_details = VehicleRental::select('created_at')->where('item_user_status_id', '!=', config('constants.ConstItemUserStatus.PaymentPending'))->filterByVehicleRental(false)->orderBy('created_at', 'desc')->first();
-        return ($vehicle_rental_details) ? $vehicle_rental_details->created_at->diffForHumans() : "-";
+
+        return ($vehicle_rental_details) ? $vehicle_rental_details->created_at->diffForHumans() : '-';
     }
 
     /**
-     * @param        $request
-     * @param string $type
+     * @param    $request
+     * @param  string  $type
      * @return mixed
      */
     public function getVehicleRentalCount($request, $type = 'filter')
@@ -137,11 +139,13 @@ class VehicleRentalService
         } else {
             $booking_count = VehicleRental::filterByVehicleRental(false)->count();
         }
+
         return $booking_count;
     }
 
     /**
      * get the date filter
+     *
      * @return $check_date
      */
     public function getDateFilter($request)
@@ -150,19 +154,21 @@ class VehicleRentalService
         if ($request->has('filter')) {
             if ($request->filter == 'lastDays') {
                 $check_date = Carbon::now()->subDays(7);
-            } else if ($request->filter == 'lastWeeks') {
+            } elseif ($request->filter == 'lastWeeks') {
                 $check_date = Carbon::now()->subWeeks(4);
-            } else if ($request->filter == 'lastMonths') {
+            } elseif ($request->filter == 'lastMonths') {
                 $check_date = Carbon::now()->subMonths(3);
-            } else if ($request->filter == 'lastYears') {
+            } elseif ($request->filter == 'lastYears') {
                 $check_date = Carbon::now()->subYears(3);
             }
         }
+
         return $check_date;
     }
 
     /**
      * Send vehicle_rental mail
+     *
      * @param $vehicle_rental
      * @param $item
      */
@@ -171,25 +177,25 @@ class VehicleRentalService
         $from = config('constants.ConstUserIds.Admin');
         $host = $item->user;
         $booker = $vehicle_rental->user;
-        $default_content = array(
+        $default_content = [
             '##SITE_NAME##' => config('site.name'),
-            '##SITE_URL##' => '<a href="' . url('/') . '">' . url('/') . '<a>',
+            '##SITE_URL##' => '<a href="'.url('/').'">'.url('/').'<a>',
             '##FROM_EMAIL##' => config('site.from_email'),
             '##CONTACT_MAIL##' => config('site.contact_email'),
-            '##CONTACT_URL##' => '<a href="' . url('/#/contactus') . '">Contact Us</a>'
-        );
+            '##CONTACT_URL##' => '<a href="'.url('/#/contactus').'">Contact Us</a>',
+        ];
         //VehicleRental mail to booker
         $template = $this->mailService->getTemplate('New VehicleRental Message To Booker');
         if (config('vehicle_rental.is_auto_approve')) {
             $cancel_url = 'cancel';
         } else {
-            $cancel_url = '<a href="' . url('/#/vehicle_rentals/' . $vehicle_rental->id . '/cancel') . '">Cancel</a>';
+            $cancel_url = '<a href="'.url('/#/vehicle_rentals/'.$vehicle_rental->id.'/cancel').'">Cancel</a>';
         }
-        $item_link = '<a href="' . url('/#/vehicle/' . $item->id) . '/' . $item->slug . '">' . $item->name . '</a>';
-        $order_link = '<a href="' . url('/#/activity/' . $vehicle_rental->id . '/all') . '">' . $vehicle_rental->id . '</a>';
-        $host_link = '<a href="' . url('/#/user/' . $host->username) . '">' . $host->username . '</a>';
-        $booker_link = '<a href="' . url('/#/user/' . $booker->username) . '">' . $booker->username . '</a>';
-        $emailFindReplace = array(
+        $item_link = '<a href="'.url('/#/vehicle/'.$item->id).'/'.$item->slug.'">'.$item->name.'</a>';
+        $order_link = '<a href="'.url('/#/activity/'.$vehicle_rental->id.'/all').'">'.$vehicle_rental->id.'</a>';
+        $host_link = '<a href="'.url('/#/user/'.$host->username).'">'.$host->username.'</a>';
+        $booker_link = '<a href="'.url('/#/user/'.$booker->username).'">'.$booker->username.'</a>';
+        $emailFindReplace = [
             '##USERNAME##' => $booker->username,
             '##HOST_NAME##' => $host_link,
             '##ITEM_NAME##' => $item_link,
@@ -199,12 +205,12 @@ class VehicleRentalService
             '##FROM_DATE##' => $vehicle_rental->item_booking_start_date,
             '##HOST_CONTACT_LINK##' => $host_link,
             '##CANCEL_URL##' => $cancel_url,
-            '##ITEM_AUTO_EXPIRE_DATE##' => config('vehicle_rental.auto_expire')
-        );
+            '##ITEM_AUTO_EXPIRE_DATE##' => config('vehicle_rental.auto_expire'),
+        ];
         $this->mailService->sendMail($template, $emailFindReplace, $booker->email, $booker->username);
         //Save vehicle_rental message to booker
         $vehicle_rental_mail_template = array_merge($emailFindReplace, $default_content);
-        $message_content_arr = array();
+        $message_content_arr = [];
         $message_content_arr['message'] = strtr($template['body_content'], $vehicle_rental_mail_template);
         $message_content_arr['subject'] = strtr($template['subject'], $vehicle_rental_mail_template);
         $this->messageService->saveMessageContent($message_content_arr, $item->id, $vehicle_rental->id, $from, $vehicle_rental->user_id, config('constants.ConstItemUserStatus.PaymentPending'), 'VehicleRental');
@@ -214,18 +220,18 @@ class VehicleRentalService
         } else {
             $template = $this->mailService->getTemplate('New VehicleRental Message To Host');
         }
-        $emailFindReplace = array(
+        $emailFindReplace = [
             '##USERNAME##' => $host->username,
             '##BOOKER_USERNAME##' => $booker_link,
             '##ITEM_NAME##' => $item_link,
             '##ORDER_NO##' => $order_link,
-            '##ACCEPT_URL##' => '<a href="' . url('/#/vehicle_orders/' . $vehicle_rental->id . '/confirm') . '">Accept</a>',
-            '##REJECT_URL##' => '<a href="' . url('/#/vehicle_orders/' . $vehicle_rental->id . '/reject') . '">Reject</a>'
-        );
+            '##ACCEPT_URL##' => '<a href="'.url('/#/vehicle_orders/'.$vehicle_rental->id.'/confirm').'">Accept</a>',
+            '##REJECT_URL##' => '<a href="'.url('/#/vehicle_orders/'.$vehicle_rental->id.'/reject').'">Reject</a>',
+        ];
         $this->mailService->sendMail($template, $emailFindReplace, $host->email, $host->username);
         //Save vehicle_rental message to host
         $vehicle_rental_mail_template = array_merge($emailFindReplace, $default_content);
-        $message_content_arr = array();
+        $message_content_arr = [];
         $message_content_arr['message'] = strtr($template['body_content'], $vehicle_rental_mail_template);
         $message_content_arr['subject'] = strtr($template['subject'], $vehicle_rental_mail_template);
         $this->messageService->saveMessageContent($message_content_arr, $item->id, $vehicle_rental->id, $from, $item->user_id, config('constants.ConstItemUserStatus.PaymentPending'), 'VehicleRental');
@@ -233,15 +239,17 @@ class VehicleRentalService
 
     /**
      * return enable gateways
+     *
      * @return array
      */
     public function getEnableGateway()
     {
-        $enabledIncludes = array();
+        $enabledIncludes = [];
         $enabledIncludes[] = 'wallet_transaction_log';
         // check if plugin enabled and include
         (isPluginEnabled('Paypal')) ? $enabledIncludes[] = 'paypal_transaction_log' : '';
         (isPluginEnabled('Sudopays')) ? $enabledIncludes[] = 'sudopay_transaction_logs' : '';
+
         return $enabledIncludes;
     }
 
@@ -253,31 +261,31 @@ class VehicleRentalService
     {
         $host = $item->user;
         $booker = $vehicle_rental->user;
-        $item_link = '<a href="' . url('/#/vehicle/' . $item->id) . '/' . $item->slug . '">' . $item->name . '</a>';
-        $order_link = '<a href="' . url('/#/activity/' . $vehicle_rental->id . '/all') . '">' . $vehicle_rental->id . '</a>';
-        $host_link = '<a href="' . url('/#/user/' . $host->username) . '">' . $host->username . '</a>';
-        $site_link = '<a href="' . url('/') . '">' . url('/') . '<a>';
-        $default_content = array(
+        $item_link = '<a href="'.url('/#/vehicle/'.$item->id).'/'.$item->slug.'">'.$item->name.'</a>';
+        $order_link = '<a href="'.url('/#/activity/'.$vehicle_rental->id.'/all').'">'.$vehicle_rental->id.'</a>';
+        $host_link = '<a href="'.url('/#/user/'.$host->username).'">'.$host->username.'</a>';
+        $site_link = '<a href="'.url('/').'">'.url('/').'<a>';
+        $default_content = [
             '##SITE_NAME##' => config('site.name'),
             '##SITE_URL##' => $site_link,
             '##FROM_EMAIL##' => config('site.from_email'),
-            '##CONTACT_MAIL##' => config('site.contact_email')
-        );
+            '##CONTACT_MAIL##' => config('site.contact_email'),
+        ];
         //VehicleRental mail to booker
         $template = $this->mailService->getTemplate('Accepted VehicleRental Message To Booker');
-        $emailFindReplace = array(
+        $emailFindReplace = [
             '##USERNAME##' => $booker->username,
             '##ITEM_NAME##' => $item_link,
-            '##HOST_CONTACT_LINK##' => $host_link
-        );
+            '##HOST_CONTACT_LINK##' => $host_link,
+        ];
         $this->mailService->sendMail($template, $emailFindReplace, $booker->email, $booker->username);
         //VehicleRental mail to host
         $template = $this->mailService->getTemplate('Accepted VehicleRental Message To Host');
-        $emailFindReplace = array(
+        $emailFindReplace = [
             '##USERNAME##' => $host->username,
             '##ITEM_NAME##' => $item_link,
-            '##ORDER_NO##' => $order_link
-        );
+            '##ORDER_NO##' => $order_link,
+        ];
         $this->mailService->sendMail($template, $emailFindReplace, $host->email, $host->username);
     }
 
@@ -292,19 +300,19 @@ class VehicleRentalService
         $from = config('constants.ConstUserIds.Admin');
         $host = $item->user;
         $booker = $vehicle_rental->user;
-        $item_link = '<a href="' . Cache::get('site_url_for_shell').'/#/vehicle/' . $item->id . '/' . $item->slug . '">' . $item->name . '</a>';
-        $order_link = '<a href="' . Cache::get('site_url_for_shell').'/#/activity/' . $vehicle_rental->id . '/all' . '">' . $vehicle_rental->id . '</a>';
-        $site_link = '<a href="' . Cache::get('site_url_for_shell') . '">' . Cache::get('site_url_for_shell') . '<a>';
-        $default_content = array(
+        $item_link = '<a href="'.Cache::get('site_url_for_shell').'/#/vehicle/'.$item->id.'/'.$item->slug.'">'.$item->name.'</a>';
+        $order_link = '<a href="'.Cache::get('site_url_for_shell').'/#/activity/'.$vehicle_rental->id.'/all'.'">'.$vehicle_rental->id.'</a>';
+        $site_link = '<a href="'.Cache::get('site_url_for_shell').'">'.Cache::get('site_url_for_shell').'<a>';
+        $default_content = [
             '##SITE_NAME##' => config('site.name'),
             '##SITE_URL##' => $site_link,
             '##FROM_EMAIL##' => config('site.from_email'),
-            '##CONTACT_MAIL##' => config('site.contact_email')
-        );
+            '##CONTACT_MAIL##' => config('site.contact_email'),
+        ];
         $status_arr = [$previous_status, $current_status];
         $status = VehicleRentalStatus::whereIn('id', $status_arr)->pluck('name', 'id')->all();
         $template = $this->mailService->getTemplate('Item User Change Status Alert');
-        $emailFindReplace = array(
+        $emailFindReplace = [
             '##SITE_NAME##' => config('site.name'),
             '##SITE_URL##' => $site_link,
             '##ITEM##' => $item->name,
@@ -313,23 +321,22 @@ class VehicleRentalService
             '##ITEM_NAME##' => $item_link,
             '##ITEM_URL##' => $item_link,
             '##ORDER_NO##' => $order_link,
-        );
+        ];
         //Status change mail and message to booker
         $this->mailService->sendMail($template, $emailFindReplace, $booker->email, $booker->username);
         $vehicle_rental_mail_template = array_merge($emailFindReplace, $default_content);
-        $message_content_arr = array();
+        $message_content_arr = [];
         $message_content_arr['message'] = strtr($template['body_content'], $vehicle_rental_mail_template);
         $message_content_arr['subject'] = strtr($template['subject'], $vehicle_rental_mail_template);
         $this->messageService->saveMessageContent($message_content_arr, $item->id, $vehicle_rental->id, $from, $vehicle_rental->user_id, $current_status, 'VehicleRental');
         //Status change mail and message to host
         $this->mailService->sendMail($template, $emailFindReplace, $host->email, $host->username);
         $vehicle_rental_mail_template = array_merge($emailFindReplace, $default_content);
-        $message_content_arr = array();
+        $message_content_arr = [];
         $message_content_arr['message'] = strtr($template['body_content'], $vehicle_rental_mail_template);
         $message_content_arr['subject'] = strtr($template['subject'], $vehicle_rental_mail_template);
         $this->messageService->saveMessageContent($message_content_arr, $item->id, $vehicle_rental->id, $from, $item->user_id, $current_status, 'VehicleRental');
     }
-
 
     /**
      *  Update VehicleRental count in item user status table
@@ -346,7 +353,7 @@ class VehicleRentalService
             VehicleRentalStatus::where('id', '=', $key)->update(['booking_count' => $value]);
         }
         foreach ($vehicle_rental_status as $value) {
-            if (!array_key_exists($value->id, $status_count)) {
+            if (! array_key_exists($value->id, $status_count)) {
                 VehicleRentalStatus::where('id', '=', $value->id)->update(['booking_count' => 0]);
             }
         }
@@ -356,7 +363,7 @@ class VehicleRentalService
     {
         $vehicle = Vehicle::find($vehicle_id);
         if ($vehicle) {
-            $data['vehicle_rental_count'] = VehicleRental::where('item_userable_type', 'MorphVehicle')->where('item_userable_id', $vehicle_id)->whereNotIn('item_user_status_id', array(config('ConstItemUserStatus.PaymentPending', 'ConstItemUserStatus.PrivateConversation')))->count();
+            $data['vehicle_rental_count'] = VehicleRental::where('item_userable_type', 'MorphVehicle')->where('item_userable_id', $vehicle_id)->whereNotIn('item_user_status_id', [config('ConstItemUserStatus.PaymentPending', 'ConstItemUserStatus.PrivateConversation')])->count();
             $vehicle->update($data);
         }
     }
@@ -365,16 +372,16 @@ class VehicleRentalService
     {
         $user = User::find($user_id);
         if ($user) {
-            $data['vehicle_rental_count'] = VehicleRental::where('user_id', $user_id)->whereNotIn('item_user_status_id', array(config('ConstItemUserStatus.PaymentPending', 'ConstItemUserStatus.PrivateConversation')))->count();
+            $data['vehicle_rental_count'] = VehicleRental::where('user_id', $user_id)->whereNotIn('item_user_status_id', [config('ConstItemUserStatus.PaymentPending', 'ConstItemUserStatus.PrivateConversation')])->count();
             $user->update($data);
         }
     }
 
     public function getBookAndOrderCount($user_id)
     {
-        $data = array();
-        $data['booking'] = array();
-        $data['host'] = array();
+        $data = [];
+        $data['booking'] = [];
+        $data['host'] = [];
         if ($user_id) {
             // get status
             $vehicle_rental_status = VehicleRentalStatus::where('id', '!=', config('constants.ConstItemUserStatus.PrivateConversation'))->orderBy('display_order', 'ASC')->select('id', 'name', 'slug')->get();
@@ -400,20 +407,20 @@ class VehicleRentalService
             // response process
             $total_booking_count = 0;
             $total_order_count = 0;
-            if (!isset($status_count[config('constants.ConstItemUserStatus.WaitingForReview')])) {
+            if (! isset($status_count[config('constants.ConstItemUserStatus.WaitingForReview')])) {
                 $status_count[config('constants.ConstItemUserStatus.WaitingForReview')] = 0;
             }
-            if (!isset($status_count[config('constants.ConstItemUserStatus.HostReviewed')])) {
+            if (! isset($status_count[config('constants.ConstItemUserStatus.HostReviewed')])) {
                 $status_count[config('constants.ConstItemUserStatus.HostReviewed')] = 0;
             }
             $status_count[config('constants.ConstItemUserStatus.WaitingForReview')] = $status_count[config('constants.ConstItemUserStatus.WaitingForReview')] + $status_count[config('constants.ConstItemUserStatus.HostReviewed')];
-            if (!isset($status_count[config('constants.ConstItemUserStatus.Completed')])) {
+            if (! isset($status_count[config('constants.ConstItemUserStatus.Completed')])) {
                 $status_count[config('constants.ConstItemUserStatus.Completed')] = 0;
             }
-            if (!isset($status_count[config('constants.ConstItemUserStatus.BookerReviewed')])) {
+            if (! isset($status_count[config('constants.ConstItemUserStatus.BookerReviewed')])) {
                 $status_count[config('constants.ConstItemUserStatus.BookerReviewed')] = 0;
             }
-            if (!isset($status_count[config('constants.ConstItemUserStatus.WaitingForPaymentCleared')])) {
+            if (! isset($status_count[config('constants.ConstItemUserStatus.WaitingForPaymentCleared')])) {
                 $status_count[config('constants.ConstItemUserStatus.WaitingForPaymentCleared')] = 0;
             }
             $status_count[config('constants.ConstItemUserStatus.Completed')] = $status_count[config('constants.ConstItemUserStatus.Completed')] + $status_count[config('constants.ConstItemUserStatus.BookerReviewed')] + +$status_count[config('constants.ConstItemUserStatus.WaitingForPaymentCleared')];
@@ -421,7 +428,7 @@ class VehicleRentalService
                 $tmp = $status;
                 $tmp1 = $status;
                 if ($status['id'] != config('constants.ConstItemUserStatus.CancelledByAdmin')) {
-                    if (!in_array($status['id'], array(config('constants.ConstItemUserStatus.HostReviewed'), config('constants.ConstItemUserStatus.BookerReviewed'), config('constants.ConstItemUserStatus.WaitingForPaymentCleared')))) {
+                    if (! in_array($status['id'], [config('constants.ConstItemUserStatus.HostReviewed'), config('constants.ConstItemUserStatus.BookerReviewed'), config('constants.ConstItemUserStatus.WaitingForPaymentCleared')])) {
                         if (isset($status_count[$status['id']])) {
                             $tmp['booking_count'] = $status_count[$status['id']];
                         } else {
@@ -430,7 +437,7 @@ class VehicleRentalService
                         $total_booking_count = $total_booking_count + $tmp['booking_count'];
                         $data['booking'][] = $tmp;
                     }
-                    if(!in_array($status['id'], array(config('constants.ConstItemUserStatus.PaymentPending')))) {
+                    if (! in_array($status['id'], [config('constants.ConstItemUserStatus.PaymentPending')])) {
                         if (isset($host_status_count[$status['id']])) {
                             $tmp1['host_count'] = $host_status_count[$status['id']];
                         } else {
@@ -441,21 +448,22 @@ class VehicleRentalService
                     }
                 }
             }
-            $data['booking'] = array_merge(array(array(
+            $data['booking'] = array_merge([[
                 'id' => 0,
                 'name' => 'All',
                 'slug' => 'all',
-                'booking_count' => $total_booking_count
-            )), $data['booking']);
-            $data['host'] = array_merge(array(array(
+                'booking_count' => $total_booking_count,
+            ]], $data['booking']);
+            $data['host'] = array_merge([[
                 'id' => 0,
                 'name' => 'All',
                 'slug' => 'all',
-                'host_count' => $total_order_count
-            )), $data['host']);
+                'host_count' => $total_order_count,
+            ]], $data['host']);
             $data['total_booking_count'] = $total_booking_count;
             $data['total_order_count'] = $total_order_count;
         }
+
         return $data;
     }
 
@@ -495,7 +503,7 @@ class VehicleRentalService
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
                 $item = $vehicle_rental->item_userable;
-                if (!is_null($item)) {
+                if (! is_null($item)) {
                     $item_user_data['id'] = $vehicle_rental->id;
                     $item_user_data['item_user_status_id'] = config('constants.ConstItemUserStatus.WaitingForPaymentCleared');
                     $item_user_data['status_updated_at'] = Carbon::now()->toDateTimeString();
@@ -504,7 +512,6 @@ class VehicleRentalService
                         $this->updateItemUserCount();
                         //Send Mail to Booker and save message contents and messages
                         $this->changeStatusMail($vehicle_rental, $item, config('constants.ConstItemUserStatus.WaitingForReview'), config('constants.ConstItemUserStatus.WaitingForPaymentCleared'));
-
                     } catch (\Exception $e) {
                         throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed');
                     }
@@ -527,11 +534,10 @@ class VehicleRentalService
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
                 $item = $vehicle_rental->item_userable;
-                if (!is_null($item)) {
+                if (! is_null($item)) {
                     $item_user_data['id'] = $vehicle_rental->id;
                     $item_user_data['item_user_status_id'] = config('constants.ConstItemUserStatus.Completed');
                     $item_user_data['status_updated_at'] = Carbon::now()->toDateTimeString();
-
                 }
                 try {
                     $vehicle_rental->update($item_user_data);
@@ -558,7 +564,7 @@ class VehicleRentalService
             ->where('item_booking_start_date', '<', $expire_date)->get();
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
-                if (!is_null($vehicle_rental->item_userable)) {
+                if (! is_null($vehicle_rental->item_userable)) {
                     $item = $vehicle_rental->item_userable;
                     $item_user_data['id'] = $vehicle_rental->id;
                     $item_user_data['item_user_status_id'] = config('constants.ConstItemUserStatus.Expired');
@@ -569,12 +575,11 @@ class VehicleRentalService
                         //Send Mail to Booker and save message contents and messages
                         $this->changeStatusMail($vehicle_rental, $item, config('constants.ConstItemUserStatus.PaymentPending'), config('constants.ConstItemUserStatus.Expired'));
                     } catch (\Exception $e) {
-                        throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed', array($e->getMessage()));
+                        throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed', [$e->getMessage()]);
                     }
                 }
             }
         }
-
     }
 
     /**
@@ -592,12 +597,12 @@ class VehicleRentalService
             ->where('status_updated_at', '<=', $expire_date)->get();
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
-                if (!is_null($vehicle_rental->item_userable) && !is_null($vehicle_rental->user)) {
+                if (! is_null($vehicle_rental->item_userable) && ! is_null($vehicle_rental->user)) {
                     try {
                         $error_msg = '';
                         $is_payment_transaction = false;
-                        $transaction_log = array();
-                        if (isPluginEnabled('Paypal') && !is_null($vehicle_rental->paypal_transaction_log)) {
+                        $transaction_log = [];
+                        if (isPluginEnabled('Paypal') && ! is_null($vehicle_rental->paypal_transaction_log)) {
                             $gateway_id = config('constants.ConstPaymentGateways.PayPal');
                             if ($vehicle_rental->paypal_transaction_log->payment_type == 'authorized') {
                                 $paypal = new \Plugins\Paypal\Services\PayPalService();
@@ -608,48 +613,48 @@ class VehicleRentalService
                                     if ($transaction_log['payment_type'] == 'voided') {
                                         $is_payment_transaction = true;
                                     }
-                                } else if (is_array($voidPayment) && $voidPayment['error']) {
+                                } elseif (is_array($voidPayment) && $voidPayment['error']) {
                                     if ($voidPayment['error']['message']) {
                                         $error_msg = $voidPayment['error']['message'];
-                                    } else if($voidPayment['error_message']) {
+                                    } elseif ($voidPayment['error_message']) {
                                         $error_msg = $voidPayment['error_message'];
                                     }
                                 }
                                 $vehicle_rental->paypal_transaction_log->update($transaction_log);
                             }
                         }
-                        if (isPluginEnabled('Sudopays') && !is_null($vehicle_rental->sudopay_transaction_logs)) {
+                        if (isPluginEnabled('Sudopays') && ! is_null($vehicle_rental->sudopay_transaction_logs)) {
                             $gateway_id = config('constants.ConstPaymentGateways.SudoPay');
                             $sudopayService = new \Plugins\Sudopays\Services\SudopayService();
                             if ($vehicle_rental->sudopay_transaction_logs->status == 'Authorized') {
                                 $voidPayment = $sudopayService->voidPayment($vehicle_rental->sudopay_transaction_logs);
-                                if (!empty($voidPayment) && ($voidPayment['status'] == 'Voided' || $voidPayment['status'] == 'Canceled')) {
+                                if (! empty($voidPayment) && ($voidPayment['status'] == 'Voided' || $voidPayment['status'] == 'Canceled')) {
                                     $transaction_log['status'] = $voidPayment['status'];
                                     $is_payment_transaction = true;
                                     $vehicle_rental->sudopay_transaction_logs->update($transaction_log);
-                                } else if (is_array($voidPayment) && $voidPayment['error']) {
+                                } elseif (is_array($voidPayment) && $voidPayment['error']) {
                                     if ($voidPayment['error']['message']) {
                                         $error_msg = $voidPayment['error']['message'];
-                                    } else if($voidPayment['error_message']) {
+                                    } elseif ($voidPayment['error_message']) {
                                         $error_msg = $voidPayment['error_message'];
                                     }
                                 }
                             } elseif ($vehicle_rental->sudopay_transaction_logs->status == 'Captured') {
                                 $refundPayment = $sudopayService->refundPayment($vehicle_rental->sudopay_transaction_logs);
-                                if (!empty($refundPayment) && $refundPayment['status'] == 'Refunded') {
+                                if (! empty($refundPayment) && $refundPayment['status'] == 'Refunded') {
                                     $transaction_log['status'] = $refundPayment['status'];
                                     $is_payment_transaction = true;
                                     $vehicle_rental->sudopay_transaction_logs->update($transaction_log);
-                                } else if (is_array($refundPayment) && $refundPayment['error']) {
+                                } elseif (is_array($refundPayment) && $refundPayment['error']) {
                                     if ($refundPayment['error']['message']) {
                                         $error_msg = $refundPayment['error']['message'];
-                                    } else if($refundPayment['error_message']) {
+                                    } elseif ($refundPayment['error_message']) {
                                         $error_msg = $refundPayment['error_message'];
                                     }
                                 }
                             }
                         }
-                        if (!is_null($vehicle_rental->wallet_transaction_log)) {
+                        if (! is_null($vehicle_rental->wallet_transaction_log)) {
                             $gateway_id = config('constants.ConstPaymentGateways.Wallet');
                             if ($vehicle_rental->wallet_transaction_log->payment_type == 'Captured') {
                                 $walletService = new \App\Services\WalletService();
@@ -669,7 +674,7 @@ class VehicleRentalService
                             Log::info($error_msg);
                         }
                     } catch (\Exception $e) {
-                        throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed', array($e->getMessage()));
+                        throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed', [$e->getMessage()]);
                     }
                 }
             }
@@ -680,7 +685,7 @@ class VehicleRentalService
     {
         $vehicle_rental = VehicleRental::find($vehicle_rental_id);
         $item = $vehicle_rental->item_userable;
-        if (!is_null($item) && $vehicle_rental->item_user_status_id == config('constants.ConstItemUserStatus.PaymentPending')) {
+        if (! is_null($item) && $vehicle_rental->item_user_status_id == config('constants.ConstItemUserStatus.PaymentPending')) {
             $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.WaitingForAcceptance');
             if (config('vehicle_rental.is_auto_approve')) {
                 $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.Confirmed');
@@ -721,7 +726,7 @@ class VehicleRentalService
     public function updateVoid($vehicle_rental_id, $gateway_id)
     {
         $vehicle_rental = VehicleRental::find($vehicle_rental_id);
-        if ($vehicle_rental && !is_null($vehicle_rental->item_userable)) {
+        if ($vehicle_rental && ! is_null($vehicle_rental->item_userable)) {
             if ($vehicle_rental['item_user_status_id'] == config('constants.ConstItemUserStatus.WaitingForAcceptance')) {
                 $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.CancelledByAdmin');
                 $vehicle_rental_data['status_updated_at'] = Carbon::now()->toDateTimeString();
@@ -739,7 +744,7 @@ class VehicleRentalService
     public function updateRefund($vehicle_rental_id, $gateway_id)
     {
         $vehicle_rental = VehicleRental::find($vehicle_rental_id);
-        if ($vehicle_rental && !is_null($vehicle_rental->item_userable)) {
+        if ($vehicle_rental && ! is_null($vehicle_rental->item_userable)) {
             if ($vehicle_rental['item_user_status_id'] == config('constants.ConstItemUserStatus.Confirmed')) {
                 $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.CancelledByAdmin');
                 $vehicle_rental_data['status_updated_at'] = Carbon::now()->toDateTimeString();
@@ -761,7 +766,7 @@ class VehicleRentalService
             ->where('item_booking_start_date', '<', $expire_date)->get();
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
-                if (!is_null($vehicle_rental->item_userable)) {
+                if (! is_null($vehicle_rental->item_userable)) {
                     $item_user_data['id'] = $vehicle_rental->id;
                     $item_user_data['item_user_status_id'] = config('constants.ConstItemUserStatus.WaitingForReview');
                     $item_user_data['status_updated_at'] = Carbon::now()->toDateTimeString();
@@ -771,7 +776,6 @@ class VehicleRentalService
                         //Send Mail to Booker and save message contents and messages
 
                         $this->changeStatusMail($vehicle_rental, $vehicle_rental->item_userable, config('constants.ConstItemUserStatus.Confirmed'), config('constants.ConstItemUserStatus.WaitingForReview'));
-
                     } catch (\Exception $e) {
                         throw new \Dingo\Api\Exception\StoreResourceFailedException('Status could not be changed');
                     }
@@ -782,6 +786,7 @@ class VehicleRentalService
 
     /**
      * Update dispute status in item users
+     *
      * @param $id
      */
     public function updateDispute($id)
@@ -792,13 +797,14 @@ class VehicleRentalService
 
     /**
      * Save the checkin status
+     *
      * @param $vehicle_rental
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function saveCheckInDetail($vehicle_rental)
     {
-        if (!$vehicle_rental) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         try {
             $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.Attended');
@@ -808,21 +814,23 @@ class VehicleRentalService
             $this->changeStatusMail($vehicle_rental, $vehicle_rental->item_userable, config('constants.ConstItemUserStatus.Confirmed'), config('constants.ConstItemUserStatus.Attended'));
             // insert record into late_payment_detail table
             $this->vehicleRentalLatePaymentDetailService->addRentalDetail($vehicle_rental);
+
             return response()->json(['Success' => 'VehicleRental has been checked-in successfully'], 200);
         } catch (\Exception $e) {
-            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', array($e->getMessage()));
+            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', [$e->getMessage()]);
         }
     }
 
     /**
      * Save the checkout status and calcualte late payment fee if any
+     *
      * @param $vehicle_rental
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function saveCheckoutDetail($vehicle_rental, $claim_request_amount)
     {
-        if (!$vehicle_rental) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         try {
             // calculate late payment charge
@@ -842,9 +850,10 @@ class VehicleRentalService
             $this->changeStatusMail($vehicle_rental, $vehicle_rental->item_userable, config('constants.ConstItemUserStatus.Attended'), config('constants.ConstItemUserStatus.WaitingForReview'));
             // insert record into late_payment_detail table
             $this->vehicleRentalLatePaymentDetailService->updateRentalDetail($vehicle_rental, $late_fee_details['total_late_hours']);
+
             return response()->json(['Success' => 'VehicleRental has been checked-out successfully'], 200);
         } catch (\Exception $e) {
-            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', array($e->getMessage()));
+            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', [$e->getMessage()]);
         }
     }
 
@@ -863,6 +872,7 @@ class VehicleRentalService
 
     /**
      * this cfunction makes all transactions on complete status
+     *
      * @param $vehicle_rental
      */
     public function completeTransactionAmounts($vehicle_rental, $is_from_dispute = 0)
@@ -870,7 +880,7 @@ class VehicleRentalService
         $walletService = new \App\Services\WalletService();
 
         // transaction for booker
-        if ($vehicle_rental->booker_amount > 0 && !$is_from_dispute) {
+        if ($vehicle_rental->booker_amount > 0 && ! $is_from_dispute) {
             $walletService->updateWalletForUser($vehicle_rental->user_id, $vehicle_rental->booker_amount, $vehicle_rental->id, 'VehicleRentals');
             $this->transactionService->log(config('constants.ConstUserIds.Admin'), $vehicle_rental->user_id, config('constants.ConstTransactionTypes.SecuirtyDepositAmountRefundedToBooker'), $vehicle_rental->booker_amount, $vehicle_rental->id, 'VehicleRentals', config('constants.ConstPaymentGateways.Wallet'));
         }
@@ -906,7 +916,7 @@ class VehicleRentalService
             ->where('item_booking_end_date', '<', $expire_date)->get();
         if ($vehicle_rentals) {
             foreach ($vehicle_rentals as $vehicle_rental) {
-                if (!is_null($vehicle_rental->item_userable)) {
+                if (! is_null($vehicle_rental->item_userable)) {
                     $item_user_data['id'] = $vehicle_rental->id;
                     $item_user_data['item_user_status_id'] = config('constants.ConstItemUserStatus.Completed');
                     $item_user_data['status_updated_at'] = Carbon::now()->toDateTimeString();

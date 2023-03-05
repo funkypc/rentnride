@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Services;
 
 use Plugins\Vehicles\Model\FuelType;
@@ -32,9 +32,10 @@ class FuelTypeService
     public function getFuelTypeList()
     {
         $feul_type_list = FuelType::pluck('id', 'name');
-        foreach($feul_type_list as $value=>$key) {
-            $feul_type_list[$value] = (integer)$key;
+        foreach ($feul_type_list as $value => $key) {
+            $feul_type_list[$value] = (int) $key;
         }
+
         return $feul_type_list;
     }
 }

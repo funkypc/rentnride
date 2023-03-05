@@ -5,25 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\CurrencyConversions\Model;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class CurrencyConversionHistory extends Model
 {
     /**
      * @var string
      */
-    protected $table = "currency_conversion_histories";
+    protected $table = 'currency_conversion_histories';
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,7 @@ class CurrencyConversionHistory extends Model
      * @var array
      */
     protected $fillable = [
-        'currency_conversion_id', 'rate_before_change', 'rate'
+        'currency_conversion_id', 'rate_before_change', 'rate',
     ];
 
     /**
@@ -43,8 +43,8 @@ class CurrencyConversionHistory extends Model
     }
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -52,18 +52,18 @@ class CurrencyConversionHistory extends Model
         $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'desc'));
         if ($request->has('q')) {
             $query->orWhereHas('currency_conversion.Currency', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
             $query->orWhereHas('currency_conversion.ConvertedCurrency', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
         }
         if ($request->has('start_date')) {
-            $start_date = date("Y-m-d H:i:s", strtotime($request->input('start_date')));
+            $start_date = date('Y-m-d H:i:s', strtotime($request->input('start_date')));
             $query->where('created_at', '>=', $start_date);
         }
         if ($request->has('end_date')) {
-            $end_date = date("Y-m-d H:i:s", strtotime($request->input('end_date')));
+            $end_date = date('Y-m-d H:i:s', strtotime($request->input('end_date')));
             $query->where('created_at', '<=', $end_date);
         }
         if ($request->has('from_currency')) {
@@ -76,6 +76,7 @@ class CurrencyConversionHistory extends Model
                 $q->where('converted_currency_id', '=', $request->input('to_currency'));
             });
         }
+
         return $query;
     }
 
@@ -87,7 +88,7 @@ class CurrencyConversionHistory extends Model
         return [
             'currency_conversion_id' => 'required|integer|exists:currency_conversions,id',
             'rate_before_change' => 'required|numeric',
-            'rate' => 'required|numeric'
+            'rate' => 'required|numeric',
         ];
     }
 

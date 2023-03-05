@@ -5,32 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
 use App\Currency;
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
 use App\Setting;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use File;
-use Cache;
 use App\Transformers\SettingTransformer;
-
+use Cache;
+use File;
+use Illuminate\Http\Request;
+use Validator;
 
 /**
  * Settings resource representation.
+ *
  * @Resource("Admin/AdminSettings")
  */
 class AdminSettingsController extends Controller
@@ -42,17 +38,18 @@ class AdminSettingsController extends Controller
     {
         // check whether the user is logged in or not.
         $this->middleware('auth:api', ['except' => [
-            'show'
+            'show',
         ]]);
         // Check the logged user role.
         $this->middleware('role', ['except' => [
-            'show'
+            'show',
         ]]);
     }
 
     /**
      * Show all settings
      * Get a JSON representation of all the settings.
+     *
      * @Get("/settings?sort={sort}&sortby={sortby}&page={page}&setting_category_id={id}")
      * @Parameters({
      *      @Parameter("sort", type="string", required=false, description="Sort the settings list by sort ley.", default=null),
@@ -64,12 +61,14 @@ class AdminSettingsController extends Controller
     public function index(Request $request)
     {
         $settings = Setting::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($settings, new SettingTransformer);
     }
 
     /**
      * Show all settings.
      * Show the settings with a `id`.
+     *
      * @Get("/setting_categories/{id}/settings")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -80,15 +79,17 @@ class AdminSettingsController extends Controller
     public function settings($id)
     {
         $setting = Setting::where('setting_category_id', '=', $id)->get();
-        if (!$setting) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $setting) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($setting, (new SettingTransformer)->setDefaultIncludes(['setting_category']));
     }
 
     /**
      * Edit the specified setting.
      * Edit the setting with a `id`.
+     *
      * @Get("/settings/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -99,15 +100,17 @@ class AdminSettingsController extends Controller
     public function edit($id)
     {
         $setting = Setting::find($id);
-        if (!$setting) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $setting) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($setting, (new SettingTransformer)->setDefaultIncludes(['setting_category']));
     }
 
     /**
      * Update the specified setting.
      * Update the setting with a `id`.
+     *
      * @Put("/settings/{id}")
      * @Transaction({
      *      @Request({"id": 1, "value": 1}),
@@ -123,9 +126,9 @@ class AdminSettingsController extends Controller
         if ($request->has('id')) {
             $setting = Setting::find($id);
             $setting = ($request->id != $id) ? false : $setting;
-            if($setting && $setting->name == 'site.currency_code'){
+            if ($setting && $setting->name == 'site.currency_code') {
                 $currency = Currency::where('code', $setting->value)->where('is_active', 1)->first();
-                if(!$currency){
+                if (! $currency) {
                     $setting = false;
                 }
             }
@@ -134,6 +137,7 @@ class AdminSettingsController extends Controller
             try {
                 $setting->update($setting_data);
                 Cache::forget('settings_data');
+
                 return response()->json(['Success' => 'Setting has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Setting could not be updated. Please, try again.');
@@ -146,6 +150,7 @@ class AdminSettingsController extends Controller
     /**
      * Show the specified setting details.
      * Show the setting detail with a `name`.
+     *
      * @Get("/settings/{name}/show")
      * @Transaction({
      *      @Request({"name": "site.version"}),
@@ -156,14 +161,16 @@ class AdminSettingsController extends Controller
     public function show($name)
     {
         $setting = Setting::where('name', '=', $name)->get();
-        if (!$setting) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $setting) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($setting, (new SettingTransformer)->setDefaultIncludes(['setting_category']));
     }
 
     /**
      * List out the all plugin and Setting to enable plugin list
+     *
      * @Get("/plugins")
      * @Transaction({
      *      @Request({"name": "site.version"}),
@@ -173,23 +180,23 @@ class AdminSettingsController extends Controller
     public function getPlugin()
     {
         $path = app()->basePath('app/Plugins/');
-        $directories = array();
-        $directories = glob($path . '/*', GLOB_ONLYDIR);
-        $available_plugin = array();
-        $available_plugin_details = array();
-        $pluginArray = array();
+        $directories = [];
+        $directories = glob($path.'/*', GLOB_ONLYDIR);
+        $available_plugin = [];
+        $available_plugin_details = [];
+        $pluginArray = [];
 
-        $pluginArray['Vehicles'] = array();
-        $pluginArray['VehicleRentals'] = array();
-        $pluginArray['PaymentGateways'] = array();
+        $pluginArray['Vehicles'] = [];
+        $pluginArray['VehicleRentals'] = [];
+        $pluginArray['PaymentGateways'] = [];
         foreach ($directories as $key => $val) {
-            $json = file_get_contents($val . '/' . 'plugin.json');
+            $json = file_get_contents($val.'/'.'plugin.json');
             $data = json_decode($json, true);
 
-            if (!empty($data['dependencies'])) {
+            if (! empty($data['dependencies'])) {
                 $pluginArray[$data['dependencies']]['sub_plugins'][$data['name']] = $data;
             } else {
-                if (!isset($pluginArray[$data['name']])) {
+                if (! isset($pluginArray[$data['name']])) {
                     $pluginArray[] = $data;
                 } else {
                     $pluginArray[$data['name']]['main'] = $data;
@@ -197,33 +204,33 @@ class AdminSettingsController extends Controller
             }
         }
         // Creating Payment Gateway plugin
-        $paymentGatewayPlugins = array();
-        if (!empty($pluginArray['PaymentGateways'])) {
+        $paymentGatewayPlugins = [];
+        if (! empty($pluginArray['PaymentGateways'])) {
             $paymentGatewayPlugins = $pluginArray['PaymentGateways'];
         }
         unset($pluginArray['PaymentGateways']);
         // Creating Vehicles Gateway plugin
 
-        $vehicleRentalRelatedPlugins = array();
-        $itemRelatedPlugins = array();
-        if (!empty($pluginArray['Vehicles'])) {
+        $vehicleRentalRelatedPlugins = [];
+        $itemRelatedPlugins = [];
+        if (! empty($pluginArray['Vehicles'])) {
             $itemRelatedPlugins = $pluginArray['Vehicles'];
-            if (!empty($pluginArray['VehicleRentals'])) {
+            if (! empty($pluginArray['VehicleRentals'])) {
                 $pluginArray['VehicleRentals']['sub_plugins'] = collect($pluginArray['VehicleRentals']['sub_plugins'])->sortBy('display_order')->all();
                 $itemRelatedPlugins['sub_plugins']['VehicleRentals'] = $itemRelatedPlugins['sub_plugins']['VehicleRentals'] + $pluginArray['VehicleRentals'];
             }
         }
         unset($pluginArray['Vehicles']);
         unset($pluginArray['VehicleRentals']);
-        $otherlugins = array();
+        $otherlugins = [];
         foreach ($pluginArray as $plugin) {
             $otherlugins[] = $plugin;
         }
         $setting_plugin = Setting::where('name', '=', 'site.enabled_plugins')->first();
-        $enabled_plugin = explode(",", $setting_plugin['value']);
+        $enabled_plugin = explode(',', $setting_plugin['value']);
         $enabled_plugin = array_map('trim', $enabled_plugin);
-        foreach ($enabled_plugin as $key=>$value) {
-            if($value == 'Sudopays') {
+        foreach ($enabled_plugin as $key => $value) {
+            if ($value == 'Sudopays') {
                 $enabled_plugin[$key] = 'ZazPay';
             }
         }
@@ -231,12 +238,14 @@ class AdminSettingsController extends Controller
         $response['payment_gateway_plugin'] = $paymentGatewayPlugins;
         $response['other_plugin'] = $otherlugins;
         $response['enabled_plugin'] = $enabled_plugin;
+
         return response()->json($response, 200);
     }
 
     /**
      * Update the plugin setting.
      * Plugin setting to update enable or disable.
+     *
      * @Put("/plugins")
      * @Transaction({
      *      @Request({"is_enabled": 1, "plugin_name": "Wallets"}),
@@ -248,21 +257,21 @@ class AdminSettingsController extends Controller
     {
         $setting = Setting::where('name', '=', 'site.enabled_plugins')->first();
         $pluginStr = $setting->value;
-        $pluginArray = explode(",", $pluginStr);
+        $pluginArray = explode(',', $pluginStr);
         $pluginArray = array_map('trim', $pluginArray);
-        $item_sub_plugin = array('VehicleRentals', 'VehicleCoupons', 'VehicleFeedbacks', 'VehicleDisputes', 'VehicleExtraAccessories', 'VehicleFuelOptions', 'VehicleInsurances', 'VehicleSurcharges', 'VehicleTaxes');
+        $item_sub_plugin = ['VehicleRentals', 'VehicleCoupons', 'VehicleFeedbacks', 'VehicleDisputes', 'VehicleExtraAccessories', 'VehicleFuelOptions', 'VehicleInsurances', 'VehicleSurcharges', 'VehicleTaxes'];
         if ($request->has('is_enabled') && $request->has('plugin_name')) {
-            if($request->plugin_name == 'ZazPay') {
+            if ($request->plugin_name == 'ZazPay') {
                 $request->plugin_name = 'Sudopays';
             }
-            $path = app()->basePath('app/Plugins/' . $request->plugin_name);
+            $path = app()->basePath('app/Plugins/'.$request->plugin_name);
             if (File::isDirectory($path)) {
                 if ($request->is_enabled === 1) {
-                    if (!in_array($request->plugin_name, $pluginArray)) {
+                    if (! in_array($request->plugin_name, $pluginArray)) {
                         $pluginArray[] = $request->plugin_name;
                     }
                     $pluginStr = implode(',', $pluginArray);
-                } else if ($request->is_enabled === 0) {
+                } elseif ($request->is_enabled === 0) {
                     $key = array_search($request->plugin_name, $pluginArray);
                     if ($key !== false) {
                         unset($pluginArray[$key]);
@@ -270,7 +279,7 @@ class AdminSettingsController extends Controller
                     if ($request->plugin_name == 'Vehicles') {
                         foreach ($item_sub_plugin as $key_value) {
                             $key = array_search($key_value, $pluginArray);
-                            if (!empty($key)) {
+                            if (! empty($key)) {
                                 unset($pluginArray[$key]);
                             }
                         }
@@ -278,7 +287,7 @@ class AdminSettingsController extends Controller
                     if ($request->plugin_name == 'VehicleRentals') {
                         foreach ($item_sub_plugin as $key_value) {
                             $key = array_search($key_value, $pluginArray);
-                            if (!empty($key)) {
+                            if (! empty($key)) {
                                 unset($pluginArray[$key]);
                             }
                         }
@@ -292,6 +301,7 @@ class AdminSettingsController extends Controller
                     if (File::exists($dest_file)) {
                         File::delete($dest_file);
                     }
+
                     return response()->json(['Success' => 'Setting has been updated'], 200);
                 } catch (\Exception $e) {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Setting could not be updated. Please, try again.');
@@ -299,10 +309,8 @@ class AdminSettingsController extends Controller
             } else {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Setting could not be updated. Please, try again.');
             }
-
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Setting could not be updated. Please, try again.');
         }
     }
-
 }

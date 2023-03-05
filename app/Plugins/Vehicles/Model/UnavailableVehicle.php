@@ -5,37 +5,36 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Model;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-use Plugins\Vehicles\Model\Vehicle;
+use Illuminate\Http\Request;
 
 /**
  * Class VehicleCompany
- * @package Plugins\Vehicles\Model
  */
 class UnavailableVehicle extends Model
 {
     /**
      * @var string
      */
-    protected $table = "unavailable_vehicles";
-	
+    protected $table = 'unavailable_vehicles';
+
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
-        'item_user_id', 'vehicle_id', 'start_date', 'end_date', 'is_dummy'
+        'item_user_id', 'vehicle_id', 'start_date', 'end_date', 'is_dummy',
     ];
 
     /**
@@ -48,7 +47,7 @@ class UnavailableVehicle extends Model
 
     public function scopeFilterByMyVehicle($query, $user_id = null)
     {
-        if (!is_null($user_id)) {
+        if (! is_null($user_id)) {
             $query->WhereHas('vehicle', function ($query) use ($user_id) {
                 $query->where('user_id', $user_id);
             });
@@ -66,15 +65,15 @@ class UnavailableVehicle extends Model
         }
         if ($request->has('q')) {
             $query->whereHas('vehicle', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
         }
-        if($request->has('start_date') && $request->has('end_date')) {
-            $query->whereBetween('start_date', array($request->start_date, $request->end_date));
-            $query->orWhereBetween('end_date', array($request->start_date, $request->end_date));
-        }else if($request->has('start_date')){
-            $query->where('start_date','>=', $request->start_date);
-        }else if($request->has('end_date')){
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $query->whereBetween('start_date', [$request->start_date, $request->end_date]);
+            $query->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+        } elseif ($request->has('start_date')) {
+            $query->where('start_date', '>=', $request->start_date);
+        } elseif ($request->has('end_date')) {
             $query->where('end_date', '<=', $request->end_date);
         }
 
@@ -107,7 +106,7 @@ class UnavailableVehicle extends Model
             'start_date.date_format' => 'Date should be in Y-m-d H:i:s format',
             'end_date.required' => 'Required',
             'end_date.date' => 'End date should be a date!',
-            'end_date.date_format' => 'Date should be in Y-m-d H:i:s format'
+            'end_date.date_format' => 'Date should be in Y-m-d H:i:s format',
         ];
     }
 }

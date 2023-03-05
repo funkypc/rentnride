@@ -5,38 +5,37 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 /**
  * Class State
- * @package App
  */
 class State extends Model
 {
     /**
      * @var string
      */
-    protected $table = "states";
+    protected $table = 'states';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'country_id', 'is_active'
+        'name', 'country_id', 'is_active',
     ];
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -54,10 +53,9 @@ class State extends Model
         return $this->belongsTo(Country::class);
     }
 
-
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -75,14 +73,15 @@ class State extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%' . $request->input('q') . '%');
+            $query->where('name', 'LIKE', '%'.$request->input('q').'%');
             $query->orWhereHas('Country', function ($q) use ($request) {
-                $q->Where('name', 'like', '%' . $request->input('q') . '%');
+                $q->Where('name', 'like', '%'.$request->input('q').'%');
             });
         }
         if ($request->has('name')) {
-            $query->where('name', 'LIKE', '%' . $request->input('name') . '%');
+            $query->where('name', 'LIKE', '%'.$request->input('name').'%');
         }
+
         return $query;
     }
 
@@ -93,7 +92,7 @@ class State extends Model
     {
         return [
             'name' => 'required|min:2',
-            'country_id' => 'required|integer|exists:countries,id'
+            'country_id' => 'required|integer|exists:countries,id',
         ];
     }
 
@@ -104,7 +103,7 @@ class State extends Model
             'name.min' => 'name - minimum length is 2',
             'country_id.required' => 'Required',
             'country_id.integer' => 'Country id must be a number!',
-            'country_id.exists' => 'Invalid country id'
+            'country_id.exists' => 'Invalid country id',
         ];
     }
 }

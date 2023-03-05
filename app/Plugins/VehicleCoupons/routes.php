@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,14 +26,13 @@
 $api = $this->app->make('Dingo\Api\Routing\Router');
 $api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'Plugins\VehicleCoupons\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
-        // coupons admin side        
+        // coupons admin side
         $api->get('vehicle_coupons', 'AdminVehicleCouponsController@index');
         $api->post('vehicle_coupons', 'AdminVehicleCouponsController@store');
         $api->put('vehicle_coupons/{id}', 'AdminVehicleCouponsController@update');
         $api->get('vehicle_coupons/{id}/edit', 'AdminVehicleCouponsController@edit');
         $api->get('vehicle_coupons/{id}', 'AdminVehicleCouponsController@show');
         $api->delete('vehicle_coupons/{id}', 'AdminVehicleCouponsController@destroy');
-
     });
     $api->group(['namespace' => 'Plugins\VehicleCoupons\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         //coupons user side

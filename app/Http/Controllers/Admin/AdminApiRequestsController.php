@@ -5,31 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
-use App\Http\Controllers\Controller;
-
 use App\ApiRequest;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use App\Http\Controllers\Controller;
 use App\Transformers\ApiRequestTransformer;
 use DB;
+use Illuminate\Http\Request;
 
 /**
  * ApiRequests resource representation.
+ *
  * @Resource("Admin/AdminApiRequests")
  */
 class AdminApiRequestsController extends Controller
@@ -60,12 +54,14 @@ class AdminApiRequestsController extends Controller
             ->leftJoin(DB::raw('(select id,ip from ips) as ips'), 'ips.id', '=', 'api_requests.ip_id')
             ->filterByRequest($request)
             ->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($api_requests, (new ApiRequestTransformer)->setDefaultIncludes(['User', 'Ip']));
     }
 
     /**
      * Show the specified api requests.
      * Show the api requests with a `id`.
+     *
      * @Get("/api_requests/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -76,15 +72,17 @@ class AdminApiRequestsController extends Controller
     public function show($id)
     {
         $api_request = ApiRequest::with('User', 'Ip')->find($id);
-        if (!$api_request) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $api_request) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($api_request, (new ApiRequestTransformer)->setDefaultIncludes(['User', 'Ip']));
     }
 
     /**
      * Delete the specified api requests.
      * Delete the api requests with a `id`.
+     *
      * @Delete("/api_requests/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -95,11 +93,12 @@ class AdminApiRequestsController extends Controller
     public function destroy($id)
     {
         $api_request = ApiRequest::find($id);
-        if (!$api_request) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $api_request) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $api_request->delete();
         }
+
         return response()->json(['Success' => 'Api Request deleted'], 200);
     }
 }

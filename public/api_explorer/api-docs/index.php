@@ -1,4 +1,5 @@
 <?php
+
 echo '{
     "apiVersion": "1.0.0",
     "swaggerVersion": "1.2",
@@ -388,4 +389,3 @@ echo '{
     }
 
 }';
-?>

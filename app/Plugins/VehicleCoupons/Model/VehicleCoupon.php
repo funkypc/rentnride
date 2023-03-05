@@ -5,28 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleCoupons\Model;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class VehicleCoupon extends Model
 {
     /**
      * @var string
      */
-    protected $table = "coupons";
+    protected $table = 'coupons';
 
     protected $fillable = [
-        'model_type', 'name', 'description', 'discount', 'discount_type_id', 'no_of_quantity', 'no_of_quantity_used', 'validity_start_date', 'validity_end_date', 'maximum_discount_amount', 'is_active'
+        'model_type', 'name', 'description', 'discount', 'discount_type_id', 'no_of_quantity', 'no_of_quantity_used', 'validity_start_date', 'validity_end_date', 'maximum_discount_amount', 'is_active',
     ];
 
     /**
@@ -38,8 +38,8 @@ class VehicleCoupon extends Model
     }
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -60,23 +60,25 @@ class VehicleCoupon extends Model
             /*$query->whereHas('couponable', function ($query) use ($request) {
                 $query->Where('name', 'LIKE', '%' . $request->input('q') . '%');
             });*/
-            $query->Where('couponable.name', 'LIKE', '%' . $request->input('q') . '%');
-            $query->orWhere('coupons.name', 'LIKE', '%' . $request->input('q') . '%');
+            $query->Where('couponable.name', 'LIKE', '%'.$request->input('q').'%');
+            $query->orWhere('coupons.name', 'LIKE', '%'.$request->input('q').'%');
         }
         if ($request->has('start_date')) {
-            $start_date = date("Y-m-d H:i:s", strtotime($request->input('start_date')));
+            $start_date = date('Y-m-d H:i:s', strtotime($request->input('start_date')));
             $query->where('validity_start_date', '>=', $start_date);
         }
         if ($request->has('end_date')) {
-            $end_date = date("Y-m-d H:i:s", strtotime($request->input('end_date')));
+            $end_date = date('Y-m-d H:i:s', strtotime($request->input('end_date')));
             $query->where('validity_end_date', '<=', $end_date);
         }
+
         return $query;
     }
 
     public function scopeFilterByVehicleRental($query)
     {
         $query->where('model_type', config('constants.ConstBookingTypes.Booking'));
+
         return $query;
     }
 
@@ -94,7 +96,7 @@ class VehicleCoupon extends Model
             'maximum_discount_amount' => 'required|numeric',
             'is_active' => 'required|boolean',
             'validity_start_date' => 'date|date_format:Y-m-d',
-            'validity_end_date' => 'date|date_format:Y-m-d'
+            'validity_end_date' => 'date|date_format:Y-m-d',
         ];
     }
 

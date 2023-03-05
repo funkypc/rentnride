@@ -5,29 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
 
 namespace Plugins\VehicleFeedbacks\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\VehicleFeedbacks\Model\VehicleFeedback;
-use Plugins\VehicleFeedbacks\Transformers\VehicleFeedbackTransformer;
-use Plugins\VehicleFeedbacks\Services\VehicleFeedbackService;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\VehicleFeedbacks\Model\VehicleFeedback;
+use Plugins\VehicleFeedbacks\Services\VehicleFeedbackService;
+use Plugins\VehicleFeedbacks\Transformers\VehicleFeedbackTransformer;
 
 /**
  * AdminVehicleFeedbacksController resource representation.
+ *
  * @Resource("Admin/AdminVehicleFeedbacksController")
  */
 class AdminVehicleFeedbacksController extends Controller
@@ -40,7 +37,6 @@ class AdminVehicleFeedbacksController extends Controller
     /**
      * AdminVehicleFeedbacksController constructor.
      */
-
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -69,7 +65,7 @@ class AdminVehicleFeedbacksController extends Controller
      */
     public function index(Request $request)
     {
-        $enabledIncludes = array('user', 'ip', 'to_user', 'vehicle_rental');
+        $enabledIncludes = ['user', 'ip', 'to_user', 'vehicle_rental'];
         $vehicle_feedbacks = VehicleFeedback::with($enabledIncludes)
             ->select(DB::raw('feedbacks.*'))
             ->leftJoin(DB::raw('(select id,username from users) as user'), 'user.id', '=', 'feedbacks.user_id')
@@ -77,13 +73,15 @@ class AdminVehicleFeedbacksController extends Controller
             ->leftJoin(DB::raw('(select id,name from vehicles) as feedbackable'), 'feedbackable.id', '=', 'feedbacks.feedbackable_id')
             ->leftJoin(DB::raw('(select id,ip from ips) as ip'), 'ip.id', '=', 'feedbacks.ip_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, array('feedbackable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['feedbackable']);
+
         return $this->response->paginator($vehicle_feedbacks, (new VehicleFeedbackTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Edit the specified vehicle feedbacks.
      * Edit the vehicle feedbacks with a `id`.
+     *
      * @Get("vehicle_feedbacks/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -93,18 +91,20 @@ class AdminVehicleFeedbacksController extends Controller
      */
     public function edit($id)
     {
-        $enabledIncludes = array('user', 'to_user');
+        $enabledIncludes = ['user', 'to_user'];
         $vehicle_feedback = VehicleFeedback::with($enabledIncludes)->find($id);
-        if (!$vehicle_feedback) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_feedback) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        $enabledIncludes = array_merge($enabledIncludes, array('feedbackable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['feedbackable']);
+
         return $this->response->item($vehicle_feedback, (new VehicleFeedbackTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Update the specified vehicle feedbacks.
      * Update the vehicle feedbacks with a `id`.
+     *
      * @Put("vehicle_feedbacks/{id}")
      * @Transaction({
      *      @Request({"feedback": "item feedback","rating": "1"}),
@@ -120,6 +120,7 @@ class AdminVehicleFeedbacksController extends Controller
                 $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::find($request->item_user_id);
             }
             $this->vehicleFeedbackService->feedBackUpdate($request, $id, $vehicle_rental);
+
             return response()->json(['Success' => 'Feedback has been updated'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Feedback could not be updated. Please, try again.');
@@ -129,6 +130,7 @@ class AdminVehicleFeedbacksController extends Controller
     /**
      * Delete the specified vehicle feedbacks.
      * Delete the vehicle feedbacks with a `id`.
+     *
      * @Delete("vehicle_feedbacks/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -139,17 +141,19 @@ class AdminVehicleFeedbacksController extends Controller
     public function destroy($id)
     {
         $vehicle_feedback = VehicleFeedback::find($id);
-        if (!$vehicle_feedback) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_feedback) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_feedback->delete();
         }
+
         return response()->json(['Success' => 'Feedback deleted'], 200);
     }
 
     /**
      * Show the specified vehicle Feedback.
      * Show the vehicle Feedback with a `id`.
+     *
      * @Get("vehicle_feedbacks/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -159,12 +163,13 @@ class AdminVehicleFeedbacksController extends Controller
      */
     public function show($id)
     {
-        $enabledIncludes = array('user', 'to_user');
+        $enabledIncludes = ['user', 'to_user'];
         $vehicle_feedback = VehicleFeedback::with($enabledIncludes)->find($id);
-        if (!$vehicle_feedback) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_feedback) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        $enabledIncludes = array_merge($enabledIncludes, array('feedbackable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['feedbackable']);
+
         return $this->response->item($vehicle_feedback, (new VehicleFeedbackTransformer)->setDefaultIncludes($enabledIncludes));
     }
 }

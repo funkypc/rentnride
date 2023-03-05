@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCancellationTypesTable extends Migration
 {
@@ -13,7 +13,7 @@ class CreateCancellationTypesTable extends Migration
     public function up()
     {
         Schema::create('cancellation_types', function (Blueprint $table) {
-            $table->bigIncrements('id')->index();;
+            $table->bigIncrements('id')->index();
             $table->timestamps();
             $table->string('name', 255);
             $table->text('description');

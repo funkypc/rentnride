@@ -5,26 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleDisputes\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Http\Request;
 use Plugins\VehicleDisputes\Model\VehicleDisputeType;
 use Plugins\VehicleDisputes\Transformers\VehicleDisputeTypeTransformer;
+use Validator;
 
 /**
  * Class AdminVehicleDisputeTypesController
- * @package Plugins\VehicleDisputes\Controllers
  */
 class AdminVehicleDisputeTypesController extends Controller
 {
@@ -52,12 +50,14 @@ class AdminVehicleDisputeTypesController extends Controller
     public function index(Request $request)
     {
         $vehicle_dispute_types = VehicleDisputeType::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_dispute_types, (new VehicleDisputeTypeTransformer));
     }
 
     /**
      * Edit the specified dispute type.
      * Edit the dispute type with a `id`.
+     *
      * @Get("/vehicle_dispute_types/{id}/edit")
      * @Transaction({
      *      @Request({"id": 2}),
@@ -68,15 +68,17 @@ class AdminVehicleDisputeTypesController extends Controller
     public function edit($id)
     {
         $dispute_type = VehicleDisputeType::find($id);
-        if (!$dispute_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $dispute_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($dispute_type, (new VehicleDisputeTypeTransformer));
     }
 
     /**
      * Update the specified dispute type.
      * Update the dispute type with a `id`.
+     *
      * @Put("/dispute_types/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "chennai", "state_id": 1, "country_id": 1, "latitude": 10.10, "longitude": 12.12, "is_active": 1}),
@@ -96,6 +98,7 @@ class AdminVehicleDisputeTypesController extends Controller
         if ($validator->passes() && $dispute_type) {
             try {
                 $dispute_type->update($dispute_type_data);
+
                 return response()->json(['Success' => 'VehicleDisputeType has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleDisputeType could not be updated. Please, try again.');

@@ -5,22 +5,21 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App\Transformers;
 
-use League\Fractal;
 use App\Message;
+use League\Fractal;
 
 /**
  * Class MessageTransformer
- * @package Messages\Transformers
  */
 class MessageTransformer extends Fractal\TransformerAbstract
 {
@@ -28,11 +27,11 @@ class MessageTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'FromUser', 'ToUser', 'Messageable', 'MessageContent', 'ItemUserStatus', 'DisputeStatus'
+        'FromUser', 'ToUser', 'Messageable', 'MessageContent', 'ItemUserStatus', 'DisputeStatus',
     ];
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return array
      */
     public function transform(Message $message)
@@ -45,11 +44,12 @@ class MessageTransformer extends Fractal\TransformerAbstract
         $output['is_archived'] = ($output['is_archived'] == 1) ? 1 : 0;
         $output['is_review'] = ($output['is_review'] == 1) ? 1 : 0;
         $output['is_communication'] = ($output['is_communication'] == 1) ? 1 : 0;
+
         return $output;
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeFromUser(Message $message)
@@ -62,7 +62,7 @@ class MessageTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeToUser(Message $message)
@@ -75,7 +75,7 @@ class MessageTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeMessageable(Message $message)
@@ -95,9 +95,8 @@ class MessageTransformer extends Fractal\TransformerAbstract
         }
     }
 
-
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeMessageContent(Message $message)
@@ -110,7 +109,7 @@ class MessageTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeItemUserStatus(Message $message)
@@ -123,7 +122,7 @@ class MessageTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return Fractal\Resource\Item|null
      */
     public function includeDisputeStatus(Message $message)

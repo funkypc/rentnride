@@ -5,34 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleRentals\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-use Plugins\VehicleRentals\Transformers\VehicleRentalTransformer;
-use Plugins\VehicleRentals\Model\VehicleRental;
-use Plugins\VehicleRentals\Model\VehicleRentalStatus;
-use Plugins\VehicleRentals\Services\VehicleRentalService;
-use Plugins\Vehicles\Services\UnavailableVehicleService;
 use App\Services\TransactionService;
 use App\User;
 use Carbon;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\VehicleRentals\Model\VehicleRental;
+use Plugins\VehicleRentals\Services\VehicleRentalService;
+use Plugins\VehicleRentals\Transformers\VehicleRentalTransformer;
+use Plugins\Vehicles\Services\UnavailableVehicleService;
 
 /**
  * VehicleRentals resource representation.
+ *
  * @Resource("Admin/AdminVehicleRentals")
  */
 class AdminVehicleRentalsController extends Controller
@@ -46,8 +42,8 @@ class AdminVehicleRentalsController extends Controller
      * @var TransactionService
      */
     protected $transactionService;
-	
-	/**
+
+    /**
      * @var unavailableVehicleService
      */
     protected $unavailableVehicleService;
@@ -75,8 +71,8 @@ class AdminVehicleRentalsController extends Controller
     {
         $this->transactionService = new TransactionService();
     }
-	
-	public function setUnavailableVehicleService()
+
+    public function setUnavailableVehicleService()
     {
         $this->unavailableVehicleService = new UnavailableVehicleService();
     }
@@ -84,6 +80,7 @@ class AdminVehicleRentalsController extends Controller
     /**
      * Show all vehicle_rentals.
      * Get a JSON representation of all the vehicle_rentals.
+     *
      * @Get("/vehicle_rentals?filter={filter}&sort={sort}&sortby={sortby}&q={q}&page={page}")
      * @Parameters({
      *      @Parameter("filter", type="integer", required=false, description="Filter vehicle_rentals list by status.", default=null),
@@ -95,7 +92,7 @@ class AdminVehicleRentalsController extends Controller
      */
     public function index(Request $request)
     {
-        $enabledIncludes = array('user', 'item_user_status');
+        $enabledIncludes = ['user', 'item_user_status'];
         // check if plugin enabled and include
         (isPluginEnabled('VehicleCoupons')) ? $enabledIncludes[] = 'vehicle_coupon' : '';
         $vehicle_rentals = VehicleRental::with($enabledIncludes)
@@ -106,13 +103,15 @@ class AdminVehicleRentalsController extends Controller
             ->filterByBooking($request)
             ->filterByVehicleRental(false)
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, array('item_userable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['item_userable']);
+
         return $this->response->paginator($vehicle_rentals, (new VehicleRentalTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Show the vehicle_rental.
      * Show the vehicle_rental with a `id`.
+     *
      * @Get("/vehicle_rentals/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -122,20 +121,22 @@ class AdminVehicleRentalsController extends Controller
      */
     public function show($id)
     {
-        $enabledIncludes = array('user', 'item_user_status', 'pickup_counter_location', 'drop_counter_location', 'vehicle_rental_additional_chargable');
+        $enabledIncludes = ['user', 'item_user_status', 'pickup_counter_location', 'drop_counter_location', 'vehicle_rental_additional_chargable'];
         // check if plugin enabled and include
         (isPluginEnabled('VehicleCoupons')) ? $enabledIncludes[] = 'vehicle_coupon' : '';
         $vehicle_rental = VehicleRental::with($enabledIncludes)->find($id);
-        if (!$vehicle_rental) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        $enabledIncludes = array_merge($enabledIncludes, array('item_userable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['item_userable']);
+
         return $this->response->item($vehicle_rental, (new VehicleRentalTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Cancel the specified vehicle_rental.
      * Cancel the vehicle_rental with a `id`.
+     *
      * @Put("/vehicle_rentals/{id}/cancelled-by-admin")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -147,14 +148,14 @@ class AdminVehicleRentalsController extends Controller
     {
         $enabledIncludes = $this->vehicleRentalService->getEnableGateway();
         $vehicle_rental = VehicleRental::with($enabledIncludes)->where('id', '=', $id)->first();
-        if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental || is_null($vehicle_rental->item_userable)) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         try {
             $error_msg = '';
             $is_payment_transaction = false;
-            $transaction_log = array();
-            if (isPluginEnabled('Paypal') && !is_null($vehicle_rental->paypal_transaction_log)) {
+            $transaction_log = [];
+            if (isPluginEnabled('Paypal') && ! is_null($vehicle_rental->paypal_transaction_log)) {
                 $gateway_id = config('constants.ConstPaymentGateways.PayPal');
                 if ($vehicle_rental->paypal_transaction_log->payment_type == 'authorized') {
                     $paypal = new \Plugins\Paypal\Services\PayPalService();
@@ -165,7 +166,7 @@ class AdminVehicleRentalsController extends Controller
                         if ($transaction_log['payment_type'] == 'voided') {
                             $is_payment_transaction = true;
                         }
-                    } else if (is_array($voidPayment) && $voidPayment['error']) {
+                    } elseif (is_array($voidPayment) && $voidPayment['error']) {
                         $error_msg = $voidPayment['error_message'];
                     }
 
@@ -181,36 +182,36 @@ class AdminVehicleRentalsController extends Controller
                         if ($transaction_log['payment_type'] == 'completed') {
                             $is_payment_transaction = true;
                         }
-                    } else if (is_array($refundPayment) && $refundPayment['error']) {
+                    } elseif (is_array($refundPayment) && $refundPayment['error']) {
                         $error_msg = $refundPayment['error_message'];
                     }
                     $vehicle_rental->paypal_transaction_log->update($transaction_log);
                 }
             }
-            if (isPluginEnabled('Sudopays') && !is_null($vehicle_rental->sudopay_transaction_logs)) {
+            if (isPluginEnabled('Sudopays') && ! is_null($vehicle_rental->sudopay_transaction_logs)) {
                 $gateway_id = config('constants.ConstPaymentGateways.SudoPay');
                 $sudopay = new \Plugins\Sudopays\Services\SudopayService();
                 if ($vehicle_rental->sudopay_transaction_logs->status == 'Authorized') {
                     $voidPayment = $sudopay->voidPayment($vehicle_rental->sudopay_transaction_logs);
-                    if (!empty($voidPayment) && ($voidPayment['status'] == 'Voided' || $voidPayment['status'] == 'Canceled')) {
+                    if (! empty($voidPayment) && ($voidPayment['status'] == 'Voided' || $voidPayment['status'] == 'Canceled')) {
                         $transaction_log['status'] = $voidPayment['status'];
                         $is_payment_transaction = true;
                         $vehicle_rental->sudopay_transaction_logs->update($transaction_log);
-                    } else if (is_array($voidPayment) && $voidPayment['error']) {
+                    } elseif (is_array($voidPayment) && $voidPayment['error']) {
                         $error_msg = $voidPayment['error_message'];
                     }
                 } elseif ($vehicle_rental->sudopay_transaction_logs->status == 'Captured') {
                     $refundPayment = $sudopay->refundPayment($vehicle_rental->sudopay_transaction_logs);
-                    if (!empty($refundPayment) && $refundPayment['status'] == 'Refunded') {
+                    if (! empty($refundPayment) && $refundPayment['status'] == 'Refunded') {
                         $transaction_log['status'] = $refundPayment['status'];
                         $is_payment_transaction = true;
                         $vehicle_rental->sudopay_transaction_logs->update($transaction_log);
-                    } else if (is_array($refundPayment) && $refundPayment['error']) {
+                    } elseif (is_array($refundPayment) && $refundPayment['error']) {
                         $error_msg = $refundPayment['error_message'];
                     }
                 }
             }
-            if (!is_null($vehicle_rental->wallet_transaction_log)) {
+            if (! is_null($vehicle_rental->wallet_transaction_log)) {
                 $gateway_id = config('constants.ConstPaymentGateways.Wallet');
                 if ($vehicle_rental->wallet_transaction_log->payment_type == 'Captured') {
                     $walletService = new \App\Services\WalletService();
@@ -221,23 +222,25 @@ class AdminVehicleRentalsController extends Controller
                 $vehicle_rental_data['item_user_status_id'] = config('constants.ConstItemUserStatus.CancelledByAdmin');
                 $vehicle_rental_data['status_updated_at'] = Carbon::now()->toDateTimeString();
                 $vehicle_rental->update($vehicle_rental_data);
-				$this->unavailableVehicleService->clearUnavaialablelist($vehicle_rental->id);
+                $this->unavailableVehicleService->clearUnavaialablelist($vehicle_rental->id);
                 $this->vehicleRentalService->updateItemUserCount();
                 //Save transactions
                 $this->transactionService->log(config('constants.ConstUserTypes.Admin'), $vehicle_rental->user_id, config('constants.ConstTransactionTypes.RefundForRentingCanceledByAdmin'), $vehicle_rental->total_amount, $vehicle_rental->id, 'VehicleRentals', $gateway_id);
                 $this->vehicleRentalService->changeStatusMail($vehicle_rental, $vehicle_rental->item_userable, $vehicle_rental->item_user_status_id, config('constants.ConstItemUserStatus.CancelledByAdmin'));
+
                 return response()->json(['Success' => 'VehicleRental has been cancelled'], 200);
             } else {
-                throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', array($error_msg));
+                throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', [$error_msg]);
             }
         } catch (\Exception $e) {
-            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', array($e->getMessage()));
+            throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleRental could not be updated. Please, try again.', [$e->getMessage()]);
         }
     }
 
     /**
      * Checkin the specified vehicle_rental.
      * Checkin the vehicle_rental with a `id`.
+     *
      * @get("/vehicle_rentals/{id}/checkin")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -248,17 +251,19 @@ class AdminVehicleRentalsController extends Controller
      */
     public function checkin($id)
     {
-        $enabledIncludes = array('item_user_status');
+        $enabledIncludes = ['item_user_status'];
         $vehicle_rental = VehicleRental::with($enabledIncludes)->filterByStatus($id, config('constants.ConstItemUserStatus.Confirmed'))->first();
-        if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental || is_null($vehicle_rental->item_userable)) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->vehicleRentalService->saveCheckInDetail($vehicle_rental);
     }
 
     /**
      * Checkout the specified vehicle_rental.
      * Checkout the vehicle_rental with a `id`.
+     *
      * @get("/vehicle_rentals/{id}/checkout")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -269,12 +274,12 @@ class AdminVehicleRentalsController extends Controller
      */
     public function checkout(Request $request, $id)
     {
-        $enabledIncludes = array('item_user_status', 'late_payment_detail');
+        $enabledIncludes = ['item_user_status', 'late_payment_detail'];
         $vehicle_rental = VehicleRental::with($enabledIncludes)->filterByStatus($id, config('constants.ConstItemUserStatus.Attended'))->first();
-        if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental || is_null($vehicle_rental->item_userable)) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->vehicleRentalService->saveCheckoutDetail($vehicle_rental, $request->claim_request_amount);
     }
 }
-

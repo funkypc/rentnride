@@ -5,25 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
+use App\Services\TransactionService;
+use App\Transaction;
+use App\Transformers\TransactionTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
-use App\Transformers\TransactionTransformer;
-use App\Transaction;
-use App\Services\TransactionService;
 
 /**
  * Transactions resource representation.
+ *
  * @Resource("Transactions")
  */
 class TransactionsController extends Controller
@@ -37,6 +37,7 @@ class TransactionsController extends Controller
         $this->middleware('auth:api');
         $this->setTransactionService();
     }
+
     public function setTransactionService()
     {
         $this->transactionService = new TransactionService();
@@ -58,9 +59,10 @@ class TransactionsController extends Controller
     public function index(Request $request)
     {
         $user = Auth::guard()->user();
-        $transactions = Transaction::with('from_user','to_user', 'transaction_type')->where('user_id', $user->id)->orWhere('receiver_user_id', $user->id)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+        $transactions = Transaction::with('from_user', 'to_user', 'transaction_type')->where('user_id', $user->id)->orWhere('receiver_user_id', $user->id)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
         $converted_transactions = $this->transactionService->transactionDescription($transactions);
-        $transaction_details = $this->response->paginator($converted_transactions, (new TransactionTransformer)->setDefaultIncludes(['from_user','to_user', 'transaction_type']));
+        $transaction_details = $this->response->paginator($converted_transactions, (new TransactionTransformer)->setDefaultIncludes(['from_user', 'to_user', 'transaction_type']));
+
         return $transaction_details;
     }
 }

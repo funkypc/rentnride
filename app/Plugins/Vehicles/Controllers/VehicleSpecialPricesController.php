@@ -5,25 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Vehicles\Model\VehicleSpecialPrice;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Vehicles\Transformers\VehicleSpecialPriceTransformer;
 
 /**
  * VehiclePrices resource representation.
+ *
  * @Resource("VehiclePrices")
  */
 class VehicleSpecialPricesController extends Controller
@@ -52,12 +51,14 @@ class VehicleSpecialPricesController extends Controller
     public function index(Request $request)
     {
         $vehicle_special_prices = VehicleSpecialPrice::with('vehicle_type')->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        return $this->response->paginator($vehicle_special_prices, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
+
+        return $this->response->paginator($vehicle_special_prices, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
     }
 
     /**
      * Edit the specified vehicle_special_price.
      * Edit the vehicle_special_price with a `id`.
+     *
      * @Get("/vehicle_special_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -68,15 +69,17 @@ class VehicleSpecialPricesController extends Controller
     public function edit($id)
     {
         $vehicle_special_price = VehicleSpecialPrice::with('vehicle_type')->find($id);
-        if (!$vehicle_special_price) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_special_price) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        return $this->response->item($vehicle_special_price, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
+
+        return $this->response->item($vehicle_special_price, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
     }
 
     /**
      * Edit the specified vehicle_special_price.
      * Edit the vehicle_special_price with a `id`.
+     *
      * @Get("/vehicle_special_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -87,10 +90,10 @@ class VehicleSpecialPricesController extends Controller
     public function show($id)
     {
         $vehicle_special_price = VehicleSpecialPrice::with('vehicle_type')->find($id);
-        if (!$vehicle_special_price) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_special_price) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        return $this->response->item($vehicle_special_price, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
-    }
 
+        return $this->response->item($vehicle_special_price, (new VehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
+    }
 }

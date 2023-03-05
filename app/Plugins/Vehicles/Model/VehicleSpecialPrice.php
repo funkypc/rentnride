@@ -5,36 +5,36 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Model;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Http\Request;
 
 /**
  * Class VehicleSpecialPrice
- * @package Plugins\Vehicles\Model
  */
 class VehicleSpecialPrice extends Model
 {
     /**
      * @var string
      */
-    protected $table = "vehicle_special_prices";
+    protected $table = 'vehicle_special_prices';
+
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
-        'start_date', 'end_date', 'vehicle_type_id', 'discount_percentage', 'is_active'
+        'start_date', 'end_date', 'vehicle_type_id', 'discount_percentage', 'is_active',
     ];
 
     /**
@@ -47,7 +47,7 @@ class VehicleSpecialPrice extends Model
 
     /**
      * @param $query
-     * @param Request $request
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -69,6 +69,7 @@ class VehicleSpecialPrice extends Model
         if ($request->has('end_date')) {
             $query->where('end_date', '<=', $request->input('end_date'));
         }
+
         return $query;
     }
 
@@ -82,7 +83,7 @@ class VehicleSpecialPrice extends Model
             'end_date' => 'required|date|date_format:Y-m-d H:i:s',
             'vehicle_type_id' => 'required|integer|exists:vehicle_types,id',
             'discount_percentage' => 'required|numeric',
-            'is_active' => 'required|boolean'
+            'is_active' => 'required|boolean',
         ];
     }
 
@@ -104,8 +105,7 @@ class VehicleSpecialPrice extends Model
             'discount_percentage.required' => 'Required',
             'discount_percentage.numeric' => 'Discount percentage must be numeric',
             'is_active.required' => 'Required',
-            'is_active.boolean' => 'Possible values to be entered is 0 or 1'
+            'is_active.boolean' => 'Possible values to be entered is 0 or 1',
         ];
     }
-
 }

@@ -5,36 +5,37 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Model;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Model;
 use App\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 /**
  * Class Vehicle
- * @package Plugins\Vehicles\Model
  */
 class Vehicle extends Model
 {
     /**
      * @var string
      */
-    protected $table = "vehicles";
+    protected $table = 'vehicles';
+
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'user_id', 'vehicle_company_id', 'vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'vehicle_rental_count', 'feedback_count', 'is_active', 'feedback_rating'
+        'name', 'slug', 'user_id', 'vehicle_company_id', 'vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'vehicle_rental_count', 'feedback_count', 'is_active', 'feedback_rating',
     ];
 
     /**
@@ -68,7 +69,6 @@ class Vehicle extends Model
     {
         return $this->belongsTo(VehicleModel::class);
     }
-
 
     /**
      * @return mixed
@@ -169,20 +169,20 @@ class Vehicle extends Model
     }
 
     /**
-     * @param         $query
-     * @param Request $request
-     * @param null    $user_id
+     * @param    $query
+     * @param  Request  $request
+     * @param  null  $user_id
      */
     public function scopeFilterByMyVehicle($query, Request $request, $user_id = null)
     {
-        if (!is_null($user_id)) {
+        if (! is_null($user_id)) {
             $query->where('user_id', '=', $user_id);
         }
     }
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      */
     public function scopeFilterActiveVehicle($query, Request $request)
     {
@@ -191,8 +191,8 @@ class Vehicle extends Model
     }
 
     /**
-     * @param         $query
-     * @param Request $request
+     * @param    $query
+     * @param  Request  $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -204,7 +204,6 @@ class Vehicle extends Model
                 $query->where('counter_location_id', $request->pickup_location_id)
                     ->where('is_pickup', '=', 1);
             });
-
         }
         // query to filter drop counter location id
         if ($request->has('drop_location_id')) {
@@ -263,23 +262,23 @@ class Vehicle extends Model
             $field = 'per_hour_amount';
         }
         // query to filter price min value
-        if ($request->has('price_min') && !empty($field)) {
+        if ($request->has('price_min') && ! empty($field)) {
             $query->where($field, '>=', $request->price_min);
         }
         // query to filter price max value
-        if ($request->has('price_max') && !empty($field)) {
+        if ($request->has('price_max') && ! empty($field)) {
             $query->where($field, '<=', $request->price_max);
         }
         // sorting conditions
         if ($request->has('sort') && $request->sort == 'price') {
-            if($request->has('sort_by_price') && $request->sort_by_price == 'day') {
+            if ($request->has('sort_by_price') && $request->sort_by_price == 'day') {
                 $field = 'per_day_amount';
             }
-            if($request->has('sort_by_price') && $request->sort_by_price == 'hour') {
+            if ($request->has('sort_by_price') && $request->sort_by_price == 'hour') {
                 $field = 'per_hour_amount';
             }
             $query->orderBy($field, $request->input('sortby', 'desc'));
-        } else if ($request->has('sort') && $request->sort == 'rating') {
+        } elseif ($request->has('sort') && $request->sort == 'rating') {
             $query->orderBy('feedback_rating', $request->input('sortby', 'desc'));
         } else {
             $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'desc'));
@@ -301,32 +300,32 @@ class Vehicle extends Model
             $query->where('no_of_seats', '<=', $request->seat_max);
         }
         // query to filter Vehicle type id
-        if ($request->has('vehicle_type') && !empty($request->vehicle_type)) {
+        if ($request->has('vehicle_type') && ! empty($request->vehicle_type)) {
             $query->whereIn('vehicle_type_id', $request->vehicle_type);
         }
         // query to filter fuel type id
-        if ($request->has('fuel_type') && !empty($request->fuel_type)) {
+        if ($request->has('fuel_type') && ! empty($request->fuel_type)) {
             $query->whereIn('fuel_type_id', $request->fuel_type);
         }
 
         if ($request->has('ac') && $request->ac == 1 && $request->has('non_ac') && $request->non_ac == 0) {
             $query->where('is_ac', '=', 1);
-        } else if ($request->has('ac') && $request->ac == 0 && $request->has('non_ac') && $request->non_ac == 1) {
+        } elseif ($request->has('ac') && $request->ac == 0 && $request->has('non_ac') && $request->non_ac == 1) {
             $query->where('is_ac', '=', 0);
-        } else if (!$request->has('ac') && $request->has('non_ac') && $request->non_ac == 1) {
+        } elseif (! $request->has('ac') && $request->has('non_ac') && $request->non_ac == 1) {
             $query->where('is_ac', '=', 0);
-        } else if ($request->has('ac') && $request->ac == 1 && !$request->has('non_ac')) {
+        } elseif ($request->has('ac') && $request->ac == 1 && ! $request->has('non_ac')) {
             $query->where('is_ac', '=', 1);
         }
 
         // query to filter transmission
         if ($request->has('manual_transmission') && $request->manual_transmission == 1 && $request->has('auto_transmission') && $request->auto_transmission == 0) {
             $query->where('is_manual_transmission', '=', 1);
-        } else if ($request->has('manual_transmission') && $request->manual_transmission == 0 && $request->has('auto_transmission') && $request->auto_transmission == 1) {
+        } elseif ($request->has('manual_transmission') && $request->manual_transmission == 0 && $request->has('auto_transmission') && $request->auto_transmission == 1) {
             $query->where('is_manual_transmission', '=', 0);
-        } else if (!$request->has('manual_transmission') && $request->has('auto_transmission') && $request->auto_transmission == 1) {
+        } elseif (! $request->has('manual_transmission') && $request->has('auto_transmission') && $request->auto_transmission == 1) {
             $query->where('is_manual_transmission', '=', 0);
-        } else if ($request->has('manual_transmission') && $request->manual_transmission == 1 && !$request->has('auto_transmission')) {
+        } elseif ($request->has('manual_transmission') && $request->manual_transmission == 1 && ! $request->has('auto_transmission')) {
             $query->where('is_manual_transmission', '=', 1);
         }
 
@@ -344,22 +343,22 @@ class Vehicle extends Model
         }
         if ($request->has('q')) {
             //Search vehicle tables
-            $query->where('vehicles.name', 'LIKE', '%' . $request->input('q') . '%');
-            $query->orWhere('vehicles.per_day_amount', 'LIKE', '%' . $request->input('q') . '%');
-            $query->orWhere('vehicles.per_hour_amount', 'LIKE', '%' . $request->input('q') . '%');
-            $query->orWhere('vehicles.feedback_count', 'LIKE', '%' . $request->input('q') . '%');
+            $query->where('vehicles.name', 'LIKE', '%'.$request->input('q').'%');
+            $query->orWhere('vehicles.per_day_amount', 'LIKE', '%'.$request->input('q').'%');
+            $query->orWhere('vehicles.per_hour_amount', 'LIKE', '%'.$request->input('q').'%');
+            $query->orWhere('vehicles.feedback_count', 'LIKE', '%'.$request->input('q').'%');
             //Search vehicle relation tables
             $query->orWhereHas('vehicle_company', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
             $query->orWhereHas('vehicle_make', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
             $query->orWhereHas('vehicle_model', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
             $query->orWhereHas('vehicle_type', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->input('q') . '%');
+                $q->where('name', 'like', '%'.$request->input('q').'%');
             });
         }
 

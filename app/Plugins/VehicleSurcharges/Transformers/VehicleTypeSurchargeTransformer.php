@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleSurcharges\Transformers;
 
 use App\Transformers\DiscountTypeTransformer;
@@ -22,7 +22,6 @@ use Plugins\VehicleSurcharges\Model\VehicleTypeSurcharge;
 
 /**
  * Class VehicleSurchargeTransformer
- * @package VehicleSurcharges\Transformers
  */
 class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
 {
@@ -32,22 +31,23 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'VehicleSurcharge', 'VehicleType', 'DurationType', 'DiscountType'
+        'VehicleSurcharge', 'VehicleType', 'DurationType', 'DiscountType',
     ];
 
     /**
-     * @param VehicleTypeSurcharge $vehicle_type_surcharge
+     * @param  VehicleTypeSurcharge  $vehicle_type_surcharge
      * @return array
      */
     public function transform(VehicleTypeSurcharge $vehicle_type_surcharge)
     {
         $output = array_only($vehicle_type_surcharge->toArray(), ['id', 'created_at', 'vehicle_type_id', 'surcharge_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'is_active']);
         $output['is_active'] = ($output['is_active']) ? true : false;
+
         return $output;
     }
 
     /**
-     * @param VehicleTypeSurcharge $vehicle_type_surcharge
+     * @param  VehicleTypeSurcharge  $vehicle_type_surcharge
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleSurcharge(VehicleTypeSurcharge $vehicle_type_surcharge)
@@ -57,11 +57,10 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeSurcharge $vehicle_type_surcharge
+     * @param  VehicleTypeSurcharge  $vehicle_type_surcharge
      * @return Fractal\Resource\Item|null
      */
     public function includeVehicleType(VehicleTypeSurcharge $vehicle_type_surcharge)
@@ -71,11 +70,10 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeSurcharge $vehicle_type_surcharge
+     * @param  VehicleTypeSurcharge  $vehicle_type_surcharge
      * @return Fractal\Resource\Item|null
      */
     public function includeDiscountType(VehicleTypeSurcharge $vehicle_type_surcharge)
@@ -85,11 +83,10 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param VehicleTypeSurcharge $vehicle_type_surcharge
+     * @param  VehicleTypeSurcharge  $vehicle_type_surcharge
      * @return Fractal\Resource\Item|null
      */
     public function includeDurationType(VehicleTypeSurcharge $vehicle_type_surcharge)
@@ -99,6 +96,5 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 }

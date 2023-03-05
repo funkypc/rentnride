@@ -5,28 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Withdrawals\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-use Plugins\Withdrawals\Model\UserCashWithdrawal;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
-use Plugins\Withdrawals\Services\MoneyTransferAccountService;
 use App\Services\TransactionService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Plugins\Withdrawals\Model\UserCashWithdrawal;
+use Plugins\Withdrawals\Services\MoneyTransferAccountService;
+use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
+use Validator;
 
 /**
  * UserCashWithdrawals resource representation.
+ *
  * @Resource("UserCashWithdrawals")
  */
 class UserCashWithdrawalsController extends Controller
@@ -35,6 +35,7 @@ class UserCashWithdrawalsController extends Controller
      * @var
      */
     protected $transactionService;
+
     /**
      * @var MoneyTransferAccountService
      */
@@ -76,12 +77,14 @@ class UserCashWithdrawalsController extends Controller
     public function index(Request $request)
     {
         $user_cash_withdrawals = UserCashWithdrawal::with('user', 'money_transfer_account', 'withdrawal_status')->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($user_cash_withdrawals, (new UserCashWithdrawalTransformer)->setDefaultIncludes(['user', 'money_transfer_account', 'withdrawal_status']));
     }
 
     /**
      * Store a new user cash withdrawal.
      * Store a new user cash withdrawal with a 'amount', 'user_id', 'money_transfer_account_id'.
+     *
      * @Post("/user_cash_withdrawals")
      * @Transaction({
      *      @Request({"amount": 1000, "user_id": 1, "money_transfer_account_id": 1}),
@@ -108,6 +111,7 @@ class UserCashWithdrawalsController extends Controller
                     $user->available_wallet_amount = $user->available_wallet_amount - $user_cash_withdrawal_data['amount'];
                     $user->blocked_amount = $user->blocked_amount + $user_cash_withdrawal_data['amount'];
                     $user->save();
+
                     return response()->json(['Success' => 'User cash withdrawal request has been added'], 200);
                 } else {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('User Cash Withdrawal could not be updated. Please, try again.');

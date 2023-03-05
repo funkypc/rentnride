@@ -5,27 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Plugins\Vehicles\Model\VehicleSpecialPrice;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Carbon;
-use Plugins\Vehicles\Transformers\AdminVehicleSpecialPriceTransformer;
 use DB;
+use Illuminate\Http\Request;
+use Plugins\Vehicles\Model\VehicleSpecialPrice;
+use Plugins\Vehicles\Transformers\AdminVehicleSpecialPriceTransformer;
+use Validator;
 
 /**
  * VehicleSpecialPrices resource representation.
+ *
  * @Resource("Admin/AdminVehicleSpecialPrices")
  */
 class AdminVehicleSpecialPricesController extends Controller
@@ -63,12 +63,14 @@ class AdminVehicleSpecialPricesController extends Controller
                                 ->select(DB::raw('vehicle_special_prices.*'))
                                 ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_special_prices.vehicle_type_id')
                                 ->filterByRequest($request)->paginate($vehicle_special_price_count);
-        return $this->response->paginator($vehicle_special_prices, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
+
+        return $this->response->paginator($vehicle_special_prices, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
     }
 
     /**
      * Edit the specified vehicle_special_price.
      * Edit the vehicle_special_price with a `id`.
+     *
      * @Get("/admin/vehicle_special_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -79,15 +81,17 @@ class AdminVehicleSpecialPricesController extends Controller
     public function edit($id)
     {
         $vehicle_special_price = VehicleSpecialPrice::with('vehicle_type')->find($id);
-        if (!$vehicle_special_price) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_special_price) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        return $this->response->item($vehicle_special_price, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
+
+        return $this->response->item($vehicle_special_price, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
     }
 
     /**
      * Edit the specified vehicle_special_price.
      * Edit the vehicle_special_price with a `id`.
+     *
      * @Get("/admin/vehicle_special_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,15 +102,17 @@ class AdminVehicleSpecialPricesController extends Controller
     public function show($id)
     {
         $vehicle_special_price = VehicleSpecialPrice::with('vehicle_type')->find($id);
-        if (!$vehicle_special_price) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_special_price) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        return $this->response->item($vehicle_special_price, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(array('vehicle_type')));
+
+        return $this->response->item($vehicle_special_price, (new AdminVehicleSpecialPriceTransformer)->setDefaultIncludes(['vehicle_type']));
     }
 
     /**
      * Store a new vehicle_special_price.
      * Store a new vehicle_special_price with a `name`, `short_description`, and `description`.
+     *
      * @Post("/admin/vehicle_special_prices")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "start_date": 2016-05-05, "end_date": 2016-05-06, "discount_percentage": 1., "is_active": 1}),
@@ -117,16 +123,16 @@ class AdminVehicleSpecialPricesController extends Controller
     public function store(Request $request)
     {
         $vehicle_special_price_data = $request->only('start_date', 'end_date', 'vehicle_type_id', 'discount_percentage', 'is_active');
-        if (!is_null($request['start_date'])) {
-            $vehicle_special_price_data['start_date'] = date("Y-m-d H:i:s", strtotime($request['start_date']));
+        if (! is_null($request['start_date'])) {
+            $vehicle_special_price_data['start_date'] = date('Y-m-d H:i:s', strtotime($request['start_date']));
         }
-        if (!is_null($request['end_date'])) {
-            $vehicle_special_price_data['end_date'] = date("Y-m-d H:i:s", strtotime($request['end_date']));
+        if (! is_null($request['end_date'])) {
+            $vehicle_special_price_data['end_date'] = date('Y-m-d H:i:s', strtotime($request['end_date']));
         }
         $validator = Validator::make($vehicle_special_price_data, VehicleSpecialPrice::GetValidationRule(), VehicleSpecialPrice::GetValidationMessage());
         if ($validator->passes()) {
             $cur_date = Carbon::now()->toDateTimeString();
-            if($cur_date > $vehicle_special_price_data['start_date'] || $vehicle_special_price_data['start_date'] > $vehicle_special_price_data['end_date']) {
+            if ($cur_date > $vehicle_special_price_data['start_date'] || $vehicle_special_price_data['start_date'] > $vehicle_special_price_data['end_date']) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Start date should be less than end date and greater than current date.');
             }
             //check whether the given special price date already in list
@@ -154,17 +160,17 @@ class AdminVehicleSpecialPricesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle special discount price could not be added. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle special discount price could not be added. Please, try again.', $validator->errors());
         }
     }
 
-
     /**
      * Update the specified vehicle_special_price
      * Update the vehicle_special_price with a `id`.
+     *
      * @Put("/admin/vehicle_special_prices/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "start_date": 2016-05-05, "end_date": 2016-05-06, "discount_percentage": 1., "is_active": 1}),
@@ -175,11 +181,11 @@ class AdminVehicleSpecialPricesController extends Controller
     public function update(Request $request, $id)
     {
         $vehicle_special_price_data = $request->only('start_date', 'end_date', 'vehicle_type_id', 'discount_percentage', 'is_active');
-        if (!is_null($request['start_date'])) {
-            $vehicle_special_price_data['start_date'] = date("Y-m-d H:i:s", strtotime($request['start_date']));
+        if (! is_null($request['start_date'])) {
+            $vehicle_special_price_data['start_date'] = date('Y-m-d H:i:s', strtotime($request['start_date']));
         }
-        if (!is_null($request['end_date'])) {
-            $vehicle_special_price_data['end_date'] = date("Y-m-d H:i:s", strtotime($request['end_date']));
+        if (! is_null($request['end_date'])) {
+            $vehicle_special_price_data['end_date'] = date('Y-m-d H:i:s', strtotime($request['end_date']));
         }
         $validator = Validator::make($vehicle_special_price_data, VehicleSpecialPrice::GetValidationRule(), VehicleSpecialPrice::GetValidationMessage());
         $vehicle_special_price = false;
@@ -188,7 +194,7 @@ class AdminVehicleSpecialPricesController extends Controller
             $vehicle_special_price = ($request->id != $id) ? false : $vehicle_special_price;
         }
         $cur_date = Carbon::now()->toDateTimeString();
-        if($cur_date > $vehicle_special_price_data['start_date'] || $vehicle_special_price_data['start_date'] > $vehicle_special_price_data['end_date']) {
+        if ($cur_date > $vehicle_special_price_data['start_date'] || $vehicle_special_price_data['start_date'] > $vehicle_special_price_data['end_date']) {
             //if($vehicle_special_price_data['start_date'] > $vehicle_special_price_data['end_date']) {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Start date should be less than end date and greater than current date');
         }
@@ -207,15 +213,16 @@ class AdminVehicleSpecialPricesController extends Controller
                                 ->where('end_date', '>', $request->end_date);
                         });
                 })->first();
-            if($vehicle_special_price_check) {
+            if ($vehicle_special_price_check) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Special Price already added for the given dates. Please try with different dates');
             }
             try {
                 $vehicle_special_price->update($vehicle_special_price_data);
+
                 return response()->json(['Success' => 'Vehicle special discount price has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle special discount price could not be updated. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle special discount price could not be updated. Please, try again.', $validator->errors());
@@ -225,6 +232,7 @@ class AdminVehicleSpecialPricesController extends Controller
     /**
      * Delete the specified vehicle_special_price.
      * Delete the vehicle_special_price with a `id`.
+     *
      * @Delete("/admin/vehicle_special_prices/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -235,11 +243,12 @@ class AdminVehicleSpecialPricesController extends Controller
     public function destroy($id)
     {
         $vehicle_special_price = VehicleSpecialPrice::find($id);
-        if (!$vehicle_special_price) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_special_price) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_special_price->delete();
         }
+
         return response()->json(['Success' => 'Vehicle special discount price deleted'], 200);
     }
 }

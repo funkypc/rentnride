@@ -5,28 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
+
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
-use App\Http\Controllers\Controller;
-
 use App\EmailTemplate;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use App\Http\Controllers\Controller;
 use App\Transformers\EmailTemplateTransformer;
+use Illuminate\Http\Request;
+use Validator;
 
 /**
  * EmailTemplates resource representation.
+ *
  * @Resource("Admin/AdminEmailTemplates")
  */
 class AdminEmailTemplatesController extends Controller
@@ -56,12 +53,14 @@ class AdminEmailTemplatesController extends Controller
     public function index(Request $request)
     {
         $email_templates = EmailTemplate::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($email_templates, new EmailTemplateTransformer);
     }
 
     /**
      * Edit the specified email template.
      * Edit the email template with a `id`.
+     *
      * @Get("/email_templates/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -72,15 +71,17 @@ class AdminEmailTemplatesController extends Controller
     public function edit($id)
     {
         $email_template = EmailTemplate::find($id);
-        if (!$email_template) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $email_template) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($email_template, new EmailTemplateTransformer);
     }
 
     /**
      * Update the specified email template.
      * Update the email template with a `id`.
+     *
      * @Put("/email_templates/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "XXXXXX", "subject": "XXXXXX", "body_content": "XXXXXX", "from_name": "XXXXXX", "info": "XXXXXX", "reply_to": "XXXXXX"}),
@@ -100,6 +101,7 @@ class AdminEmailTemplatesController extends Controller
         if ($validator->passes() && $email_template) {
             try {
                 $email_template->update($email_template_data);
+
                 return response()->json(['Success' => 'EmailTemplate has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('EmailTemplate could not be updated. Please, try again.');
@@ -107,6 +109,5 @@ class AdminEmailTemplatesController extends Controller
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('EmailTemplate could not be updated. Please, try again.', $validator->errors());
         }
-
     }
 }

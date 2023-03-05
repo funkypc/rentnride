@@ -5,26 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleExtraAccessories\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\VehicleExtraAccessories\Model\VehicleTypeExtraAccessory;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleExtraAccessories\Transformers\VehicleTypeExtraAccessoryTransformer;
 
 /**
  * VehicleExtraAccessories resource representation.
+ *
  * @Resource("VehicleExtraAccessories")
  */
 class VehicleTypeExtraAccessoriesController extends Controller
@@ -52,8 +50,9 @@ class VehicleTypeExtraAccessoriesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = array('vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type');
+        $enabled_includes = ['vehicle_extra_accessory', 'discount_type', 'duration_type', 'vehicle_type'];
         $vehicle_type_extra_accessories = VehicleTypeExtraAccessory::with($enabled_includes)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($vehicle_type_extra_accessories, (new VehicleTypeExtraAccessoryTransformer)->setDefaultIncludes($enabled_includes));
     }
 }

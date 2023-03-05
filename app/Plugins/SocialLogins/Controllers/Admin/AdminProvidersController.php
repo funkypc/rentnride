@@ -5,29 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\SocialLogins\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\SocialLogins\Model\Provider;
-
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\SocialLogins\Transformers\ProviderTransformer;
+use Validator;
 
 /**
  * Providers resource representation.
+ *
  * @Resource("Admin/AdminProviders")
  */
 class AdminProvidersController extends Controller
@@ -59,12 +55,14 @@ class AdminProvidersController extends Controller
     public function index(Request $request)
     {
         $providers = Provider::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($providers, new ProviderTransformer);
     }
 
     /**
      * Edit the specified provider.
      * Edit the provider with a `id`.
+     *
      * @Get("/providers/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -75,15 +73,17 @@ class AdminProvidersController extends Controller
     public function edit($id)
     {
         $provider = Provider::find($id);
-        if (!$provider) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $provider) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($provider, new ProviderTransformer);
     }
 
     /**
      * Update the specified provider.
      * Update the provider with a `id`.
+     *
      * @Put("/providers/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Facebook", "secret_key": "XXXXXX", "api_key": "XXXXXX", "icon_class": "fa-facebook", "button_class": "btn-facebook", "display_order": "2"}),
@@ -103,6 +103,7 @@ class AdminProvidersController extends Controller
         if ($validator->passes() && $provider) {
             try {
                 $provider->update($provider_data);
+
                 return response()->json(['Success' => 'Provider has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Provider could not be updated. Please, try again.');
@@ -115,6 +116,7 @@ class AdminProvidersController extends Controller
     /**
      * Delete the specified provider.
      * Delete the provider with a `id`.
+     *
      * @Delete("/providers/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -125,11 +127,12 @@ class AdminProvidersController extends Controller
     public function destroy($id)
     {
         $provider = Provider::find($id);
-        if (!$provider) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $provider) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $provider->delete();
         }
+
         return response()->json(['Success' => 'Provider deleted'], 200);
     }
 }

@@ -5,25 +5,19 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace App\Services;
 
-use App\Services\MailService;
-use Illuminate\Database\Eloquent\Model;
-use App\Wallet;
 use App\User;
-use Illuminate\Support\Facades\Auth;
-use App\Services\TransactionService;
-use App\Services\MessageService;
+use App\Wallet;
 use App\WalletTransactionLog;
-use App\Services\WalletTransactionLogService;
 use Log;
 
 class WalletService
@@ -32,10 +26,12 @@ class WalletService
      * @var
      */
     protected $mailService;
+
     /**
      * @var \App\Services\MessageService
      */
     protected $messageService;
+
     /**
      * @var
      */
@@ -84,7 +80,7 @@ class WalletService
     {
         $wallet = Wallet::with('user')->where('id', $walletId)->first();
         if (empty($wallet)) {
-            return $this->response->errorNotFound("Invalid Request");
+            return $this->response->errorNotFound('Invalid Request');
         }
         if (empty($wallet['is_success'])) {
             $this->transactionService->log($wallet->user->id, $wallet->user->id, config('constants.ConstTransactionTypes.AddedToWallet'), $wallet->amount, $wallet->id, 'Wallets', $wallet->payment_gateway_id, $transaction_fee, $wallet->description);
@@ -98,17 +94,19 @@ class WalletService
         } else {
             return true;
         }
+
         return false;
     }
 
     public function getWalletDetails()
     {
-        $wallet_response = array(
-            'error' => array(
-                'code' => 0
-            ),
-            'wallet_enabled' => true
-        );
+        $wallet_response = [
+            'error' => [
+                'code' => 0,
+            ],
+            'wallet_enabled' => true,
+        ];
+
         return $wallet_response;
     }
 
@@ -117,10 +115,11 @@ class WalletService
         $transaction_log = WalletTransactionLog::where('id', '=', $log_id)->first();
         $related_details = $transaction_log->wallet_transaction_logable;
         $user = $related_details->user;
-        if ((($user->available_wallet_amount >= $related_details->total_amount) && ($transaction_log->wallet_transaction_logable_type == 'MorphVehicleRental')) || ( ($user->available_wallet_amount >= config('vehicle.listing_fee') )&& ( $transaction_log->wallet_transaction_logable_type == 'MorphVehicle')) ) {
+        if ((($user->available_wallet_amount >= $related_details->total_amount) && ($transaction_log->wallet_transaction_logable_type == 'MorphVehicleRental')) || (($user->available_wallet_amount >= config('vehicle.listing_fee')) && ($transaction_log->wallet_transaction_logable_type == 'MorphVehicle'))) {
             $transaction_log->status = 'created';
             $transaction_log->payment_type = 'initiated';
             $transaction_log->save();
+
             return true;
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Your Wallet has insufficient money. Please, try again.');
@@ -130,7 +129,7 @@ class WalletService
     public function executePayment($related_model, $type, $log_id)
     {
         $process = false;
-        if($type == 'MorphVehicle'){
+        if ($type == 'MorphVehicle') {
             $user = $related_model->user;
             $user->available_wallet_amount = $user->available_wallet_amount - config('vehicle.listing_fee');
             if ($user->save()) {
@@ -143,9 +142,9 @@ class WalletService
                 $process = true;
             }
         }
-        if($type == 'MorphVehicleRental'){
+        if ($type == 'MorphVehicleRental') {
             $user = $related_model->user;
-            if($user->available_wallet_amount >= $related_model->total_amount) {
+            if ($user->available_wallet_amount >= $related_model->total_amount) {
                 $user->available_wallet_amount = $user->available_wallet_amount - $related_model->total_amount;
                 if ($user->save()) {
                     $transaction_log = WalletTransactionLog::where('id', $log_id)->first();
@@ -158,16 +157,17 @@ class WalletService
                 }
             }
         }
-        return array(
+
+        return [
             'status' => $process,
-        );
+        ];
     }
 
     public function voidPayment($vehicle_rental)
     {
         $process_status = false;
-        $transaction_log = array();
-        if ($vehicle_rental && !is_null($vehicle_rental->wallet_transaction_log)) {
+        $transaction_log = [];
+        if ($vehicle_rental && ! is_null($vehicle_rental->wallet_transaction_log)) {
             if ($vehicle_rental->wallet_transaction_log->payment_type == 'Captured') {
                 $transaction_log['payment_type'] = 'voided';
                 $vehicle_rental->wallet_transaction_log->update($transaction_log);
@@ -175,6 +175,7 @@ class WalletService
                 $process_status = true;
             }
         }
+
         return $process_status;
     }
 
@@ -190,7 +191,7 @@ class WalletService
         User::where('id', '=', $user_id)->increment('available_wallet_amount', $amount);
         // update wallet transaction log
         $walletLogService = new \App\Services\WalletTransactionLogService();
-        $transaction_log_data = array();
+        $transaction_log_data = [];
         $transaction_log_data['amount'] = $amount;
         $transaction_log_data['status'] = 'Completed';
         $transaction_log_data['payment_type'] = 'Paid';
@@ -210,6 +211,7 @@ class WalletService
             $user['available_wallet_amount'] = $wallet->user->available_wallet_amount - $sudopay_revised_amount;
             $wallet->user->update($user);
             $this->transactionService->log(config('constants.ConstUserTypes.Admin'), $wallet->user_id, config('constants.ConstTransactionTypes.RefundForWallet'), $sudopay_revised_amount, $wallet->id, 'Wallets', $gateway_id);
+
             return true;
         }
     }

@@ -5,38 +5,35 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleRentals\Model;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Support\Facades\Auth;
-
 
 /**
  * Class VehicleRentalBookerDetail
- * @package Plugins\VehicleRentals\Model
  */
 class VehicleRentalBookerDetail extends Model
 {
     /**
      * @var string
      */
-    protected $table = "booker_details";
+    protected $table = 'booker_details';
+
     /**
      * The attributes that are mass assignable.
+     *
      * @var array
      */
     protected $fillable = [
-        'item_user_id', 'email', 'first_name', 'last_name', 'mobile', 'address'
+        'item_user_id', 'email', 'first_name', 'last_name', 'mobile', 'address',
     ];
 
     /**
@@ -58,7 +55,7 @@ class VehicleRentalBookerDetail extends Model
             'last_name' => 'required',
             'email' => 'required|email',
             'mobile' => 'required',
-            'address' => 'required'
+            'address' => 'required',
         ];
     }
 
@@ -72,8 +69,7 @@ class VehicleRentalBookerDetail extends Model
             'email.required' => 'Required',
             'email.email' => 'Given email is not valid!',
             'mobile.required' => 'Required',
-            'address.required' => 'Required'
+            'address.required' => 'Required',
         ];
     }
-
 }

@@ -5,19 +5,19 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleDisputes\Transformers;
 
+use App\Transformers\UserTransformer;
 use League\Fractal;
 use Plugins\VehicleDisputes\Model\VehicleDispute;
-use App\Transformers\UserTransformer;
 
 class VehicleDisputeTransformer extends Fractal\TransformerAbstract
 {
@@ -27,11 +27,11 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'user', 'dispute_status', 'dispute_type', 'dispute_closed_type', 'LastRepliedUser', 'item_user_disputable', 'message'
+        'user', 'dispute_status', 'dispute_type', 'dispute_closed_type', 'LastRepliedUser', 'item_user_disputable', 'message',
     ];
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return array
      */
     public function transform(VehicleDispute $vehicle_dispute)
@@ -43,13 +43,14 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
         } elseif ($output['is_favor_booker'] == 1 && $output['dispute_status_id'] == config('constants.ConstDisputeStatuses.Closed')) {
             $output['is_favor_booker'] = 'Booker';
         } else {
-			$output['is_favor_booker'] = '';
-		}
+            $output['is_favor_booker'] = '';
+        }
+
         return $output;
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeUser(VehicleDispute $vehicle_dispute)
@@ -62,7 +63,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function LastRepliedUser(VehicleDispute $vehicle_dispute)
@@ -75,7 +76,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeDisputeStatus(VehicleDispute $vehicle_dispute)
@@ -88,7 +89,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeDisputeType(VehicleDispute $vehicle_dispute)
@@ -101,14 +102,15 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeItemUserDisputable(VehicleDispute $vehicle_dispute)
     {
         if ($vehicle_dispute->item_user_disputable) {
             if ($vehicle_dispute->item_user_disputable_type == 'MorphVehicleRental') {
-                $enabledIncludes = array('item_user_status', 'user', 'item_userable');
+                $enabledIncludes = ['item_user_status', 'user', 'item_userable'];
+
                 return $this->item($vehicle_dispute->item_user_disputable, (new \Plugins\VehicleRentals\Transformers\VehicleRentalTransformer)->setDefaultIncludes($enabledIncludes));
             }
         } else {
@@ -117,7 +119,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeDisputeClosedType(VehicleDispute $vehicle_dispute)
@@ -130,7 +132,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param VehicleDispute $vehicle_dispute
+     * @param  VehicleDispute  $vehicle_dispute
      * @return Fractal\Resource\Item|null
      */
     public function includeMessage(VehicleDispute $vehicle_dispute)

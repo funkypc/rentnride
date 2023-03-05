@@ -5,19 +5,20 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleFeedbacks\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use App\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\ServiceProvider;
+
 class VehicleFeedbackServiceProvider extends ServiceProvider
 {
     /**
@@ -27,7 +28,7 @@ class VehicleFeedbackServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__ . '/../routes.php';
+        include __DIR__.'/../routes.php';
         $this->app->make('Plugins\VehicleFeedbacks\Controllers\Admin\AdminVehicleFeedbacksController');
         $this->app->make('Plugins\VehicleFeedbacks\Controllers\VehicleFeedbacksController');
     }
@@ -39,12 +40,12 @@ class VehicleFeedbackServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $morphRelations = array();
+        $morphRelations = [];
         $morphRelations['MorphUser'] = User::class;
         if (isPluginEnabled('Vehicles')) {
             $morphRelations['MorphVehicle'] = \Plugins\Vehicles\Model\Vehicle::class;
         }
-        if (!empty($morphRelations)) {
+        if (! empty($morphRelations)) {
             Relation::morphMap($morphRelations);
         }
     }

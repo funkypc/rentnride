@@ -5,36 +5,32 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers\Admin;
 
-
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Plugins\Vehicles\Model\VehicleModel;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use Plugins\Vehicles\Transformers\AdminVehicleModelTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
-use Plugins\Vehicles\Services\VehicleModelService;
 use DB;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Illuminate\Http\Request;
+use Plugins\Vehicles\Model\VehicleModel;
+use Plugins\Vehicles\Services\VehicleModelService;
+use Plugins\Vehicles\Transformers\AdminVehicleModelTransformer;
+use Validator;
 
 /**
  * Class AdminVehicleModelsController
- * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminVehicleModelsController extends Controller
 {
     /**
-     * @var $vehicleModelService
+     * @var
      */
     protected $vehicleModelService;
 
@@ -75,11 +71,13 @@ class AdminVehicleModelsController extends Controller
             ->select(DB::raw('vehicle_models.*'))
             ->leftJoin(DB::raw('(select id,name from vehicle_makes) as vehicle_make'), 'vehicle_make.id', '=', 'vehicle_models.vehicle_make_id')
             ->filterByRequest($request)->paginate($vehicle_model_count);
+
         return $this->response->paginator($vehicle_models, (new AdminVehicleModelTransformer)->setDefaultIncludes(['vehicle_make']));
     }
 
     /**
      * Store a new vehicle model.
+     *
      * @Post("/vehicle_models")
      * @Transaction({
      *      @Request({"name": "suzuki", "vehicle_make_id":"1", "is_active": 1}),
@@ -98,13 +96,14 @@ class AdminVehicleModelsController extends Controller
                 if ($vehicle_model) {
                     // after save count update
                     $this->vehicleModelService->afterSave($vehicle_model, false);
+
                     return response()->json(['Success' => 'Vehicle model has been added'], 200);
                 } else {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle model could not be added. Please, try again.');
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Model could not be added. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle model could not be added. Please, try again.', $validator->errors());
@@ -114,6 +113,7 @@ class AdminVehicleModelsController extends Controller
     /**
      * Edit the specified vehicle model.
      * Edit the vehicle model with a `id`.
+     *
      * @Get("/vehicle_models/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -124,15 +124,17 @@ class AdminVehicleModelsController extends Controller
     public function edit($id)
     {
         $vehicle_type = VehicleModel::find($id);
-        if (!$vehicle_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_type, (new AdminVehicleModelTransformer));
     }
 
     /**
      * Update the specified vehicle model.
      * Update the vehicle model with a `id`.
+     *
      * @Put("/vehicle_models/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "suzuki", "vehicle_make_id":"1", "is_active": 1}),
@@ -159,10 +161,11 @@ class AdminVehicleModelsController extends Controller
                 $vehicle_model->update($vehicle_model_data);
                 // after save count update
                 $this->vehicleModelService->afterSave($vehicle_model, $vehicle_model_old);
+
                 return response()->json(['Success' => 'Vehicle Model has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Model could not be updated. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Model could not be updated. Please, try again.', $validator->errors());
@@ -172,6 +175,7 @@ class AdminVehicleModelsController extends Controller
     /**
      * Delete the specified vehicle model.
      * Delete the vehicle model with a `id`.
+     *
      * @Delete("/vehicle_models/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -182,17 +186,19 @@ class AdminVehicleModelsController extends Controller
     public function destroy($id)
     {
         $vehicle_model = VehicleModel::find($id);
-        if (!$vehicle_model) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_model) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $vehicle_model->delete();
         }
+
         return response()->json(['Success' => 'Vehicle model deleted'], 200);
     }
 
     /**
      * Show the specified vehicle model.
      * Show the vehicle model with a `id`.
+     *
      * @Get("/vehicle_models/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -203,9 +209,10 @@ class AdminVehicleModelsController extends Controller
     public function show($id)
     {
         $vehicle_model = VehicleModel::find($id);
-        if (!$vehicle_model) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_model) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($vehicle_model, (new AdminVehicleModelTransformer));
     }
 }

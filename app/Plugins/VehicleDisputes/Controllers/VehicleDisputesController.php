@@ -5,31 +5,31 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleDisputes\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\VehicleDisputes\Model\VehicleDispute;
-use Plugins\VehicleRentals\Model\VehicleRental;
-use Plugins\VehicleDisputes\Model\VehicleDisputeType;
 use Plugins\VehicleDisputes\Model\VehicleDisputeClosedType;
-use Plugins\VehicleDisputes\Transformers\VehicleDisputeTransformer;
+use Plugins\VehicleDisputes\Model\VehicleDisputeType;
 use Plugins\VehicleDisputes\Services\VehicleDisputeService;
+use Plugins\VehicleDisputes\Transformers\VehicleDisputeTransformer;
+use Plugins\VehicleRentals\Model\VehicleRental;
 use Plugins\VehicleRentals\Services\VehicleRentalService;
+use Validator;
 
 /**
  * VehicleDisputes resource representation.
+ *
  * @Resource("disputes")
  */
 class VehicleDisputesController extends Controller
@@ -38,6 +38,7 @@ class VehicleDisputesController extends Controller
      * @var vehicleDisputeService
      */
     protected $vehicleDisputeService;
+
     /**
      * @var VehicleRentalService
      */
@@ -85,15 +86,17 @@ class VehicleDisputesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabledIncludes = array('user', 'dispute_type', 'dispute_closed_type', 'dispute_status');
+        $enabledIncludes = ['user', 'dispute_type', 'dispute_closed_type', 'dispute_status'];
         $vehicle_disputes = VehicleDispute::with($enabledIncludes)->filterByVehicleRental()->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, array('item_user_disputable'));
+        $enabledIncludes = array_merge($enabledIncludes, ['item_user_disputable']);
+
         return $this->response->paginator($vehicle_disputes, (new VehicleDisputeTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Store a new dispute.
      * Store a new dispute with a `item_user_id`, 'dispute_type_id', 'reason'.
+     *
      * @Post("/vehicle_disputes")
      * @Transaction({
      *      @Request({"item_user_id":1, "dispute_type_id":1, "reason": "Not matching the specification"}),
@@ -109,19 +112,19 @@ class VehicleDisputesController extends Controller
         $vehicle_rental = VehicleRental::with('user')->where('id', '=', $request->item_user_id)
             ->where('is_dispute', '=', 0)
             ->whereIn('item_user_status_id', [config('constants.ConstItemUserStatus.WaitingForReview'), config('constants.ConstItemUserStatus.BookerReviewed')])->first();
-        if (!$vehicle_rental || is_null($vehicle_rental->item_userable)) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $vehicle_rental || is_null($vehicle_rental->item_userable)) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        $booker_id = (int)$vehicle_rental->user_id;
-        $host_id = (int)$vehicle_rental->item_userable->user_id;
+        $booker_id = (int) $vehicle_rental->user_id;
+        $host_id = (int) $vehicle_rental->item_userable->user_id;
         if ($user->role_id != config('constants.ConstUserTypes.Admin') && $booker_id != $user->id && $host_id != $user->id) {
-            return $this->response->errorNotFound("Invalid Request");
+            return $this->response->errorNotFound('Invalid Request');
         }
-        if($booker_id == $user->id && ($vehicle_rental->item_user_status_id != config('constants.ConstItemUserStatus.WaitingForReview') || $request->dispute_type_id == config('constants.ConstDisputeTypes.Feedback') || $request->dispute_type_id == config('constants.ConstDisputeTypes.Security'))) {
-            return $this->response->errorNotFound("Invalid Request");
+        if ($booker_id == $user->id && ($vehicle_rental->item_user_status_id != config('constants.ConstItemUserStatus.WaitingForReview') || $request->dispute_type_id == config('constants.ConstDisputeTypes.Feedback') || $request->dispute_type_id == config('constants.ConstDisputeTypes.Security'))) {
+            return $this->response->errorNotFound('Invalid Request');
         }
-        if($host_id == $user->id && ($request->dispute_type_id == config('constants.ConstDisputeTypes.Specification') || ($request->dispute_type_id == config('constants.ConstDisputeTypes.Feedback') && $vehicle_rental->item_user_status_id == config('constants.ConstItemUserStatus.WaitingForReview')))) {
-            return $this->response->errorNotFound("Invalid Request");
+        if ($host_id == $user->id && ($request->dispute_type_id == config('constants.ConstDisputeTypes.Specification') || ($request->dispute_type_id == config('constants.ConstDisputeTypes.Feedback') && $vehicle_rental->item_user_status_id == config('constants.ConstItemUserStatus.WaitingForReview')))) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         ($user->id === $booker_id) ? $vehicle_dispute_data['is_booker'] = 1 : $vehicle_dispute_data['is_booker'] = 0;
         $validator = Validator::make($vehicle_dispute_data, VehicleDispute::GetValidationRule(), VehicleDispute::GetValidationMessage());
@@ -140,6 +143,7 @@ class VehicleDisputesController extends Controller
                 $this->vehicleRentalService->updateDispute($request->item_user_id);
                 // send mail
                 $this->vehicleDisputeService->sendDisputeOpenMail($vehicle_dispute, $vehicle_rental);
+
                 return response()->json(['Success' => 'Vehicle Dispute has been added'], 200);
             } else {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Dispute could not be sent. Please, try again.');
@@ -157,17 +161,17 @@ class VehicleDisputesController extends Controller
     {
         $user = Auth::guard()->user();
         if (isPluginEnabled('VehicleRentals')) {
-            $enabledIncludes = array('user', 'item_user_status', 'message');
+            $enabledIncludes = ['user', 'item_user_status', 'message'];
             // check if plugin enabled and include
             (isPluginEnabled('VehicleFeedbacks')) ? $enabledIncludes[] = 'vehicle_feedback' : '';
             $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::with($enabledIncludes)
                 ->where('id', '=', $vehicle_rental_id)
-                ->whereIn('item_user_status_id', array(config('constants.ConstItemUserStatus.WaitingForReview'), config('constants.ConstItemUserStatus.BookerReviewed')))->first();
-            if (!($vehicle_rental)) {
-                return $this->response->errorNotFound("Invalid Request");
+                ->whereIn('item_user_status_id', [config('constants.ConstItemUserStatus.WaitingForReview'), config('constants.ConstItemUserStatus.BookerReviewed')])->first();
+            if (! ($vehicle_rental)) {
+                return $this->response->errorNotFound('Invalid Request');
             }
-            $booker_id = (int)$vehicle_rental->user_id;
-            $host_id = (int)$vehicle_rental->item_userable->user_id;
+            $booker_id = (int) $vehicle_rental->user_id;
+            $host_id = (int) $vehicle_rental->item_userable->user_id;
             if ($user->role_id == config('constants.ConstUserTypes.Admin') && $booker_id != $user->id && $host_id != $user->id && $vehicle_rental->is_dispute) {
                 $dispute = VehicleDispute::with('dispute_type', 'dispute_status', 'user', 'item_user_disputable')
                     ->where('item_user_disputable_id', '=', $vehicle_rental_id)
@@ -181,6 +185,7 @@ class VehicleDisputesController extends Controller
                 $dispute_date = strtotime($dispute->created_at);
                 $datediff = $now - $dispute_date;
                 $dispute_array['diff_days'] = floor($datediff / (60 * 60 * 24));
+
                 return response()->json(['dispute_array' => $dispute_array], 200);
             } else {
                 if ($vehicle_rental->is_dispute) {
@@ -192,7 +197,7 @@ class VehicleDisputesController extends Controller
                 $all_vehicle_dispute_types = VehicleDisputeType::where('is_booker', '=', $is_booker)->where('is_active', '=', 1)->get();
                 $disputeTypes = false;
                 foreach ($all_vehicle_dispute_types as $key => $dispute_type_det) {
-                    if ((int)$vehicle_rental->item_user_status_id === config('constants.ConstItemUserStatus.WaitingForReview')) {
+                    if ((int) $vehicle_rental->item_user_status_id === config('constants.ConstItemUserStatus.WaitingForReview')) {
                         // property doesn't match host requirements (booker)
                         if ($booker_id === $user->id && $dispute_type_det && $dispute_type_det->id === config('constants.ConstDisputeTypes.Specification')) {
                             $disputeTypes[] = $dispute_type_det;
@@ -201,7 +206,7 @@ class VehicleDisputesController extends Controller
                         if ($host_id === $user->id && $dispute_type_det && $dispute_type_det->id === config('constants.ConstDisputeTypes.Security')) {
                             $disputeTypes[] = $dispute_type_det;
                         }
-                    } else if ((int)$vehicle_rental->item_user_status_id === config('constants.ConstItemUserStatus.BookerReviewed') && $host_id === $user->id && $vehicle_rental->vehicle_feedback && $vehicle_rental->vehicle_feedback[0]->rating < config('dispute.rating_limit_to_raise_dispute')) {
+                    } elseif ((int) $vehicle_rental->item_user_status_id === config('constants.ConstItemUserStatus.BookerReviewed') && $host_id === $user->id && $vehicle_rental->vehicle_feedback && $vehicle_rental->vehicle_feedback[0]->rating < config('dispute.rating_limit_to_raise_dispute')) {
                         // Poor Feedback dispute (host)
                         if ($dispute_type_det && $dispute_type_det->id === config('constants.ConstDisputeTypes.Feedback')) {
                             $disputeTypes[] = $dispute_type_det;
@@ -214,14 +219,14 @@ class VehicleDisputesController extends Controller
                 }
                 if ($disputeTypes) {
                     return response()->json(['dispute_types' => $disputeTypes], 200);
-                } else if ($all_vehicle_dispute_types) {
+                } elseif ($all_vehicle_dispute_types) {
                     return response()->json(['all_dispute_types' => $all_vehicle_dispute_types], 200);
                 } else {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleDispute could not be raised.');
                 }
             }
         } else {
-            return $this->response->errorNotFound("Invalid Request");
+            return $this->response->errorNotFound('Invalid Request');
         }
     }
 }

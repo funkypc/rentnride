@@ -5,32 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Vehicles\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Vehicles\Model\FuelType;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Vehicles\Transformers\AdminFuelTypeTransformer;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use Validator;
 
 /**
  * Class AdminFuelTypesController
- * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminFuelTypesController extends Controller
 {
-
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -58,12 +53,14 @@ class AdminFuelTypesController extends Controller
             $fuel_type_count = FuelType::count();
         }
         $fuel_types = FuelType::filterByRequest($request)->paginate($fuel_type_count);
+
         return $this->response->paginator($fuel_types, new AdminFuelTypeTransformer);
     }
 
     /**
      * Store a new fuel type.
      * Store a new fuel type with a 'amount', 'user_id', 'name', 'booking_type_id', 'description'.
+     *
      * @Post("/fuel_types")
      * @Transaction({
      *      @Request({}),
@@ -85,7 +82,7 @@ class AdminFuelTypesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Fuel type could not be added. Please, try again.',
-                    array($e->getMessage()));
+                    [$e->getMessage()]);
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Fuel type could not be added. Please, try again.', $validator->errors());
@@ -95,6 +92,7 @@ class AdminFuelTypesController extends Controller
     /**
      * Edit the specified fuel type.
      * Edit the fuel type with a `id`.
+     *
      * @Get("/fuel_types/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -105,15 +103,17 @@ class AdminFuelTypesController extends Controller
     public function edit($id)
     {
         $fuel_type = FuelType::find($id);
-        if (!$fuel_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $fuel_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($fuel_type, (new AdminFuelTypeTransformer));
     }
 
     /**
      * Update the specified fuel type.
      * Update the fuel type with a `id`.
+     *
      * @Put("/fuel_types/{id}")
      * @Transaction({
      *      @Response(200, body={"success": "Record has been updated."}),
@@ -132,6 +132,7 @@ class AdminFuelTypesController extends Controller
         if ($validator->passes() && $fuel_type) {
             try {
                 $fuel_type->update($fuel_type_data);
+
                 return response()->json(['Success' => 'Fuel Type has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Fuel Type could not be updated. Please, try again.');
@@ -144,6 +145,7 @@ class AdminFuelTypesController extends Controller
     /**
      * Delete the specified fuel type.
      * Delete the fuel type with a `id`.
+     *
      * @Delete("/fuel_types/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -154,17 +156,19 @@ class AdminFuelTypesController extends Controller
     public function destroy($id)
     {
         $fuel_type = FuelType::find($id);
-        if (!$fuel_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $fuel_type) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $fuel_type->delete();
         }
+
         return response()->json(['Success' => 'Fuel Type deleted'], 200);
     }
 
     /**
      * Show the specified fuel type.
      * Show the fuel type with a `id`.
+     *
      * @Get("/fuel_types/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -175,9 +179,10 @@ class AdminFuelTypesController extends Controller
     public function show($id)
     {
         $fuel_type = FuelType::find($id);
-        if (!$fuel_type) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $fuel_type) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($fuel_type, (new AdminFuelTypeTransformer));
     }
 }

@@ -5,31 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-use App\User;
-use Illuminate\Support\Facades\Auth;
-use Validator;
-use App\Transformers\UserTransformer;
-use App\Transformers\UserSimpleTransformer;
-use Illuminate\Support\Facades\Hash;
-use App\Services\UserService;
 use App\Services\IpService;
+use App\Services\UserService;
+use App\Transformers\UserSimpleTransformer;
+use App\Transformers\UserTransformer;
+use App\User;
 use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Validator;
 
 /**
  * Users resource representation.
+ *
  * @Resource("Admin/AdminUsers")
  */
 class AdminUsersController extends Controller
@@ -38,6 +37,7 @@ class AdminUsersController extends Controller
      * @var UserService
      */
     protected $user_service;
+
     /**
      * @var IpService
      */
@@ -78,23 +78,26 @@ class AdminUsersController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('limit') && $request->input('limit') == 'all'){
-            $users_count = User::where(['is_active' => true, 'is_email_confirmed' => true, 'is_agree_terms_conditions' => true ])->count();
-            $users = User::where(['is_active' => true, 'is_email_confirmed' => true, 'is_agree_terms_conditions' => true ])->select('id', 'username')->paginate($users_count);
+        if ($request->has('limit') && $request->input('limit') == 'all') {
+            $users_count = User::where(['is_active' => true, 'is_email_confirmed' => true, 'is_agree_terms_conditions' => true])->count();
+            $users = User::where(['is_active' => true, 'is_email_confirmed' => true, 'is_agree_terms_conditions' => true])->select('id', 'username')->paginate($users_count);
+
             return $this->response->paginator($users, new UserSimpleTransformer);
-        } else if($request->has('limit') && $request->input('limit') != 'all'){
+        } elseif ($request->has('limit') && $request->input('limit') != 'all') {
             $users_count = $request->input('limit');
             $users = User::select(DB::raw('users.*'))
                 ->leftJoin(DB::raw('(select id,ip from ips) as last_login_ip'), 'last_login_ip.id', '=', 'users.last_login_ip_id')
                 ->leftJoin(DB::raw('(select id,ip from ips) as register_ip'), 'register_ip.id', '=', 'users.register_ip_id')
-				->filterByRequest($request)->paginate($users_count);
+                ->filterByRequest($request)->paginate($users_count);
+
             return $this->response->paginator($users, (new UserTransformer)->setDefaultIncludes(['last_login_ip', 'register_ip']));
-        } else{
+        } else {
             $users = User::select(DB::raw('users.*'))
                 ->leftJoin(DB::raw('(select id,ip from ips) as last_login_ip'), 'last_login_ip.id', '=', 'users.last_login_ip_id')
                 ->leftJoin(DB::raw('(select id,ip from ips) as register_ip'), 'register_ip.id', '=', 'users.register_ip_id')
                 ->filterByRequest($request)
                 ->paginate(config('constants.ConstPageLimit'));
+
             return $this->response->paginator($users, (new UserTransformer)->setDefaultIncludes(['last_login_ip', 'register_ip']));
         }
     }
@@ -102,6 +105,7 @@ class AdminUsersController extends Controller
     /**
      * Store a new user.
      * Store a new city with a `role_id`, `username`, `email`, `password`, `is_active` and `is_email_confirmed`.
+     *
      * @Post("/users")
      * @Transaction({
      *      @Request({"role_id": 1, "name": "AHSAN", "email": "guest@gmail.com", "password": "XXXXXX", "is_active": 1, "is_email_confirmed": 1 }),
@@ -121,7 +125,8 @@ class AdminUsersController extends Controller
             $user_data['register_ip_id'] = $this->IpService->getIpId($request->ip());
             $user = User::create($user_data);
             if ($user) {
-				$this->UserService->sendAdminAddUserMail($user->username, $request->password, $user->email);
+                $this->UserService->sendAdminAddUserMail($user->username, $request->password, $user->email);
+
                 return response()->json(['Success' => 'User has been added'], 200);
             } else {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('User could not be updated. Please, try again.');
@@ -134,6 +139,7 @@ class AdminUsersController extends Controller
     /**
      * Edit the specified user.
      * Edit the user with a `id`.
+     *
      * @Get("/users/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -144,15 +150,17 @@ class AdminUsersController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($user, new UserTransformer);
     }
 
     /**
      * Show the specified user.
      * Show the user with a `id`.
+     *
      * @Get("/users/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -163,15 +171,17 @@ class AdminUsersController extends Controller
     public function show($id)
     {
         $user = User::with('last_login_ip', 'register_ip', 'attachments')->find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($user, (new UserTransformer)->setDefaultIncludes(['last_login_ip', 'register_ip', 'attachmentable']));
     }
 
     /**
      * Update User
      * Update user with a `id`.
+     *
      * @Put("/users?id=1")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -201,13 +211,14 @@ class AdminUsersController extends Controller
                 if ($user_is_active !== $request->is_active && $request->is_active === 1) {
                     // send mail for active
                     $this->UserService->sendStatusMail($user->username, $user->email, 'Admin User Active');
-                } else if ($user_is_active !== $request->is_active && $request->is_active === 0) {
+                } elseif ($user_is_active !== $request->is_active && $request->is_active === 0) {
                     // send mail for deactive
                     $this->UserService->sendStatusMail($user->username, $user->email, 'Admin User Deactivate');
                 }
-                if($user->user_login_count === 0){
+                if ($user->user_login_count === 0) {
                     $this->UserService->sendWelcomeMail($user->id, $user->email, $user->username);
                 }
+
                 return response()->json(['Success' => 'User has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('User could not be updated. Please, try again.');
@@ -220,6 +231,7 @@ class AdminUsersController extends Controller
     /**
      * Delete the specified user.
      * Delete the user with a `id`.
+     *
      * @Delete("/users/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -230,11 +242,12 @@ class AdminUsersController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             if ($user->delete()) {
                 $this->UserService->sendStatusMail($user->username, $user->email, 'Admin User Delete');
+
                 return response()->json(['Success' => 'User deleted'], 200);
             }
         }
@@ -242,6 +255,7 @@ class AdminUsersController extends Controller
 
     /**
      * Change Password.
+     *
      * @Put("/users/{id}/change_password")
      * @Transaction({
      *      @Request({"id": 1, "New Password": "XXXXXX", "Confirm Password": "XXXXXX"}),
@@ -253,8 +267,8 @@ class AdminUsersController extends Controller
     public function changePassword(Request $request, $id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         }
         $user_data = $request->only('password', 'confirm_password');
         $validator = Validator::make($user_data, User::GetValidationRule());
@@ -270,6 +284,7 @@ class AdminUsersController extends Controller
 
     /**
      * Deactivate the user.
+     *
      * @Put("/users/{id}/deactive")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -280,8 +295,8 @@ class AdminUsersController extends Controller
     public function deactive(Request $request, $id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $user_data['is_active'] = false;
             if ($user->update($user_data)) {
@@ -292,6 +307,7 @@ class AdminUsersController extends Controller
 
     /**
      * Activate the user.
+     *
      * @Put("/users/{id}/active")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -302,8 +318,8 @@ class AdminUsersController extends Controller
     public function active(Request $request, $id)
     {
         $user = User::find($id);
-        if (!$user) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $user) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $user_data['is_active'] = true;
             if ($user->update($user_data)) {

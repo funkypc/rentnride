@@ -5,27 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
 use App\Http\Controllers\Controller;
-
 use App\Ip;
 use App\Transformers\IpTransformer;
 use DB;
+use Illuminate\Http\Request;
 
 /**
  * Ips resource representation.
+ *
  * @Resource("Admin/AdminIps")
  */
 class AdminIpsController extends Controller
@@ -61,12 +59,14 @@ class AdminIpsController extends Controller
             ->leftJoin(DB::raw('(select id,name as country_name from countries) as countries'), 'countries.id', '=', 'ips.country_id')
             ->filterByRequest($request)
             ->paginate(config('constants.ConstPageLimit'));
+
         return $this->response->paginator($ips, (new IpTransformer)->setDefaultIncludes(['City', 'State', 'Country']));
     }
 
     /**
      * Show the specified ip.
      * Show the ip with a `id`.
+     *
      * @Get("/ips/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -77,15 +77,17 @@ class AdminIpsController extends Controller
     public function show($id)
     {
         $ips = Ip::with('City', 'State', 'Country')->find($id);
-        if (!$ips) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $ips) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($ips, (new IpTransformer)->setDefaultIncludes(['City', 'State', 'Country']));
     }
 
     /**
      * Delete the specified ip.
      * Delete the ip with a `id`.
+     *
      * @Delete("/ips/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -96,11 +98,12 @@ class AdminIpsController extends Controller
     public function destroy($id)
     {
         $ips = Ip::find($id);
-        if (!$ips) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $ips) {
+            return $this->response->errorNotFound('Invalid Request');
         } else {
             $ips->delete();
         }
+
         return response()->json(['Success' => 'Ip deleted'], 200);
     }
 }

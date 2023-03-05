@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateItemUserAdditionalChargesTable extends Migration
 {
@@ -18,7 +18,7 @@ class CreateItemUserAdditionalChargesTable extends Migration
             $table->bigInteger('item_user_id')->unsigned()->nullable()->index();
             $table->foreign('item_user_id')
                 ->references('id')->on('item_users')
-				->onDelete('set null');
+                ->onDelete('set null');
             $table->string('item_user_additional_chargable_type');
             $table->bigInteger('item_user_additional_chargable_id')->unsigned();
             $table->double('amount', 10, 2)->default(0.00);

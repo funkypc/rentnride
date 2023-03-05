@@ -5,28 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\Paypal\Controllers\Admin;
 
-use Illuminate\Http\Request;
-
-
-
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Plugins\Paypal\Model\PaypalTransactionLog;
-use Illuminate\Support\Facades\Auth;
-use Validator;
 use Plugins\Paypal\Transformers\PaypalTransactionLogTransformer;
 
 /**
  * Money Transfer Accounts resource representation.
+ *
  * @Resource("Sudopays")
  */
 class AdminPaypalTransactionLogsController extends Controller
@@ -53,17 +49,17 @@ class AdminPaypalTransactionLogsController extends Controller
      *      @Parameter("page", type="integer", required=false, description="The page of results to view.", default=1),
      * })
      */
-
     public function index(Request $request)
     {
         $paypal_transaction_logs = PaypalTransactionLog::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        return $this->response->paginator($paypal_transaction_logs, (new PaypalTransactionLogTransformer));
 
+        return $this->response->paginator($paypal_transaction_logs, (new PaypalTransactionLogTransformer));
     }
 
     /**
      * Show the paypal transaction log.
      * Show the paypal transaction log with a `id`.
+     *
      * @Get("/paypal_transaction_logs/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -74,9 +70,10 @@ class AdminPaypalTransactionLogsController extends Controller
     public function show($id)
     {
         $paypal_transaction_log = PaypalTransactionLog::find($id);
-        if (!$paypal_transaction_log) {
-            return $this->response->errorNotFound("Invalid Request");
+        if (! $paypal_transaction_log) {
+            return $this->response->errorNotFound('Invalid Request');
         }
+
         return $this->response->item($paypal_transaction_log, (new PaypalTransactionLogTransformer));
     }
 }

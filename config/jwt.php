@@ -297,7 +297,7 @@ return [
         |
         */
 
-      'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
+        'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
 
         /*
         |--------------------------------------------------------------------------
@@ -308,7 +308,7 @@ return [
         |
         */
 
-      'show_black_list_exception' => env('JWT_SHOW_BLACKLIST_EXCEPTION', 0),
+        'show_black_list_exception' => env('JWT_SHOW_BLACKLIST_EXCEPTION', 0),
     ],
 
 ];

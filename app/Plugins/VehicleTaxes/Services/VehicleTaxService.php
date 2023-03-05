@@ -5,18 +5,18 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
+
 namespace Plugins\VehicleTaxes\Services;
 
-use Plugins\VehicleTaxes\Model\VehicleTypeTax;
 use Plugins\VehicleRentals\Model\VehicleRentalAdditionalCharge;
+use Plugins\VehicleTaxes\Model\VehicleTypeTax;
 
 class VehicleTaxService
 {
@@ -37,21 +37,21 @@ class VehicleTaxService
     {
         $res_amount = 0;
         $vehicle_type_taxes = VehicleTypeTax::where('vehicle_type_id', $vehicle_type_id)->get();
-        if (!empty($vehicle_type_taxes)) {
+        if (! empty($vehicle_type_taxes)) {
             foreach ($vehicle_type_taxes as $vehicle_type_tax) {
-                if (!empty($vehicle_type_tax->rate)) {
-                    if (!empty($vehicle_type_tax->discount_type_id) && $vehicle_type_tax->discount_type_id == 1) {
+                if (! empty($vehicle_type_tax->rate)) {
+                    if (! empty($vehicle_type_tax->discount_type_id) && $vehicle_type_tax->discount_type_id == 1) {
                         $tax_amount = $booking_calculated_details['booking_amount'] * $vehicle_type_tax->rate / 100;
-                    } else if (!empty($vehicle_type_tax->discount_type_id) && $vehicle_type_tax->discount_type_id == 2) {
+                    } elseif (! empty($vehicle_type_tax->discount_type_id) && $vehicle_type_tax->discount_type_id == 2) {
                         $tax_amount = $vehicle_type_tax->rate;
                     }
-                    if (!empty($vehicle_type_tax->duration_type_id) && $vehicle_type_tax->duration_type_id == 1) {
-                        if (!empty($booking_calculated_details['total_hours'])) {
+                    if (! empty($vehicle_type_tax->duration_type_id) && $vehicle_type_tax->duration_type_id == 1) {
+                        if (! empty($booking_calculated_details['total_hours'])) {
                             $booking_calculated_details['total_days'] = $booking_calculated_details['total_days'] + 1;
                         }
                         $tax_amount = $tax_amount * $booking_calculated_details['total_days'];
                     }
-                    if (!empty($vehicle_type_tax->max_allowed_amount)) {
+                    if (! empty($vehicle_type_tax->max_allowed_amount)) {
                         if ($tax_amount > $vehicle_type_tax->max_allowed_amount) {
                             $tax_amount = $vehicle_type_tax->max_allowed_amount;
                         }
@@ -64,10 +64,10 @@ class VehicleTaxService
                 $vehicle_tax->vehicle_rental_additional_charges()->save($vehicle_rental_additional_charge);
                 $res_amount = $res_amount + $tax_amount;
             }
+
             return $res_amount;
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Given Taxes not available. Please, try again.');
         }
     }
-
 }

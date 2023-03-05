@@ -5,23 +5,21 @@
  * PHP version 5
  *
  * @category   PHP
- * @package    RENT&RIDE
- * @subpackage Core
+ *
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
+ *
  * @link       http://www.agriya.com
  */
- 
 
 namespace App\Transformers;
 
-use League\Fractal;
 use App\UserLogin;
+use League\Fractal;
 
 /**
  * Class UserLoginTransformer
- * @package App\Transformers
  */
 class UserLoginTransformer extends Fractal\TransformerAbstract
 {
@@ -31,21 +29,22 @@ class UserLoginTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'UserLoginIp', 'User', 'Role'
+        'UserLoginIp', 'User', 'Role',
     ];
 
     /**
-     * @param UserLogin $user_login
+     * @param  UserLogin  $user_login
      * @return array
      */
     public function transform(UserLogin $user_login)
     {
         $output = array_only($user_login->toArray(), ['id', 'created_at', 'user_id', 'user_login_ip_id', 'role_id', 'user_agent']);
+
         return $output;
     }
 
     /**
-     * @param UserLogin $user_login
+     * @param  UserLogin  $user_login
      * @return Fractal\Resource\Item
      */
     public function includeUserLoginIp(UserLogin $user_login)
@@ -55,11 +54,10 @@ class UserLoginTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param UserLogin $user_login
+     * @param  UserLogin  $user_login
      * @return Fractal\Resource\Item
      */
     public function includeUser(UserLogin $user_login)
@@ -69,11 +67,10 @@ class UserLoginTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 
     /**
-     * @param UserLogin $user_login
+     * @param  UserLogin  $user_login
      * @return Fractal\Resource\Item
      */
     public function includeRole(UserLogin $user_login)
@@ -83,6 +80,5 @@ class UserLoginTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
-
     }
 }
