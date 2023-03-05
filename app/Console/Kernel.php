@@ -1,22 +1,9 @@
 <?php
-/**
- * APP - Console
- *
- * PHP version 5
- *
- * @category   PHP
- *
- * @author     Agriya <info@agriya.com>
- * @copyright  2018 Agriya Infoway Private Ltd
- * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
- * @link       http://www.agriya.com
- */
 
 namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
-use Laravel\Lumen\Console\Kernel as ConsoleKernel;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
@@ -26,20 +13,30 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\CurrencyCron::class,
-        Commands\StatusUpdateCron::class,
-        Commands\GeoIpCron::class,
+        //
     ];
 
     /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+     * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('currency:cron')->daily();
-        $schedule->command('status_update:cron')->daily();
-        $schedule->command('ip:cron')->daily();
+        // $schedule->command('inspire')
+        //          ->hourly();
+    }
+
+    /**
+     * Register the commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
     }
 }
