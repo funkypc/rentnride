@@ -13,6 +13,8 @@
  * @link       http://www.agriya.com
  */
  
+use Illuminate\Support\Str;
+
 return [
 
 	/*
@@ -87,6 +89,9 @@ return [
 	|
 	*/
 
-	'prefix' => 'laravel',
+	'prefix' => env(
+        'CACHE_PREFIX',
+        Str::slug(env('APP_NAME', 'lumen'), '_').'_cache'
+    ),
 
 ];
