@@ -16,7 +16,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 try {
-    Dotenv\Dotenv::createImmutable(__DIR__ . '/../')->load();
+    Dotenv\Dotenv::create(__DIR__ . '/../')->load();
 } catch (Dotenv\Exception\InvalidPathException $e) {
     //
 }
