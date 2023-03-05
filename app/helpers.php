@@ -95,7 +95,7 @@ if (! function_exists('asset')) {
      */
     function asset($path, $secure = null)
     {
-        return app('url')->asset($path, $secure);
+        return URL::asset($path, $secure);
     }
 }
 
@@ -128,7 +128,7 @@ if (! function_exists('bcrypt')) {
      */
     function bcrypt($value, $options = [])
     {
-        return app('hash')->make($value, $options);
+        return Hash::make($value, $options);
     }
 }
 
@@ -148,7 +148,7 @@ if (! function_exists('redirect')) {
             return app('redirect');
         }
 
-        return app('redirect')->to($to, $status, $headers, $secure);
+        return Redirect::to($to, $status, $headers, $secure);
     }
 }
 
@@ -214,10 +214,10 @@ if (! function_exists('session')) {
             return app('session');
         }
         if (is_array($key)) {
-            return app('session')->put($key);
+            return Session::put($key);
         }
 
-        return app('session')->get($key, $default);
+        return Session::get($key, $default);
     }
 }
 
