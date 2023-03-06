@@ -38,6 +38,17 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades();
 
+/*
+|--------------------------------------------------------------------------
+| Register Config Files
+|--------------------------------------------------------------------------
+|
+| Now we will register the "app" configuration file. If the file exists in
+| your configuration directory it will be loaded; otherwise, we'll load
+| the default version. You may register other files below as needed.
+|
+*/
+
 $app->configure('app');
 $app->configure('view'); 
 $app->configure('cache');
@@ -52,7 +63,6 @@ $app->configure('services');
 $app->configure('paypal');
 class_alias(Intervention\Image\Facades\Image::class, 'Image');
 class_alias(Illuminate\Support\Facades\File::class, 'File');
-class_alias(Illuminate\Support\Facades\Storage::class, 'Storage');
 class_alias(Carbon\Carbon::class, 'Carbon');
 class_alias(EasySlug\EasySlug\EasySlugFacade::class, 'EasySlug');
 class_alias(Netshell\Paypal\Facades\Paypal::class, 'Paypal');

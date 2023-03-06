@@ -28,15 +28,6 @@ class SettingsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
-    }
-
-    /**
-     * Bootstrap the application services.
-     * @return void
-     */
-    public function boot()
-    {
         if (Schema::hasTable('settings')) {
             $setting = Cache::rememberForever('settings_data', function () {
                 return DB::table('settings')->pluck('value', 'name');
@@ -45,5 +36,14 @@ class SettingsServiceProvider extends ServiceProvider
                 config()->set($key, $value);
             }
         }
+    }
+
+    /**
+     * Bootstrap the application services.
+     * @return void
+     */
+    public function boot()
+    {
+        //
     }
 }
