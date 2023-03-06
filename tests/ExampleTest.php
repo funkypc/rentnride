@@ -12,7 +12,12 @@
  *
  * @link       http://www.agriya.com
  */
-class ExampleTest extends TestCase
+
+ namespace Tests;
+
+use Illuminate\Contracts\Console\Kernel;
+
+trait ExampleTest
 {
     /**
      * A basic test example.

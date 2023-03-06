@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\CurrencyCron::class,
+        Commands\StatusUpdateCron::class,
+        Commands\GeoIpCron::class,
     ];
 
     /**
@@ -24,8 +26,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('currency:cron')->daily();
+        $schedule->command('status_update:cron')->daily();
+        $schedule->command('ip:cron')->daily();
     }
 
     /**

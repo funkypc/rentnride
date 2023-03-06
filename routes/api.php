@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,24 +40,6 @@ use Illuminate\Support\Facades\Route;
 
 $api = app('Dingo\Api\Routing\Router');
 
-$value = config('app.timezone');
-date_default_timezone_set($value);
-
-Route::get('/', function () use ($router) {
-    return $router->version();
-});
-
-Route::get('robots.txt', function () {
-    return config('site.robots');
-});
-
-Route::get('clear_cache', function () {
-    Cache::forget('settings_data');
-    Cache::forget('site_url_for_shell');
-
-    return response()->json(['Success' => 'setting cache cleared'], 200);
-});
-
 $api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'App\Http\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
 
@@ -94,8 +76,8 @@ $api->version(['v1'], function ($api) {
         $api->post('currencies', 'AdminCurrenciesController@store');
         $api->put('currencies/{id}', 'AdminCurrenciesController@update');
 
-        $api->get('discount_types', 'AdminDiscountTypesController@index');
-        $api->get('duration_types', 'AdminDurationTypesController@index');
+        // $api->get('discount_types', 'AdminDiscountTypesController@index');
+        // $api->get('duration_types', 'AdminDurationTypesController@index');
 
         // admin dashboards
         $api->get('stats', 'AdminDashboardsController@stats');
@@ -192,9 +174,9 @@ $api->version(['v1'], function ($api) {
         //currencies user side
         $api->get('/currencies', 'CurrenciesController@index');
         //discount types
-        $api->get('discount_types', 'DiscountTypesController@index');
+        // $api->get('discount_types', 'DiscountTypesController@index');
         // duration types
-        $api->get('duration_types', 'DurationTypesController@index');
+        // $api->get('duration_types', 'DurationTypesController@index');
 
         //languages user side
         $api->get('/languages', 'LanguagesController@index');
