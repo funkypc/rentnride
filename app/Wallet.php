@@ -5,21 +5,23 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use App\User;
 
 class Wallet extends Model
 {
-    protected $table = 'user_add_wallet_amounts';
+    protected $table = "user_add_wallet_amounts";
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +29,7 @@ class Wallet extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'description', 'amount', 'payment_gateway_id', 'user_paypal_connection_id', 'payment_id', 'pay_key', 'is_success',
+        'user_id', 'description', 'amount', 'payment_gateway_id', 'user_paypal_connection_id', 'payment_id', 'pay_key', 'is_success'
     ];
 
     /**
@@ -66,9 +68,8 @@ class Wallet extends Model
     {
         $min = config('wallet.min_wallet_amount');
         $max = config('wallet.max_wallet_amount');
-
         return [
-            'amount' => 'required|numeric|min:'.$min.'|max:'.$max,
+            'amount' => 'required|numeric|min:' . $min . '|max:' . $max
         ];
     }
 
@@ -78,7 +79,8 @@ class Wallet extends Model
             'amount.required' => 'Required',
             'amount.numeric' => 'Enter valid amount',
             'amount.min' => 'amount - Enter greater or equal minimum amount',
-            'amount.max' => 'amount - Enter less or equal maximum amount',
+            'amount.max' => 'amount - Enter less or equal maximum amount'
         ];
     }
+
 }

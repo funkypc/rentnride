@@ -5,19 +5,19 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Transformers;
 
-use App\Transformers\UserTransformer;
 use League\Fractal;
 use Plugins\Withdrawals\Model\MoneyTransferAccount;
+use App\Transformers\UserTransformer;
 
 class MoneyTransferAccountTransformer extends Fractal\TransformerAbstract
 {
@@ -27,18 +27,17 @@ class MoneyTransferAccountTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'User',
+        'User'
     ];
 
     public function transform(MoneyTransferAccount $money_transfer_account)
     {
         $output = array_only($money_transfer_account->toArray(), ['id', 'account', 'user_id', 'is_primary']);
-
         return $output;
     }
 
     /**
-     * @param  MoneyTransferAccount  $money_transfer_account
+     * @param MoneyTransferAccount $money_transfer_account
      * @return Fractal\Resource\Item
      */
     public function includeUser(MoneyTransferAccount $money_transfer_account)
@@ -48,5 +47,6 @@ class MoneyTransferAccountTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 }

@@ -5,22 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class Currency extends Model
 {
-    protected $table = 'currencies';
+    protected $table = "currencies";
 
     /**
      * The attributes that are mass assignable.
@@ -28,12 +28,12 @@ class Currency extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'code', 'symbol', 'prefix', 'suffix', 'decimals', 'dec_point', 'thousands_sep', 'is_prefix_display_on_left', 'is_use_graphic_symbol', 'is_active',
+        'name', 'code', 'symbol', 'prefix', 'suffix', 'decimals', 'dec_point', 'thousands_sep', 'is_prefix_display_on_left', 'is_use_graphic_symbol', 'is_active'
     ];
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -47,11 +47,12 @@ class Currency extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('code', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('code', 'LIKE', '%' . $request->input('q') . '%');
         }
-
         return $query;
+
+
     }
 
     /**
@@ -67,7 +68,7 @@ class Currency extends Model
             'dec_point' => 'required|max:1',
             'thousands_sep' => 'required|max:1',
             'is_prefix_display_on_left' => 'required|integer|max:1',
-            'is_use_graphic_symbol' => 'required|integer|max:1',
+            'is_use_graphic_symbol' => 'required|integer|max:1'
         ];
     }
 

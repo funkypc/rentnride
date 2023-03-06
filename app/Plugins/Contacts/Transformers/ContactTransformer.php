@@ -5,23 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Contacts\Transformers;
 
-use App\Transformers\IpTransformer;
-use App\Transformers\UserTransformer;
 use League\Fractal;
 use Plugins\Contacts\Model\Contact;
+use App\Transformers\UserTransformer;
+use App\Transformers\IpTransformer;
 
 /**
  * Class ContactTransformer
+ * @package Contacts\Transformers
  */
 class ContactTransformer extends Fractal\TransformerAbstract
 {
@@ -31,23 +32,22 @@ class ContactTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'User', 'Ip',
+        'User', 'Ip'
     ];
 
     /**
-     * @param  Contact  $contact
+     * @param Contact $contact
      * @return array
      */
     public function transform(Contact $contact)
     {
         $output = array_only($contact->toArray(), ['id', 'user_id', 'first_name', 'last_name', 'subject', 'message', 'telephone', 'email']);
-        $output['user_type'] = empty($output['user_id']) ? 'Guest' : $contact['user']['username'];
-
+        $output['user_type'] = empty($output['user_id']) ? "Guest" : $contact['user']['username'];
         return $output;
     }
 
     /**
-     * @param  Contact  $contact
+     * @param Contact $contact
      * @return Fractal\Resource\Item
      */
     public function includeUser(Contact $contact)
@@ -57,10 +57,11 @@ class ContactTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 
     /**
-     * @param  Contact  $contact
+     * @param Contact $contact
      * @return Fractal\Resource\Item
      */
     public function includeIp(Contact $contact)
@@ -70,5 +71,6 @@ class ContactTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 }

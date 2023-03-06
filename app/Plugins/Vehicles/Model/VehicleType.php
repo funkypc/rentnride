@@ -5,37 +5,36 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Model;
 
 use App\DurationType;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class VehicleType
+ * @package Plugins\Vehicles\Model
  */
 class VehicleType extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'vehicle_types';
-
+    protected $table = "vehicle_types";
     /**
      * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
-        'name', 'slug', 'minimum_hour_price', 'maximum_hour_price', 'minimum_day_price', 'maximum_day_price', 'drop_location_differ_unit_price', 'drop_location_differ_additional_fee', 'deposit_amount', 'is_active', 'vehicle_count', 'late_checkout_addtional_fee', 'duration_type_id',
+        'name', 'slug', 'minimum_hour_price', 'maximum_hour_price', 'minimum_day_price', 'maximum_day_price', 'drop_location_differ_unit_price', 'drop_location_differ_additional_fee', 'deposit_amount', 'is_active', 'vehicle_count', 'late_checkout_addtional_fee', 'duration_type_id'
     ];
 
     /**
@@ -109,19 +108,17 @@ class VehicleType extends Model
     {
         return $this->belongsTo(DurationType::class);
     }
-
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      */
     public function scopeFilterByActiveRecord($query, Request $request)
     {
         $query->where('is_active', '=', 1);
     }
-
     /**
      * @param $query
-     * @param  Request  $request
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -135,12 +132,11 @@ class VehicleType extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('q') . '%');
         }
         if ($request->has('type') && $request->type == 'vehicle_count') {
             $query->where('vehicle_count', '>', 0);
         }
-
         return $query;
     }
 

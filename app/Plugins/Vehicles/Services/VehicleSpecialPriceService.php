@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Services;
 
 use Plugins\Vehicles\Model\VehicleSpecialPrice;
@@ -32,7 +32,6 @@ class VehicleSpecialPriceService
     public function getVehicleSpecialPriceList()
     {
         $vehicle_special_price_list = VehicleSpecialPrice::where('is_active', true)->pluck('id', 'vehicle_type_id', 'start_date', 'end_date', 'discount_percentage');
-
         return $vehicle_special_price_list;
     }
 
@@ -51,10 +50,9 @@ class VehicleSpecialPriceService
             ->where('end_date', '>=', $vehicle_rental_end_date)
             ->where('is_active', 1)
             ->orderBy('discount_percentage', 'desc')->first();
-        if (! empty($vehicle_special_price)) {
+        if (!empty($vehicle_special_price)) {
             $special_price_amount = $booking_amount * $vehicle_special_price->discount_percentage / 100;
         }
-
         return $special_price_amount;
     }
 }

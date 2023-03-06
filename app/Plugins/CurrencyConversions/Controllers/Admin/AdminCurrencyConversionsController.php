@@ -5,25 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\CurrencyConversions\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use DB;
 use Illuminate\Http\Request;
-use Plugins\CurrencyConversions\Model\CurrencyConversion;
-use Plugins\CurrencyConversions\Transformers\CurrencyConversionTransformer;
 
+
+use App\Http\Controllers\Controller;
+
+use Plugins\CurrencyConversions\Model\CurrencyConversion;
+
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use Plugins\CurrencyConversions\Transformers\CurrencyConversionTransformer;
+use DB;
 /**
  * CurrencyConversions resource representation.
- *
  * @Resource("Admin/AdminCurrencyConversions")
  */
 class AdminCurrencyConversionsController extends Controller
@@ -54,7 +59,6 @@ class AdminCurrencyConversionsController extends Controller
             ->leftJoin(DB::raw('(select id,name from currencies) as currency'), 'currency.id', '=', 'currency_conversions.currency_id')
             ->leftJoin(DB::raw('(select id,name from currencies) as converted_currency'), 'converted_currency.id', '=', 'currency_conversions.converted_currency_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($currency_conversions, (new CurrencyConversionTransformer)->setDefaultIncludes(['currency', 'converted_currency']));
     }
 }

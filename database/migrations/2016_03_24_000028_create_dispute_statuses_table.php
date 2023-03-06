@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateDisputeStatusesTable extends Migration
 {
@@ -26,6 +26,6 @@ class CreateDisputeStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('dispute_statuses');
+		Schema::drop('dispute_statuses');
     }
 }

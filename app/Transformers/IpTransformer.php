@@ -5,21 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Transformers;
 
-use App\Ip;
 use League\Fractal;
+use App\Ip;
 
 /**
  * Class IpTransformer
+ * @package App\Transformers
  */
 class IpTransformer extends Fractal\TransformerAbstract
 {
@@ -29,22 +30,21 @@ class IpTransformer extends Fractal\TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'City', 'State', 'Country',
+        'City', 'State', 'Country'
     ];
 
     /**
-     * @param  Ip  $ip
+     * @param Ip $ip
      * @return array
      */
     public function transform(Ip $ip)
     {
         $output = array_only($ip->toArray(), ['id', 'ip', 'city_id', 'state_id', 'country_id', 'latitude', 'longitude']);
-
         return $output;
     }
 
     /**
-     * @param  Ip  $ip
+     * @param Ip $ip
      * @return Fractal\Resource\Item
      */
     public function includeCity(Ip $ip)
@@ -57,7 +57,7 @@ class IpTransformer extends Fractal\TransformerAbstract
     }
 
     /**
-     * @param  Ip  $ip
+     * @param Ip $ip
      * @return Fractal\Resource\Item
      */
     public function includeState(Ip $ip)
@@ -67,10 +67,11 @@ class IpTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 
     /**
-     * @param  Ip  $ip
+     * @param Ip $ip
      * @return Fractal\Resource\Item
      */
     public function includeCountry(Ip $ip)
@@ -80,5 +81,6 @@ class IpTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 }

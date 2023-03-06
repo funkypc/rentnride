@@ -5,40 +5,43 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Model;
 
 use App\Message;
-use App\Transaction;
-use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+
+use Illuminate\Support\Facades\Auth;
+use App\User;
+use App\Transaction;
 
 /**
  * Class UserCashWithdrawal
+ * @package App
  */
 class UserCashWithdrawal extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'user_cash_withdrawals';
-
+    protected $table = "user_cash_withdrawals";
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'amount', 'user_id', 'money_transfer_account_id', 'withdrawal_status_id',
+        'amount', 'user_id', 'money_transfer_account_id', 'withdrawal_status_id'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -48,6 +51,7 @@ class UserCashWithdrawal extends Model
         return $this->belongsTo(MoneyTransferAccount::class);
     }
 
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -55,6 +59,7 @@ class UserCashWithdrawal extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -81,8 +86,8 @@ class UserCashWithdrawal extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -92,22 +97,21 @@ class UserCashWithdrawal extends Model
             $query->where('withdrawal_status_id', '=', $request->input('filter'));
         }
         if ($request->has('q')) {
-            $query->where('user_cash_withdrawals.amount', 'like', '%'.$request->input('q').'%');
+            $query->where('user_cash_withdrawals.amount', 'like', '%' . $request->input('q') . '%');
             $query->orWhereHas('user', function ($q) use ($request) {
-                $q->where('username', 'like', '%'.$request->input('q').'%');
+                $q->where('username', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('money_transfer_account', function ($q) use ($request) {
-                $q->where('account', 'like', '%'.$request->input('q').'%');
+                $q->where('account', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('withdrawal_status', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
         $user = JWTAuth::parseToken()->authenticate();
         if ($user->id != config('constants.ConstUserTypes.Admin')) {
             $query->where('user_id', '=', $user->id);
         }
-
         return $query;
     }
 
@@ -120,7 +124,7 @@ class UserCashWithdrawal extends Model
             'amount' => 'sometimes|required|min:1|max:4',
             'user_id' => 'sometimes|required|integer',
             'money_transfer_account_id' => 'sometimes|required|integer',
-            'withdrawal_status_id' => 'required|integer',
+            'withdrawal_status_id' => 'required|integer'
         ];
     }
 
@@ -138,4 +142,5 @@ class UserCashWithdrawal extends Model
             'withdrawal_status_id.integer' => 'withdrawal_status_id must be a number',
         ];
     }
+
 }

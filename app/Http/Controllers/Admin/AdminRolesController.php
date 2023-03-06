@@ -5,24 +5,29 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Role;
-use App\Transformers\RoleTransformer;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+
+use App\Role;
+
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use App\Transformers\RoleTransformer;
 
 /**
  * Roles resource representation.
- *
  * @Resource("Admin/AdminRoles")
  */
 class AdminRolesController extends Controller
@@ -52,7 +57,6 @@ class AdminRolesController extends Controller
     public function index(Request $request)
     {
         $roles = Role::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($roles, new RoleTransformer);
     }
 }

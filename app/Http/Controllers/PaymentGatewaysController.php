@@ -5,11 +5,11 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
@@ -41,7 +41,6 @@ class PaymentGatewaysController extends Controller
 
     /**
      * Show all enabled payment gateways.
-     *
      * @Get("/get_gateways")
      * @Transaction({
      *      @Response(200, body={"paypal": {"error": {"code": 0}, "paypal_enabled": true}, "sudopay": [], "wallet": {"error": {"code": 0},"wallet_enabled": true}})
@@ -49,7 +48,7 @@ class PaymentGatewaysController extends Controller
      */
     public function getGateways(Request $request)
     {
-        $sudopay_gateway_response = $paypal_gateway_response = $wallet_response = $payment_gateways = [];
+        $sudopay_gateway_response = $paypal_gateway_response = $wallet_response = $payment_gateways = array();
         $selected_payment_gateway_id = $selected_gateway_id = '';
         // wallet
         $wallet = new \App\Services\WalletService();
@@ -60,13 +59,13 @@ class PaymentGatewaysController extends Controller
             $paypal_gateway_response = $paypal->getPaypalDetails();
         }
         if (isPluginEnabled('Sudopays')) {
-            $gateways = $this->sudopayService->callGateways(['supported_actions' => 'auth,capture']);
+            $gateways = $this->sudopayService->callGateways(array('supported_actions' => 'auth,capture'));
             $i = 0;
-            if (! empty($gateways['gateways'])) {
+            if (!empty($gateways['gateways'])) {
                 foreach ($gateways['gateways'] as $group_gateway) {
                     $gateway_groups[] = $group_gateway;
                 }
-                $unset_array = [];
+                $unset_array = array();
                 foreach ($gateways['gateways'] as $key => $group_gateway) {
                     if (count($group_gateway['gateways']) > 0) {
                         foreach ($group_gateway['gateways'] as $gateway) {
@@ -82,16 +81,16 @@ class PaymentGatewaysController extends Controller
                         unset($gateway_groups[$unset_val]);
                     }
                 }
-                $payment_gateway_arrays = [];
-                if (! empty($gateway_array)) {
+                $payment_gateway_arrays = array();
+                if (!empty($gateway_array)) {
                     foreach ($gateway_array as $gateway) {
                         $payment_gateway_arrays[$i]['id'] = $gateway['id'];
-                        $payment_gateway_arrays[$i]['payment_id'] = 'sp_'.$gateway['id'];
+                        $payment_gateway_arrays[$i]['payment_id'] = 'sp_' . $gateway['id'];
                         $payment_gateway_arrays[$i]['group_id'] = $gateway['group_id'];
                         $payment_gateway_arrays[$i]['display_name'] = $gateway['display_name'];
                         $payment_gateway_arrays[$i]['thumb_url'] = $gateway['thumb_url'];
-                        $payment_gateway_arrays[$i]['sp_'.$gateway['id']] = implode($gateway['_form_fields']['_extends_tpl'], ',');
-                        $payment_gateway_arrays[$i]['form_fields'] = implode($gateway['_form_fields']['_extends_tpl'], ',');
+                        $payment_gateway_arrays[$i]['sp_' . $gateway['id']] = implode($gateway['_form_fields']['_extends_tpl'], ",");
+                        $payment_gateway_arrays[$i]['form_fields'] = implode($gateway['_form_fields']['_extends_tpl'], ",");
                         $i++;
                     }
                     $payment_gateways = $payment_gateway_arrays;
@@ -99,14 +98,14 @@ class PaymentGatewaysController extends Controller
                 //Load form fields
                 $form_fields_tpls = $gateways['_form_fields_tpls'];
                 //Get first payment
-                if (! empty($gateway_groups)) {
+                if (!empty($gateway_groups)) {
                     $default_group_id = '';
                     $default_gateway_id = '';
-                    foreach ($gateway_groups as $key => $value) {
+                    foreach ($gateway_groups As $key => $value) {
                         $default_group_id = $value['id'];
                         break;
                     }
-                    foreach ($payment_gateways as $key => $value) {
+                    foreach ($payment_gateways As $key => $value) {
                         $default_gateway_id = $value['payment_id'];
                         break;
                     }
@@ -119,6 +118,7 @@ class PaymentGatewaysController extends Controller
                 $sudopay_gateway_response['form_fields_tpls'] = $form_fields_tpls;
                 $sudopay_gateway_response['selected_payment_gateway_id'] = $selected_payment_gateway_id;
                 $sudopay_gateway_response['selected_gateway_id'] = $selected_gateway_id;
+
             }
         }
         if ($request->has('page') && $request->page == 'wallet') {
@@ -129,7 +129,7 @@ class PaymentGatewaysController extends Controller
             $response['sudopay'] = $sudopay_gateway_response;
             $response['wallet'] = $wallet_response;
         }
-
         return $response;
     }
+
 }

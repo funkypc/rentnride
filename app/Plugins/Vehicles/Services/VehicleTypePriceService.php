@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Services;
 
 use Plugins\Vehicles\Model\VehicleTypePrice;
@@ -32,7 +32,6 @@ class VehicleTypePriceService
     public function getVehicleTypePriceList()
     {
         $vehicle_type_price_list = VehicleTypePrice::where('is_active', true)->pluck('id', 'vehicle_type_id', 'minimum_no_of_day', 'maximum_no_of_day', 'discount_percentage');
-
         return $vehicle_type_price_list;
     }
 
@@ -53,10 +52,9 @@ class VehicleTypePriceService
             ->where('maximum_no_of_day', '>=', $date_diff['total_days'])
             ->where('is_active', 1)
             ->orderBy('discount_percentage', 'desc')->first();
-        if (! empty($vehicle_type_price)) {
+        if (!empty($vehicle_type_price)) {
             $vehicle_type_price_amount = $booking_amount * $vehicle_type_price->discount_percentage / 100;
         }
-
         return $vehicle_type_price_amount;
     }
 }

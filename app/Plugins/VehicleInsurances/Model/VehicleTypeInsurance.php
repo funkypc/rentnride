@@ -5,31 +5,33 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleInsurances\Model;
 
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 use App\DiscountType;
 use App\DurationType;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class VehicleTypeInsurance extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'vehicle_type_insurances';
+    protected $table = "vehicle_type_insurances";
 
     protected $fillable = [
-        'vehicle_type_id', 'insurance_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'is_active',
+        'vehicle_type_id', 'insurance_id', 'rate', 'discount_type_id', 'duration_type_id', 'max_allowed_amount', 'is_active'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -72,17 +74,16 @@ class VehicleTypeInsurance extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      */
     public function scopeFilterByActiveRecord($query, Request $request)
     {
         $query->where('is_active', '=', 1);
     }
-
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -90,16 +91,16 @@ class VehicleTypeInsurance extends Model
         $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'asc'));
         if ($request->has('q')) {
             $query->WhereHas('vehicle_insurance', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('vehicle_type', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('discount_type', function ($q) use ($request) {
-                $q->where('type', 'like', '%'.$request->input('q').'%');
+                $q->where('type', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('duration_type', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
 
@@ -110,10 +111,9 @@ class VehicleTypeInsurance extends Model
             }
             $query->where('is_active', '=', $filter);
         }
-        if ($request->has('insurance_id')) {
+        if($request->has('insurance_id')){
             $query->where('insurance_id', '=', $request->insurance_id);
         }
-
         return $query;
     }
 
@@ -128,7 +128,7 @@ class VehicleTypeInsurance extends Model
             'rate' => 'required|numeric',
             'discount_type_id' => 'required|integer|exists:discount_types,id',
             'duration_type_id' => 'required|integer|exists:duration_types,id',
-            'max_allowed_amount' => 'required|numeric',
+            'max_allowed_amount' => 'required|numeric'
         ];
     }
 
@@ -153,7 +153,8 @@ class VehicleTypeInsurance extends Model
             'duration_type_id.integer' => 'Duration Type Id must be integer',
             'discount_type_id.exists' => 'Invalid duration type id',
             'max_allowed_amount.required' => 'Required',
-            'max_allowed_amount.numeric' => 'Max allowed amount must be numeric',
+            'max_allowed_amount.numeric' => 'Max allowed amount must be numeric'
         ];
     }
+
 }

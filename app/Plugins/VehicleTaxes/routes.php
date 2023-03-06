@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,7 +26,7 @@
 $api = $this->app->make('Dingo\Api\Routing\Router');
 $api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'Plugins\VehicleTaxes\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
-        // Taxes admin side
+        // Taxes admin side        
         $api->get('vehicle_taxes', 'AdminVehicleTaxesController@index');
         $api->post('vehicle_taxes', 'AdminVehicleTaxesController@store');
         $api->put('vehicle_taxes/{id}', 'AdminVehicleTaxesController@update');
@@ -41,6 +41,7 @@ $api->version(['v1'], function ($api) {
         $api->get('vehicle_type_taxes/{id}/edit', 'AdminVehicleTypeTaxesController@edit');
         $api->get('vehicle_type_taxes/{id}', 'AdminVehicleTypeTaxesController@show');
         $api->delete('vehicle_type_taxes/{id}', 'AdminVehicleTypeTaxesController@destroy');
+
     });
     $api->group(['namespace' => 'Plugins\VehicleTaxes\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         //taxes user side

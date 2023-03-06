@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Sudopays\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
 use Plugins\Sudopays\Model\SudopayTransactionLog;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Sudopays\Transformers\SudopayTransactionLogTransformer;
 
 /**
  * Money Transfer Accounts resource representation.
- *
  * @Resource("Sudopays")
  */
 class AdminSudopayTransactionLogsController extends Controller
@@ -49,17 +51,17 @@ class AdminSudopayTransactionLogsController extends Controller
      *      @Parameter("page", type="integer", required=false, description="The page of results to view.", default=1),
      * })
      */
+
     public function index(Request $request)
     {
         $sudopay_transaction_logs = SudopayTransactionLog::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($sudopay_transaction_logs, (new SudopayTransactionLogTransformer));
+
     }
 
     /**
      * Show the sudopay transaction log.
      * Show the sudopay transaction log with a `id`.
-     *
      * @Get("/sudopay_transaction_logs/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -70,10 +72,9 @@ class AdminSudopayTransactionLogsController extends Controller
     public function show($id)
     {
         $sudopay_transaction_log = SudopayTransactionLog::find($id);
-        if (! $sudopay_transaction_log) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$sudopay_transaction_log) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($sudopay_transaction_log, (new SudopayTransactionLogTransformer));
     }
 }

@@ -5,26 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use DB;
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleTypePrice;
-use Plugins\Vehicles\Transformers\AdminVehicleTypePriceTransformer;
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use Plugins\Vehicles\Transformers\AdminVehicleTypePriceTransformer;
+use DB;
 
 /**
  * VehicleTypePrices resource representation.
- *
  * @Resource("Admin/AdminVehicleTypePrices")
  */
 class AdminVehicleTypePricesController extends Controller
@@ -62,14 +63,12 @@ class AdminVehicleTypePricesController extends Controller
                                 ->select(DB::raw('vehicle_type_prices.*'))
                                 ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_type_prices.vehicle_type_id')
                                 ->filterByRequest($request)->paginate($vehicle_type_price_count);
-
-        return $this->response->paginator($vehicle_type_prices, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(['vehicle_type']));
+        return $this->response->paginator($vehicle_type_prices, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(array('vehicle_type')));
     }
 
     /**
      * Edit the specified vehicle_type_price.
      * Edit the vehicle_type_price with a `id`.
-     *
      * @Get("/admin/vehicle_type_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -80,17 +79,15 @@ class AdminVehicleTypePricesController extends Controller
     public function edit($id)
     {
         $vehicle_type_price = VehicleTypePrice::with('vehicle_type')->find($id);
-        if (! $vehicle_type_price) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_price) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
-        return $this->response->item($vehicle_type_price, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(['vehicle_type']));
+        return $this->response->item($vehicle_type_price, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(array('vehicle_type')));
     }
 
     /**
      * Edit the specified vehicle_type_price.
      * Edit the vehicle_type_price with a `id`.
-     *
      * @Get("/admin/vehicle_type_prices/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -101,17 +98,15 @@ class AdminVehicleTypePricesController extends Controller
     public function show($id)
     {
         $vehicle_type_price = VehicleTypePrice::with('vehicle_type')->find($id);
-        if (! $vehicle_type_price) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_price) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
-        return $this->response->item($vehicle_type_price, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(['vehicle_type']));
+        return $this->response->item($vehicle_type_price, (new AdminVehicleTypePriceTransformer)->setDefaultIncludes(array('vehicle_type')));
     }
 
     /**
      * Store a new vehicle_type_price.
      * Store a new vehicle_type_price with a `name`, `short_description`, and `description`.
-     *
      * @Post("/admin/vehicle_type_prices")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "minimum_no_of_day": 1, "maximum_no_of_day": 1, "discount_percentage": 1, "is_active": 1}),
@@ -128,16 +123,16 @@ class AdminVehicleTypePricesController extends Controller
                 //check whether the given type price date already in list
                 $vehicle_type_price = VehicleTypePrice::where('vehicle_type_id', $request['vehicle_type_id'])
                     ->where(function ($query) use ($request) {
-                        $query->whereBetween('minimum_no_of_day', [$request->minimum_no_of_day, $request->maximum_no_of_day])
-                        ->orWhereBetween('maximum_no_of_day', [$request->minimum_no_of_day, $request->maximum_no_of_day])
-                        ->orwhere(function ($query) use ($request) {
-                            $query->where('minimum_no_of_day', '>', $request->minimum_no_of_day)
-                                ->where('maximum_no_of_day', '<', $request->minimum_no_of_day);
-                        })->orwhere(function ($query) use ($request) {
-                            $query->where('minimum_no_of_day', '<', $request->maximum_no_of_day)
-                                ->where('maximum_no_of_day', '>', $request->maximum_no_of_day);
-                        });
-                    })->first();
+						$query->whereBetween('minimum_no_of_day', [$request->minimum_no_of_day, $request->maximum_no_of_day])
+						->orWhereBetween('maximum_no_of_day', [$request->minimum_no_of_day, $request->maximum_no_of_day])
+						->orwhere(function ($query) use ($request) {
+							$query->where('minimum_no_of_day', '>', $request->minimum_no_of_day)
+								->where('maximum_no_of_day', '<', $request->minimum_no_of_day);
+						})->orwhere(function ($query) use ($request) {
+							$query->where('minimum_no_of_day', '<', $request->maximum_no_of_day)
+								->where('maximum_no_of_day', '>', $request->maximum_no_of_day);
+						});
+					})->first();
                 if ($vehicle_type_price) {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Type Price already added for the given days. Please try with different days');
                 }
@@ -153,17 +148,17 @@ class AdminVehicleTypePricesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle discount Price could not be added. Please, try again.',
-                    [$e->getMessage()]);
+                    array($e->getMessage()));
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle discount Price could not be added. Please, try again.', $validator->errors());
         }
     }
 
+
     /**
      * Update the specified vehicle_type_price
      * Update the vehicle_type_price with a `id`.
-     *
      * @Put("/admin/vehicle_type_prices/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "minimum_no_of_day": 1, "maximum_no_of_day": 1, "discount_percentage": 1, "is_active":1}),
@@ -204,11 +199,10 @@ class AdminVehicleTypePricesController extends Controller
                 } else {
                     throw new \Dingo\Api\Exception\StoreResourceFailedException('Minimum number of day should be less than maximum number of day');
                 }
-
                 return response()->json(['Success' => 'Vehicle discount Price has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle discount Price could not be updated. Please, try again.',
-                    [$e->getMessage()]);
+                    array($e->getMessage()));
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle discount Price could not be updated. Please, try again.', $validator->errors());
@@ -218,7 +212,6 @@ class AdminVehicleTypePricesController extends Controller
     /**
      * Delete the specified vehicle_type_price.
      * Delete the vehicle_type_price with a `id`.
-     *
      * @Delete("/admin/vehicle_type_prices/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -229,12 +222,11 @@ class AdminVehicleTypePricesController extends Controller
     public function destroy($id)
     {
         $vehicle_type_price = VehicleTypePrice::find($id);
-        if (! $vehicle_type_price) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_price) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $vehicle_type_price->delete();
         }
-
         return response()->json(['Success' => 'Vehicle discount Price deleted'], 200);
     }
 }

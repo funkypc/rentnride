@@ -5,25 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
+
+
 use App\Http\Controllers\Controller;
 use App\Language;
-use App\Transformers\LanguageTransformer;
-use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Transformers\LanguageTransformer;
 
 /**
  * Languages resource representation.
- *
  * @Resource("Admin/AdminLanguages")
  */
 class AdminLanguagesController extends Controller
@@ -55,14 +58,12 @@ class AdminLanguagesController extends Controller
     public function index(Request $request)
     {
         $languages = Language::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($languages, new LanguageTransformer);
     }
 
     /**
      * Store a new language.
      * Store a new language with a `name`, iso2, and `iso3`.
-     *
      * @Post("/languages")
      * @Transaction({
      *      @Request({"name": "English", "iso2": "EN", "iso3": "ENG"}),
@@ -90,7 +91,6 @@ class AdminLanguagesController extends Controller
     /**
      * Edit the specified language.
      * Edit the language with a `id`.
-     *
      * @Get("/languages/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -101,17 +101,15 @@ class AdminLanguagesController extends Controller
     public function edit($id)
     {
         $language = Language::find($id);
-        if (! $language) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$language) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($language, new LanguageTransformer);
     }
 
     /**
      * Update the specified language.
      * Update the language with a `id`.
-     *
      * @Put("/languages/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "English", "iso2": "EN", "iso3": "ENG", "is_active": 1}),
@@ -131,7 +129,6 @@ class AdminLanguagesController extends Controller
         if ($validator->passes() && $language) {
             try {
                 $language->update($language_data);
-
                 return response()->json(['Success' => 'Language has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Language could not be updated. Please, try again.');
@@ -144,7 +141,6 @@ class AdminLanguagesController extends Controller
     /**
      * Delete the specified language.
      * Delete the language with a `id`.
-     *
      * @Delete("/languages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -155,12 +151,11 @@ class AdminLanguagesController extends Controller
     public function destroy($id)
     {
         $language = Language::find($id);
-        if (! $language) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$language) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $language->delete();
         }
-
         return response()->json(['Success' => 'Language deleted'], 200);
     }
 }

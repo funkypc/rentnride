@@ -5,18 +5,18 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleDisputes\Providers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class VehicleDisputeServiceProvider extends ServiceProvider
 {
@@ -27,7 +27,7 @@ class VehicleDisputeServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/../routes.php';
+        include __DIR__ . '/../routes.php';
         $this->app->make('Plugins\VehicleDisputes\Controllers\Admin\AdminVehicleDisputesController');
         $this->app->make('Plugins\VehicleDisputes\Controllers\Admin\AdminVehicleDisputeTypesController');
         $this->app->make('Plugins\VehicleDisputes\Controllers\Admin\AdminVehicleDisputeClosedTypesController');
@@ -44,7 +44,7 @@ class VehicleDisputeServiceProvider extends ServiceProvider
     public function boot()
     {
         Relation::morphMap([
-            'MorphVehicleRental' => \Plugins\VehicleRentals\Model\VehicleRental::class,
+            'MorphVehicleRental' => \Plugins\VehicleRentals\Model\VehicleRental::class
         ]);
     }
 }

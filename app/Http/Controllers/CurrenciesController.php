@@ -5,23 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Currency;
 use App\Transformers\CurrencyTransformer;
-use Illuminate\Http\Request;
 
 /**
  * Currencies resource representation.
- *
  * @Resource("Currencies")
  */
 class CurrenciesController extends Controller
@@ -42,7 +41,6 @@ class CurrenciesController extends Controller
     public function index(Request $request)
     {
         $currencies = Currency::filterByRequest($request)->get();
-
         return $this->response->collection($currencies, new CurrencyTransformer);
     }
 }

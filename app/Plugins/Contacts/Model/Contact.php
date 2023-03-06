@@ -5,31 +5,32 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Contacts\Model;
 
-use App\Ip;
-use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use App\User;
+use App\Ip;
 
 class Contact extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'contacts';
+    protected $table = "contacts";
 
     protected $fillable = [
-        'first_name', 'last_name', 'subject', 'message', 'telephone', 'email', 'user_id', 'ip_id',
+        'first_name', 'last_name', 'subject', 'message', 'telephone', 'email', 'user_id', 'ip_id'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -48,28 +49,27 @@ class Contact extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
-    {
-        if ($request->has('sort') && $request->sort == 'user_type') {
-            $query->orderBy('user_id', $request->input('sortby', 'desc'));
-        } elseif ($request->has('sort') && $request->sort == 'ip.ip') {
-            $query->orderBy('ip_id', $request->input('sortby', 'desc'));
-        } else {
-            $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'asc'));
-        }
-
+    {	
+        if($request->has('sort') && $request->sort == 'user_type'){			
+			$query->orderBy('user_id', $request->input('sortby', 'desc'));
+		} else if($request->has('sort') && $request->sort == 'ip.ip'){			
+			$query->orderBy('ip_id', $request->input('sortby', 'desc'));
+		} else {
+			$query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'asc'));
+		}
+		
         if ($request->has('q')) {
-            $query->where('first_name', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('last_name', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('email', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('subject', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('message', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('first_name', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('email', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('subject', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('message', 'LIKE', '%' . $request->input('q') . '%');
         }
-
         return $query;
     }
 
@@ -85,7 +85,7 @@ class Contact extends Model
             'email' => 'required|email',
             'subject' => 'required|min:5',
             'message' => 'required|min:10',
-            'telephone' => 'required|min:10',
+            'telephone' => 'required|min:10'
         ];
     }
 
@@ -107,7 +107,8 @@ class Contact extends Model
             'message.required' => 'Required',
             'message.min' => 'message -Minimum length is 10',
             'telephone.required' => 'Required',
-            'telephone.min' => 'telephone - Minimum length is 10',
+            'telephone.min' => 'telephone - Minimum length is 10'
         ];
     }
+
 }

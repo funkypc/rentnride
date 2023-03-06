@@ -5,48 +5,49 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Transformers;
 
-use App\Transformers\UserTransformer;
 use League\Fractal;
 use Plugins\Withdrawals\Model\UserCashWithdrawal;
+use App\Transformers\UserTransformer;
+use Carbon\Carbon;
 
 /**
  * Class UserCashWithdrawalsTransformer
+ * @package App\Transformers
  */
 class UserCashWithdrawalTransformer extends Fractal\TransformerAbstract
 {
     /**
      * List of resources possible to include
-     *
      * @var array
      */
     protected $availableIncludes = [
-        'User', 'WithdrawalStatus', 'MoneyTransferAccount',
+        'User', 'WithdrawalStatus', 'MoneyTransferAccount'
     ];
 
     /**
-     * @param  UserCashWithdrawal  $user_cash_withdrawal
+     * @param UserCashWithdrawal $user_cash_withdrawal
      * @return array
      */
     public function transform(UserCashWithdrawal $user_cash_withdrawal)
     {
         $output = array_only($user_cash_withdrawal->toArray(), ['id', 'created_at', 'amount', 'withdrawal_status_id', 'user_id', 'money_transfer_account_id']);
         $output['created_at'] = $user_cash_withdrawal->created_at->toDateTimeString();
-
         return $output;
     }
 
+
     /**
-     * @param  UserCashWithdrawal  $user_cash_withdrawal
+     * @param UserCashWithdrawal $user_cash_withdrawal
      * @return Fractal\Resource\Item
      */
     public function includeUser(UserCashWithdrawal $user_cash_withdrawal)
@@ -56,10 +57,12 @@ class UserCashWithdrawalTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 
+
     /**
-     * @param  UserCashWithdrawal  $user_cash_withdrawal
+     * @param UserCashWithdrawal $user_cash_withdrawal
      * @return Fractal\Resource\Item
      */
     public function includeWithdrawalStatus(UserCashWithdrawal $user_cash_withdrawal)
@@ -69,10 +72,11 @@ class UserCashWithdrawalTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
 
     /**
-     * @param  UserCashWithdrawal  $user_cash_withdrawal
+     * @param UserCashWithdrawal $user_cash_withdrawal
      * @return Fractal\Resource\Item
      */
     public function includeMoneyTransferAccount(UserCashWithdrawal $user_cash_withdrawal)
@@ -82,5 +86,7 @@ class UserCashWithdrawalTransformer extends Fractal\TransformerAbstract
         } else {
             return null;
         }
+
     }
+
 }

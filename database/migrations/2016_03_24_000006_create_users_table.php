@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
 {
@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id')->index();
             $table->timestamps();
-            $table->bigInteger('role_id')->unsigned()->nullable()->index();
+			$table->bigInteger('role_id')->unsigned()->nullable()->index();
             $table->foreign('role_id')
                 ->references('id')->on('roles')
                 ->onDelete('set null');
@@ -39,7 +39,7 @@ class CreateUsersTable extends Migration
             $table->foreign('last_login_ip_id')
                 ->references('id')->on('ips')
                 ->onDelete('set null');
-            $table->bigInteger('user_avatar_source_id')->nullable();
+			$table->bigInteger('user_avatar_source_id')->nullable();
             $table->rememberToken();
             $table->string('pwd_reset_token');
             $table->bigInteger('feedback_count')->default(0)->nullable();

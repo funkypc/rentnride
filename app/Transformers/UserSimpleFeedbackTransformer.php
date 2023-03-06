@@ -5,33 +5,32 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Transformers;
 
-use App\Attachment;
-use App\User;
 use League\Fractal;
+use App\User;
+use App\Attachment;
 
 class UserSimpleFeedbackTransformer extends Fractal\TransformerAbstract
 {
     /**
      * List of resources possible to include
-     *
      * @var array
      */
     protected $availableIncludes = [
-        'Attachmentable',
+        'Attachmentable'
     ];
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return array
      */
     public function transform(User $user)
@@ -39,12 +38,11 @@ class UserSimpleFeedbackTransformer extends Fractal\TransformerAbstract
         $output = array_only($user->toArray(), ['id', 'username']);
         $output['name'] = $output['username'];
         unset($output['username']);
-
         return $output;
     }
 
     /**
-     * @param  User  $user
+     * @param User $user
      * @return mixed
      */
     public function includeAttachmentable(User $user)
@@ -54,8 +52,8 @@ class UserSimpleFeedbackTransformer extends Fractal\TransformerAbstract
         } else {
             $user->attachments = Attachment::where('id', '=', config('constants.ConstAttachment.UserAvatar'))->first();
             $user->attachments->attachmentable_id = $user->id;
-
             return $this->item($user->attachments, new AttachmentTransformer());
         }
     }
+
 }

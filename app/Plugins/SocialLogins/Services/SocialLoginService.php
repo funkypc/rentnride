@@ -5,19 +5,19 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\SocialLogins\Services;
 
 use App\Services\UserService;
-use App\User;
 use PHPOpenSourceSaver\JWTAuth\Contracts\Providers\JWT;
+use App\User;
 
 class SocialLoginService
 {
@@ -25,7 +25,6 @@ class SocialLoginService
      * @var JWT
      */
     protected $jwt;
-
     /**
      * @var UserService
      */
@@ -33,10 +32,10 @@ class SocialLoginService
 
     /**
      * SocialLoginService constructor.
-     *
-     * @param  JWT  $jwt
-     * @param  UserService  $service
+     * @param JWT $jwt
+     * @param UserService $service
      */
+
     public function __construct(JWT $jwt, UserService $service)
     {
         $this->jwt = $jwt;
@@ -45,7 +44,6 @@ class SocialLoginService
 
     /**
      * Generate JSON Web Token.
-     *
      * @param $user
      * @return token
      */
@@ -54,18 +52,17 @@ class SocialLoginService
         $payload = [
             'sub' => $user->id,
             'iat' => time(),
-            'exp' => time() + (2 * 7 * 24 * 60 * 60),
+            'exp' => time() + (2 * 7 * 24 * 60 * 60)
         ];
-
         return $this->jwt->encode($payload, config('constants.token_secret'));
     }
 
     /**
      * Generate facebook user name
-     *
      * @param $fb_user_name
      * @return username
      */
+
     public function generateUserName($fb_user_name)
     {
         $username = str_replace(' ', '', $fb_user_name);
@@ -74,9 +71,10 @@ class SocialLoginService
         $i = 1;
         $created_username = $username;
         while ($this->service->CheckUsernameAvailable($username) !== false) {
-            $username = $created_username.$i++;
+            $username = $created_username . $i++;
         }
-
         return $username;
     }
+
+
 }

@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleTaxes\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Plugins\VehicleTaxes\Model\VehicleTax;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleTaxes\Transformers\VehicleTaxTransformer;
 
 /**
  * VehicleTaxes resource representation.
- *
  * @Resource("VehicleTaxes")
  */
 class VehicleTaxesController extends Controller
@@ -51,7 +53,6 @@ class VehicleTaxesController extends Controller
     public function index(Request $request)
     {
         $taxes = VehicleTax::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($taxes, (new VehicleTaxTransformer));
     }
 }

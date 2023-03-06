@@ -5,26 +5,31 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Services\UserLoginService;
-use App\Transformers\UserLoginTransformer;
-use App\UserLogin;
-use DB;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+
+use App\UserLogin;
+
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use App\Transformers\UserLoginTransformer;
+use App\Services\UserLoginService;
+use DB;
 
 /**
  * UserLogins resource representation.
- *
  * @Resource("Admin/AdminUserLogins")
  */
 class AdminUserLoginsController extends Controller
@@ -69,14 +74,12 @@ class AdminUserLoginsController extends Controller
             ->leftJoin(DB::raw('(select id,ip from ips) as user_login_ip'), 'user_login_ip.id', '=', 'user_logins.user_login_ip_id')
             ->filterByRequest($request)
             ->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($user_logins, (new UserLoginTransformer)->setDefaultIncludes(['user_login_ip', 'user', 'role']));
     }
 
     /**
      * Show the specified user login.
      * Show the user login with a `id`.
-     *
      * @Get("/user_login/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -87,17 +90,15 @@ class AdminUserLoginsController extends Controller
     public function show($id)
     {
         $user_login = UserLogin::with('user_login_ip', 'user', 'role')->find($id);
-        if (! $user_login) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$user_login) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($user_login, (new UserLoginTransformer)->setDefaultIncludes(['user_login_ip', 'user', 'role']));
     }
 
     /**
      * Delete the specified user logins.
      * Delete the user login with a `id`.
-     *
      * @Delete("/user_login/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -108,14 +109,13 @@ class AdminUserLoginsController extends Controller
     public function destroy($id)
     {
         $user_login = UserLogin::find($id);
-        if (! $user_login) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$user_login) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $user_login->delete();
             // decrement user login count by 1 in users
             $this->UserLoginService->decreaseUserLoginCount($user_login->user_id);
         }
-
         return response()->json(['Success' => 'UserLogin deleted'], 200);
     }
 }

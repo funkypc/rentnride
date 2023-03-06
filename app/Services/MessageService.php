@@ -5,22 +5,24 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Services;
 
 use App\Message;
 use App\MessageContent;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class MessageService
 {
+
     /**
      * MessageService constructor.
      */
@@ -41,7 +43,7 @@ class MessageService
         //Save Message Contents
         $message_content = MessageContent::create($message_content_arr);
         //get message content id and save to message table
-        $message_array = [];
+        $message_array = array();
         $message_array['message_content_id'] = $message_content->id;
         $message_array['item_user_status_id'] = $status_id;
         $message_array['dispute_status_id'] = $dispute_status_id;
@@ -86,13 +88,14 @@ class MessageService
      */
     public function getMessages($vehicle_rental, $user)
     {
-        $message_data_res = [];
-        $return_data_res = [];
-        if (! $vehicle_rental) {
+
+        $message_data_res = array();
+        $return_data_res = array();
+        if (!$vehicle_rental) {
             return $this->response->errorNotFound('Invalid Request');
         }
         $booker = $vehicle_rental->user->username;
-        $host = (! is_null($vehicle_rental->item_userable->user)) ? $vehicle_rental->item_userable->user->username : '';
+        $host = (!is_null($vehicle_rental->item_userable->user)) ? $vehicle_rental->item_userable->user->username : "";
         $check_user_id = $user->id;
         if ($user->role_id == config('constants.ConstUserTypes.Admin')) {
             $check_user_id = $vehicle_rental->user_id;
@@ -100,12 +103,12 @@ class MessageService
         if ($vehicle_rental->message) {
             foreach ($vehicle_rental->message as $message) {
                 if ($message->to_user_id == $check_user_id) {
-                    $replace_content = [
+                    $replace_content = array(
                         '##BOOKER##' => $booker,
                         '##CREATED_DATE##' => $message->created_at,
                         '##HOSTER##' => $host,
-                        '##ACCEPTED_DATE##' => $message->created_at,
-                    ];
+                        '##ACCEPTED_DATE##' => $message->created_at
+                    );
                     $message_data_res[$message->id]['id'] = $message->id;
                     $message_data_res[$message->id]['status_id'] = $message->item_user_status_id;
                     $message_data_res[$message->id]['status'] = $message->item_user_status->name;
@@ -113,7 +116,7 @@ class MessageService
 
                     if ($message->message_content->subject === 'Private Note' || $message->message_content->subject === 'Feedback') {
                         $message_data_res[$message->id]['description'] = $message->message_content->message;
-                    } elseif ($message->dispute_status_id) {
+                    } else if ($message->dispute_status_id) {
                         $message_data_res[$message->id]['description'] = $message->message_content->subject;
                         $message_data_res[$message->id]['status_id'] = $message->dispute_status_id;
                         $message_data_res[$message->id]['status'] = $message->dispute_status->name;
@@ -126,7 +129,6 @@ class MessageService
         $return_data_res['vehicle_rentalDetails'] = $vehicle_rental;
         $return_data_res['item'] = $vehicle_rental->item_userable;
         $return_data_res['messages'] = $message_data_res;
-
         return $return_data_res;
     }
 }

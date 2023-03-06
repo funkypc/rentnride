@@ -5,35 +5,39 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleRentals\Model;
 
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+
+use Illuminate\Support\Facades\Auth;
+use DB;
+
 
 /**
  * Class VehicleRentalAdditionalCharge
+ * @package Plugins\VehicleRentals\Model
  */
 class VehicleRentalAdditionalCharge extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'item_user_additional_charges';
-
+    protected $table = "item_user_additional_charges";
     /**
      * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
-        'item_user_id', 'additional_chargable_type', 'additional_chargable_id', 'amount',
+        'item_user_id', 'additional_chargable_type', 'additional_chargable_id', 'amount'
     ];
 
     /**

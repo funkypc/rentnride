@@ -5,28 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\Contacts\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Services\IpService;
 use App\Services\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Plugins\Contacts\Model\Contact;
 use Plugins\Contacts\Services\ContactService;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
+use Plugins\Contacts\Model\Contact;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
  * Contacts resource representation.
- *
  * @Resource("Contacts")
  */
 class ContactsController extends Controller
@@ -35,12 +35,10 @@ class ContactsController extends Controller
      * @var IpService
      */
     protected $IpService;
-
     /**
      * @var UserService
      */
     protected $user_service;
-
     /**
      * @var ContactService
      */
@@ -69,7 +67,6 @@ class ContactsController extends Controller
     /**
      * Store a new contact.
      * Store a new contact with a `user_id`, `ip_id`, 'first_name', 'last_name', 'subject', 'message', 'telephone', 'email'.
-     *
      * @Post("/contacts")
      * @Transaction({
      *      @Request({"user_id": 1, "first_name": "Ahsan", "last_name": "L", "email": "guest@gmail.com", "subject": "Regarding VehicleRental", "message": "Need to Anke a vehicle_rental,. Where can i do that?", "telephone": "XXXXXX"}),
@@ -95,7 +92,6 @@ class ContactsController extends Controller
             $contact = Contact::create($contact_data);
             if ($contact) {
                 $this->ContactService->sendContactMail($request);
-
                 return response()->json(['Success' => 'You have Successfully Contacted us. Will contact you soon'], 200);
             } else {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Contact message could not be sent. Please, try again.');

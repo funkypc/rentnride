@@ -1,9 +1,21 @@
 <?php
-
+/**
+ * Rent & Ride
+ *
+ * PHP version 5
+ *
+ * @category   PHP
+ * @package    RENT&RIDE
+ * @subpackage Core
+ * @author     Agriya <info@agriya.com>
+ * @copyright  2018 Agriya Infoway Private Ltd
+ * @license    http://www.agriya.com/ Agriya Infoway Licence
+ * @link       http://www.agriya.com
+ */
+ 
 namespace App\Providers;
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
+use Laravel\Lumen\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -13,20 +25,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\Event' => [
+        'App\Events\SomeEvent' => [
             'App\Listeners\EventListener',
         ],
     ];
-
-    /**
-     * Register any events for your application.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        parent::boot();
-
-        //
-    }
 }

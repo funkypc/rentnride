@@ -5,26 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleSurcharges\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use DB;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Plugins\VehicleSurcharges\Model\VehicleTypeSurcharge;
-use Plugins\VehicleSurcharges\Transformers\VehicleTypeSurchargeTransformer;
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use Plugins\VehicleSurcharges\Transformers\VehicleTypeSurchargeTransformer;
+use DB;
 
 /**
  * VehicleTypeSurcharges resource representation.
- *
  * @Resource("Admin/AdminVehicleTypeSurcharges")
  */
 class AdminVehicleTypeSurchargesController extends Controller
@@ -54,7 +54,7 @@ class AdminVehicleTypeSurchargesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = ['vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type'];
+        $enabled_includes = array('vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type');
         $vehicle_type_surcharges = VehicleTypeSurcharge::with($enabled_includes)
             ->select(DB::raw('vehicle_type_surcharges.*'))
             ->leftJoin(DB::raw('(select id,name from vehicle_types) as vehicle_type'), 'vehicle_type.id', '=', 'vehicle_type_surcharges.vehicle_type_id')
@@ -62,14 +62,12 @@ class AdminVehicleTypeSurchargesController extends Controller
             ->leftJoin(DB::raw('(select id,type from discount_types) as discount_type'), 'discount_type.id', '=', 'vehicle_type_surcharges.discount_type_id')
             ->leftJoin(DB::raw('(select id,name from duration_types) as duration_type'), 'duration_type.id', '=', 'vehicle_type_surcharges.duration_type_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($vehicle_type_surcharges, (new VehicleTypeSurchargeTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Edit the specified vehicle_type_surcharge.
      * Edit the vehicle_type_surcharge with a `id`.
-     *
      * @Get("/admin/vehicle_type_surcharges/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -79,19 +77,17 @@ class AdminVehicleTypeSurchargesController extends Controller
      */
     public function edit($id)
     {
-        $enabled_includes = ['vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type'];
+        $enabled_includes = array('vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type');
         $vehicle_type_surcharge = VehicleTypeSurcharge::with($enabled_includes)->find($id);
-        if (! $vehicle_type_surcharge) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_surcharge) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_type_surcharge, (new VehicleTypeSurchargeTransformer)->setDefaultIncludes($enabled_includes));
     }
-
-    /**
+	
+	/**
      * Show the specified vehicle_type_surcharge.
      * Show the vehicle_type_surcharge with a `id`.
-     *
      * @Get("/admin/vehicle_type_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -101,19 +97,17 @@ class AdminVehicleTypeSurchargesController extends Controller
      */
     public function show($id)
     {
-        $enabled_includes = ['vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type'];
+        $enabled_includes = array('vehicle_surcharge', 'discount_type', 'duration_type', 'vehicle_type');
         $vehicle_type_surcharge = VehicleTypeSurcharge::with($enabled_includes)->find($id);
-        if (! $vehicle_type_surcharge) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_surcharge) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_type_surcharge, (new VehicleTypeSurchargeTransformer)->setDefaultIncludes($enabled_includes));
     }
 
     /**
      * Store a new vehicle_type_surcharge.
      * Store a new vehicle_type_surcharge with a `name`, `short_description`, and `description`.
-     *
      * @Post("/admin/vehicle_type_surcharges")
      * @Transaction({
      *      @Request({"vehicle_type_id": 1, "surcharge_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -138,10 +132,10 @@ class AdminVehicleTypeSurchargesController extends Controller
         }
     }
 
+
     /**
      * Update the specified vehicle_type_surcharge
      * Update the vehicle_type_surcharge with a `id`.
-     *
      * @Put("/admin/vehicle_type_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1, "vehicle_type_id": 1, "surcharge_id": 1, "discount_type_id": 1, "duration_type_id": 1, "rate": 200, "max_allowed_amount": 1000}),
@@ -161,7 +155,6 @@ class AdminVehicleTypeSurchargesController extends Controller
         if ($validator->passes() && $vehicle_type_surcharge) {
             try {
                 $vehicle_type_surcharge->update($vehicle_type_surcharge_data);
-
                 return response()->json(['Success' => 'VehicleTypeSurcharge has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleTypeSurcharge could not be updated. Please, try again.');
@@ -174,7 +167,6 @@ class AdminVehicleTypeSurchargesController extends Controller
     /**
      * Delete the specified vehicle_type_surcharge.
      * Delete the vehicle_type_surcharge with a `id`.
-     *
      * @Delete("/admin/vehicle_type_surcharges/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -185,12 +177,11 @@ class AdminVehicleTypeSurchargesController extends Controller
     public function destroy($id)
     {
         $vehicle_type_surcharge = VehicleTypeSurcharge::find($id);
-        if (! $vehicle_type_surcharge) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_type_surcharge) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $vehicle_type_surcharge->delete();
         }
-
         return response()->json(['Success' => 'VehicleTypeSurcharge deleted'], 200);
     }
 }

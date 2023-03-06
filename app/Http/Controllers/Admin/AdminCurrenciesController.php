@@ -5,25 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Currency;
-use App\Http\Controllers\Controller;
-use App\Transformers\CurrencyTransformer;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+use App\Currency;
+
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Transformers\CurrencyTransformer;
 
 /**
  * Currencies resource representation.
- *
  * @Resource("Admin/AdminCurrencies")
  */
 class AdminCurrenciesController extends Controller
@@ -59,14 +62,12 @@ class AdminCurrenciesController extends Controller
             $currency_count = Currency::count();
         }
         $currencies = Currency::filterByRequest($request)->paginate($currency_count);
-
         return $this->response->paginator($currencies, new CurrencyTransformer);
     }
 
     /**
      * Store a new currency.
      * Store a new currency with a `name`, `code`, `symbol`, `prefix`, `suffix`, `decimals` ,`dec_point`, `thousands_sep`, `is_prefix_display_on_left` and `is_use_graphic_symbol`.
-     *
      * @Post("/currencies")
      * @Transaction({
      *      @Request({"name": "Dollar", "code": "USD", "symbol": "$", "prefix" : "$", "suffix":"", "decimals":"0.00", "dec_point":"2", "thousands_sep":"4", "is_prefix_display_on_left":1, "is_use_graphic_symbol":1 }),
@@ -94,7 +95,6 @@ class AdminCurrenciesController extends Controller
     /**
      * Edit the specified currency.
      * Edit the currency with a `id`.
-     *
      * @Get("/currencies/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -105,17 +105,15 @@ class AdminCurrenciesController extends Controller
     public function edit($id)
     {
         $currency = Currency::find($id);
-        if (! $currency) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$currency) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($currency, new CurrencyTransformer);
     }
 
     /**
      * Show the specified currency.
      * show the currency with a `id`.
-     *
      * @Get("/currencies/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -126,17 +124,15 @@ class AdminCurrenciesController extends Controller
     public function show($id)
     {
         $currency = Currency::find($id);
-        if (! $currency) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$currency) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($currency, new CurrencyTransformer);
     }
 
     /**
      * Update the specified currency
      * Update the currency with a `id`.
-     *
      * @Put("/currencies/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Dollar", "code": "USD", "symbol": "$", "prefix" : "$", "suffix":"", "decimals":"0.00", "dec_point":"2", "thousands_sep":"4", "is_prefix_display_on_left":1, "is_use_graphic_symbol":1, "is_active": 1}),
@@ -156,7 +152,6 @@ class AdminCurrenciesController extends Controller
         if ($validator->passes() && $currency) {
             try {
                 $currency->update($currency_data);
-
                 return response()->json(['Success' => 'Currency has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Currency could not be updated. Please, try again.');
@@ -164,12 +159,12 @@ class AdminCurrenciesController extends Controller
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Currency could not be updated. Please, try again.', $validator->errors());
         }
+
     }
 
     /**
      * Delete the specified currency
      * Delete the currency with a `id`.
-     *
      * @Delete("/currencies/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -180,12 +175,11 @@ class AdminCurrenciesController extends Controller
     public function destroy($id)
     {
         $currency = Currency::find($id);
-        if (! $currency) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$currency) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $currency->delete();
         }
-
         return response()->json(['Success' => 'Currency deleted'], 200);
     }
 }

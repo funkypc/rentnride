@@ -5,25 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleDisputes\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use DB;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\VehicleDisputes\Model\VehicleDisputeClosedType;
 use Plugins\VehicleDisputes\Transformers\VehicleDisputeClosedTypeTransformer;
-use Validator;
+use DB;
 
 /**
  * Class AdminVehicleDisputeClosedTypesController
+ * @package Plugins\VehicleDisputes\Controllers
  */
 class AdminVehicleDisputeClosedTypesController extends Controller
 {
@@ -54,14 +56,12 @@ class AdminVehicleDisputeClosedTypesController extends Controller
             ->select(DB::raw('dispute_closed_types.*'))
             ->leftJoin(DB::raw('(select id,name from dispute_types) as dispute_type'), 'dispute_type.id', '=', 'dispute_closed_types.dispute_type_id')
             ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($vehicle_dispute_closed_types, (new VehicleDisputeClosedTypeTransformer)->setDefaultIncludes(['dispute_type']));
     }
 
     /**
      * Edit the specified dispute_closed_type.
      * Edit the dispute_closed_type with a `id`.
-     *
      * @Get("/vehicle_dispute_closed_types/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -72,17 +72,15 @@ class AdminVehicleDisputeClosedTypesController extends Controller
     public function edit($id)
     {
         $dispute_closed_type = VehicleDisputeClosedType::with(['dispute_type'])->find($id);
-        if (! $dispute_closed_type) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$dispute_closed_type) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($dispute_closed_type, (new VehicleDisputeClosedTypeTransformer)->setDefaultIncludes(['dispute_type']));
     }
 
     /**
      * Update the specified dispute closed type.
      * Update the dispute_closed_type with a `id`.
-     *
      * @Put("/vehicle_dispute_closed_types/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "Favor Booker", "dispute_type_id": 1, "is_booker": 1, "resolved_type": "refunded", "reason": "Property doesn't match with the one mentioned in property specification"}),
@@ -102,7 +100,6 @@ class AdminVehicleDisputeClosedTypesController extends Controller
         if ($validator->passes() && $dispute_closed_type) {
             try {
                 $dispute_closed_type->update($dispute_closed_type_data);
-
                 return response()->json(['Success' => 'VehicleDisputeClosedType has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('VehicleDisputeClosedType could not be updated. Please, try again.');

@@ -5,30 +5,32 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Services\TransactionService;
-use App\User;
-use DB;
-use Illuminate\Http\Request;
 use Plugins\Withdrawals\Model\MoneyTransferAccount;
+use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\UserCashWithdrawal;
-use Plugins\Withdrawals\Services\UserCashWithdrawalService;
-use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use Plugins\Withdrawals\Transformers\UserCashWithdrawalTransformer;
+use App\User;
+use App\Services\TransactionService;
+use Plugins\Withdrawals\Services\UserCashWithdrawalService;
+use DB;
 
 /**
  * UserCashWithdrawals resource representation.
- *
  * @Resource("Admin/AdminUserCashWithdrawals")
  */
 class AdminUserCashWithdrawalsController extends Controller
@@ -37,7 +39,6 @@ class AdminUserCashWithdrawalsController extends Controller
      * @var
      */
     protected $withdrawalService;
-
     /**
      * @var TransactionService
      */
@@ -86,14 +87,12 @@ class AdminUserCashWithdrawalsController extends Controller
                                     ->leftJoin(DB::raw('(select id,name from withdrawal_statuses) as withdrawal_status'), 'withdrawal_status.id', '=', 'user_cash_withdrawals.withdrawal_status_id')
                                     ->leftJoin(DB::raw('(select id,account from money_transfer_accounts) as money_transfer_account'), 'money_transfer_account.id', '=', 'user_cash_withdrawals.money_transfer_account_id')
                                     ->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($user_cash_withdrawals, (new UserCashWithdrawalTransformer)->setDefaultIncludes(['user', 'money_transfer_account', 'withdrawal_status']));
     }
 
     /**
      * Edit the specified user cash withdrawal.
      * Edit the user cash withdrawal with a `id`.
-     *
      * @Get("/user_cash_withdrawals/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -104,17 +103,15 @@ class AdminUserCashWithdrawalsController extends Controller
     public function edit($id)
     {
         $user_cash_withdrawal = UserCashWithdrawal::with('user', 'money_transfer_account', 'withdrawal_status')->find($id);
-        if (! $user_cash_withdrawal) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$user_cash_withdrawal) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($user_cash_withdrawal, (new UserCashWithdrawalTransformer)->setDefaultIncludes(['user', 'money_transfer_account', 'withdrawal_status']));
     }
 
     /**
      * Update the specified user cash withdrawal.
      * Update the user cash withdrawal with a `id`.
-     *
      * @Put("/user_cash_withdrawals/{id}")
      * @Transaction({
      *      @Request({"id": 1, "withdrwa_status_id": 1, "amount": 100}),
@@ -135,7 +132,7 @@ class AdminUserCashWithdrawalsController extends Controller
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Status already changed.');
         }
         $check_money_transfer_account = MoneyTransferAccount::find($user_cash_withdrawal->money_transfer_account_id);
-        if (! $check_money_transfer_account) {
+        if (!$check_money_transfer_account) {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('No Money Transfer Account is added or set as primary.');
         }
         if ($validator->passes() && $user_cash_withdrawal) {
@@ -157,7 +154,6 @@ class AdminUserCashWithdrawalsController extends Controller
                         $user->save();
                     }
                     $this->withdrawalService->withdrawMail($user->id, $user->username, $user->email, $user_cash_withdrawal);
-
                     return response()->json(['Success' => 'UserCashWithdrawal has been updated'], 200);
                 }
             } catch (\Exception $e) {
@@ -171,7 +167,6 @@ class AdminUserCashWithdrawalsController extends Controller
     /**
      * Delete the specified user cash withdrawal.
      * Delete the user cash withdrawal with a `id`.
-     *
      * @Delete("/user_cash_withdrawals/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -182,12 +177,11 @@ class AdminUserCashWithdrawalsController extends Controller
     public function destroy($id)
     {
         $user_cash_withdrawal = UserCashWithdrawal::find($id);
-        if (! $user_cash_withdrawal) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$user_cash_withdrawal) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $user_cash_withdrawal->delete();
         }
-
         return response()->json(['Success' => 'UserCashWithdrawal deleted'], 200);
     }
 }

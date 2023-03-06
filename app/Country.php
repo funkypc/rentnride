@@ -5,28 +5,29 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Country
+ * @package App
  */
 class Country extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'countries';
+    protected $table = "countries";
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +35,7 @@ class Country extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'iso2', 'iso3', 'is_active',
+        'name', 'iso2', 'iso3', 'is_active'
     ];
 
     /**
@@ -62,8 +63,8 @@ class Country extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -77,14 +78,15 @@ class Country extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('iso2', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('iso2', 'LIKE', '%' . $request->input('q') . '%');
         }
         if ($request->has('name')) {
-            $query->where('name', 'LIKE', '%'.$request->input('name').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('name') . '%');
         }
-
         return $query;
+
+
     }
 
     /**
@@ -95,7 +97,7 @@ class Country extends Model
         return [
             'name' => 'required|min:2',
             'iso2' => 'required|min:2|max:2',
-            'iso3' => 'required|min:3|max:3',
+            'iso3' => 'required|min:3|max:3'
         ];
     }
 

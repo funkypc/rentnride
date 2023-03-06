@@ -5,25 +5,27 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Message;
+use Validator;
 use App\Transformers\MessageTransformer;
 use DB;
-use Illuminate\Http\Request;
 
 /**
  * AdminMessages resource representation.
- *
  * @Resource("Admin/AdminMessages")
  */
 class AdminMessagesController extends Controller
@@ -64,7 +66,6 @@ class AdminMessagesController extends Controller
             ->leftJoin(DB::raw('(select id,message, subject from message_contents) as message_content'), 'message_content.id', '=', 'messages.message_content_id')
             ->filterByRequest($request)
             ->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($messages, (new MessageTransformer)->setDefaultIncludes(['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status', 'messageable']));
     }
 
@@ -143,7 +144,6 @@ class AdminMessagesController extends Controller
     /**
      * Show the specified message.
      * Show the message with a `id`.
-     *
      * @Get("/messages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -153,20 +153,18 @@ class AdminMessagesController extends Controller
      */
     public function show($id)
     {
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $message = Message::with($enabledIncludes)->find($id);
-        if (! $message) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$message) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->item($message, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
     /**
      * Delete the specified message.
      * Delete the message with a `id`.
-     *
      * @Delete("messages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -177,12 +175,12 @@ class AdminMessagesController extends Controller
     public function destroy($id)
     {
         $message = Message::find($id);
-        if (! $message) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$message) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $message->delete();
         }
-
         return response()->json(['Success' => 'Messages deleted'], 200);
     }
+
 }

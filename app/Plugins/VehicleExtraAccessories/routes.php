@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -26,7 +26,7 @@
 $api = $this->app->make('Dingo\Api\Routing\Router');
 $api->version(['v1'], function ($api) {
     $api->group(['prefix' => 'admin', 'namespace' => 'Plugins\VehicleExtraAccessories\Controllers\Admin', 'middleware' => 'apitracking'], function () use ($api) {
-        // ExtraAccessories admin side
+        // ExtraAccessories admin side        
         $api->get('vehicle_extra_accessories', 'AdminVehicleExtraAccessoriesController@index');
         $api->post('vehicle_extra_accessories', 'AdminVehicleExtraAccessoriesController@store');
         $api->put('vehicle_extra_accessories/{id}', 'AdminVehicleExtraAccessoriesController@update');
@@ -41,6 +41,7 @@ $api->version(['v1'], function ($api) {
         $api->get('vehicle_type_extra_accessories/{id}/edit', 'AdminVehicleTypeExtraAccessoriesController@edit');
         $api->get('vehicle_type_extra_accessories/{id}', 'AdminVehicleTypeExtraAccessoriesController@show');
         $api->delete('vehicle_type_extra_accessories/{id}', 'AdminVehicleTypeExtraAccessoriesController@destroy');
+
     });
     $api->group(['namespace' => 'Plugins\VehicleExtraAccessories\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         //extra_accessories user side

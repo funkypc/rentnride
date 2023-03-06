@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateSudopayPaymentGatewaysTable extends Migration
 {
@@ -12,7 +12,7 @@ class CreateSudopayPaymentGatewaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('sudopay_payment_gateways', function (Blueprint $table) {
+        Schema::create("sudopay_payment_gateways", function (Blueprint $table) {
             $table->bigIncrements('id')->index();
             $table->timestamps();
             $table->string('sudopay_gateway_name');
@@ -36,6 +36,7 @@ class CreateSudopayPaymentGatewaysTable extends Migration
             $table->text('supported_features_services');
             $table->text('connect_instruction');
             $table->string('name');
+
         });
     }
 

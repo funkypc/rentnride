@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateItemUsersTable extends Migration
 {
@@ -40,11 +40,11 @@ class CreateItemUsersTable extends Migration
             $table->bigInteger('pickup_counter_location_id')->unsigned()->nullable()->index();
             $table->foreign('pickup_counter_location_id')
                 ->references('id')->on('counter_locations')
-                ->onDelete('set null');
+				->onDelete('set null');
             $table->bigInteger('drop_counter_location_id')->unsigned()->nullable()->index();
             $table->foreign('drop_counter_location_id')
                 ->references('id')->on('counter_locations')
-                ->onDelete('set null');
+				->onDelete('set null');
             $table->double('booking_amount', 10, 2)->default(0.00);
             $table->double('deposit_amount', 10, 2)->default(0.00)->nullable();
             $table->double('coupon_discount_amount', 10, 2)->default(0.00)->nullable();
@@ -83,3 +83,4 @@ class CreateItemUsersTable extends Migration
         // Schema::drop('item_users');
     }
 }
+

@@ -5,22 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Model;
 
-use App\User;
 use Illuminate\Database\Eloquent\Model;
+use App\User;
 
 class MoneyTransferAccount extends Model
 {
-    protected $table = 'money_transfer_accounts';
+    protected $table = "money_transfer_accounts";
 
     /**
      * The attributes that are mass assignable.
@@ -28,14 +28,14 @@ class MoneyTransferAccount extends Model
      * @var array
      */
     protected $fillable = [
-        'account', 'user_id', 'is_primary',
+        'account', 'user_id', 'is_primary'
     ];
 
     public function scopeGetValidationRule()
     {
         return [
             'account' => 'required',
-            'user_id' => 'required|integer',
+            'user_id' => 'required|integer'
         ];
     }
 
@@ -63,4 +63,5 @@ class MoneyTransferAccount extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }

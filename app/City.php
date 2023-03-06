@@ -5,29 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class City extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'cities';
+    protected $table = "cities";
 
     protected $fillable = [
-        'name', 'state_id', 'country_id', 'latitude', 'longitude', 'is_active',
+        'name', 'state_id', 'country_id', 'latitude', 'longitude', 'is_active'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -54,8 +55,8 @@ class City extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -75,15 +76,14 @@ class City extends Model
             $query->where('is_active', '=', $filter);
         }
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('q') . '%');
             $query->orWhereHas('State', function ($q) use ($request) {
-                $q->Where('name', 'like', '%'.$request->input('q').'%');
+                $q->Where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('Country', function ($q) use ($request) {
-                $q->Where('name', 'like', '%'.$request->input('q').'%');
+                $q->Where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
-
         return $query;
     }
 
@@ -95,7 +95,7 @@ class City extends Model
         return [
             'name' => 'required|min:2',
             'state_id' => 'required|integer|exists:states,id',
-            'country_id' => 'required|integer|exists:countries,id',
+            'country_id' => 'required|integer|exists:countries,id'
         ];
     }
 
@@ -112,4 +112,5 @@ class City extends Model
             'country_id.exists' => 'Invalid country id',
         ];
     }
+
 }
