@@ -24,7 +24,6 @@ use Plugins\Vehicles\Model\UnavailableVehicle;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use App\User;
 use Plugins\Vehicles\Model\CounterLocation;
-use Illuminate\Support\Facades\Auth;
 use DB;
 use Carbon;
 use Plugins\Vehicles\Services\VehicleService;

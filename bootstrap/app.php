@@ -39,6 +39,7 @@ $app = new Laravel\Lumen\Application(
 $app->withFacades();
 
 $app->configure('app');
+$app->configure('view'); 
 $app->configure('cache');
 $app->configure('api');
 $app->configure('jwt');
