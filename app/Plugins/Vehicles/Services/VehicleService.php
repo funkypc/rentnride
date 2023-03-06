@@ -5,26 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Services;
 
-use App\Services\TransactionService;
+
 use App\User;
-use Carbon;
-use Plugins\Vehicles\Model\CounterLocation;
 use Plugins\Vehicles\Model\UnavailableVehicle;
 use Plugins\Vehicles\Model\Vehicle;
-use Plugins\Vehicles\Model\VehicleCompany;
+use Plugins\Vehicles\Model\CounterLocation;
+use Plugins\Vehicles\Services\VehicleSpecialPriceService;
+use Plugins\Vehicles\Services\VehicleTypePriceService;
+use Plugins\Vehicles\Model\VehicleType;
 use Plugins\Vehicles\Model\VehicleMake;
 use Plugins\Vehicles\Model\VehicleModel;
-use Plugins\Vehicles\Model\VehicleType;
+use Plugins\Vehicles\Model\VehicleCompany;
+use App\Services\TransactionService;
+use Carbon;
+use DB;
 
 class VehicleService
 {
@@ -65,20 +69,18 @@ class VehicleService
 
     /**
      * get last registered record for admin dashboard
-     *
      * @param $request
      * @return User created_at
      */
     public function getLastAddVehicle()
     {
         $item_details = Vehicle::select('created_at')->where('is_active', 1)->orderBy('created_at', 'desc')->first();
-
         return ($item_details) ? $item_details->created_at->diffForHumans() : '-';
     }
 
     /**
-     * @param    $request
-     * @param  string  $type
+     * @param        $request
+     * @param string $type
      * @return mixed
      */
     public function getVehicleCount($request, $type = 'filter')
@@ -91,13 +93,11 @@ class VehicleService
         } else {
             $vehicle_count = Vehicle::count();
         }
-
         return $vehicle_count;
     }
 
     /**
      * get the date filter
-     *
      * @return $check_date
      */
     public function getDateFilter($request)
@@ -106,15 +106,14 @@ class VehicleService
         if ($request->has('filter')) {
             if ($request->filter == 'lastDays') {
                 $check_date = Carbon::now()->subDays(7);
-            } elseif ($request->filter == 'lastWeeks') {
+            } else if ($request->filter == 'lastWeeks') {
                 $check_date = Carbon::now()->subWeeks(4);
-            } elseif ($request->filter == 'lastMonths') {
+            } else if ($request->filter == 'lastMonths') {
                 $check_date = Carbon::now()->subMonths(3);
-            } elseif ($request->filter == 'lastYears') {
+            } else if ($request->filter == 'lastYears') {
                 $check_date = Carbon::now()->subYears(3);
             }
         }
-
         return $check_date;
     }
 
@@ -127,11 +126,11 @@ class VehicleService
     public function processDifferLocationDropAmount($location1, $location2, $vehicle_type_id)
     {
         $unit = config('vehicle.unit');
-        $lat = [];
-        $lon = [];
-        $diff_location_drop_details = [];
-        $counter_locations = CounterLocation::whereIn('id', [$location1, $location2])->get();
-        if (! empty($counter_locations)) {
+        $lat = array();
+        $lon = array();
+        $diff_location_drop_details = array();
+        $counter_locations = CounterLocation::whereIn('id', array($location1, $location2))->get();
+        if (!empty($counter_locations)) {
             foreach ($counter_locations as $counter_location) {
                 $lat[] = $counter_location->latitude;
                 $lon[] = $counter_location->longitude;
@@ -142,18 +141,17 @@ class VehicleService
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
             $unit = strtoupper($unit);
-            if ($unit == 'KM') {
+            if ($unit == "KM") {
                 $miles = $miles * 1.609344;
             }
             $diff_location_drop_details['total_distance'] = ceil($miles);
             $vehicle_type = VehicleType::where('id', $vehicle_type_id)->first();
             $diff_location_drop_amount = ceil($miles) * $vehicle_type->drop_location_differ_unit_price;
-            if (! empty($vehicle_type->drop_location_differ_additional_fee)) {
+            if (!empty($vehicle_type->drop_location_differ_additional_fee)) {
                 $diff_location_drop_details['drop_location_differ_additional_fee'] = $vehicle_type->drop_location_differ_additional_fee;
             }
             $diff_location_drop_details['diff_location_drop_amount'] = $diff_location_drop_amount;
             $diff_location_drop_details['distance_unit'] = $unit;
-
             return $diff_location_drop_details;
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Given Counter locations not available. Please, try again.');
@@ -168,14 +166,14 @@ class VehicleService
      */
     public function getDiscountRate($vehicles, $start_date, $end_date)
     {
-        $total_trip_amount_details = [];
+        $total_trip_amount_details = array();
         foreach ($vehicles as $vehicle) {
             $special_price_percent = 0;
             // calculate total trip amount
             $total_trip_amount_details = $this->calculateBookingAmount($start_date, $end_date, $vehicle);
             $vehicle->booking_amount = $total_trip_amount_details['booking_amount'];
             // set vehicle type prices
-            if (! is_null($vehicle->vehicle_type) && ! is_null($vehicle->vehicle_type->vehicle_special_price)) {
+            if (!is_null($vehicle->vehicle_type) && !is_null($vehicle->vehicle_type->vehicle_special_price)) {
                 foreach ($vehicle->vehicle_type->vehicle_special_price as $special_price) {
                     if ($special_price->discount_percentage > $special_price_percent && strtotime($start_date) >= strtotime($special_price->start_date) && strtotime($end_date) <= strtotime($special_price->end_date)) {
                         $special_price_percent = $special_price->discount_percentage;
@@ -183,7 +181,7 @@ class VehicleService
                 }
             }
             // set vehicle type prices
-            if (! is_null($vehicle->vehicle_type) && ! is_null($vehicle->vehicle_type->vehicle_type_price)) {
+            if (!is_null($vehicle->vehicle_type) && !is_null($vehicle->vehicle_type->vehicle_type_price)) {
                 foreach ($vehicle->vehicle_type->vehicle_type_price as $type_price) {
                     if ($type_price->discount_percentage > $special_price_percent && $total_trip_amount_details['total_days'] >= $type_price->minimum_no_of_day && $total_trip_amount_details['total_days'] <= $type_price->maximum_no_of_day) {
                         $special_price_percent = $type_price->discount_percentage;
@@ -197,24 +195,22 @@ class VehicleService
         }
         unset($total_trip_amount_details['booking_amount']);
         $vehicles->booking_details = $total_trip_amount_details;
-
         return $vehicles;
     }
 
     /**
      * @param $vehicle_id
-     * @param  bool  $item_user_id
-     * @param  bool  $start_date
-     * @param  bool  $end_date
-     * @param  int  $is_dummy
+     * @param bool $item_user_id
+     * @param bool $start_date
+     * @param bool $end_date
+     * @param int $is_dummy
      */
     public function addVehicleSearchRecord($vehicle_id, $item_user_id = false, $start_date = false, $end_date = false, $is_dummy = 0)
     {
         $vehicle = false;
         $search_insert_data['vehicle_id'] = $vehicle_id;
-        if ($item_user_id) {
+        if ($item_user_id)
             $search_insert_data['item_user_id'] = $item_user_id;
-        }
         $search_insert_data['is_dummy'] = $is_dummy;
         if ($start_date) {
             $search_insert_data['start_date'] = $start_date;
@@ -226,12 +222,12 @@ class VehicleService
                 $search_insert_data['end_date'] = $grace_time_added_end_date->toDateTimeString();
             }
         }
-        if ($is_dummy && ! $item_user_id) {
+        if ($is_dummy && !$item_user_id) {
             $vehicle = UnavailableVehicle::where('vehicle_id', $vehicle_id)->where('is_dummy', $is_dummy)->first();
         } else {
             $vehicle = UnavailableVehicle::where('vehicle_id', $vehicle_id)->where('is_dummy', $is_dummy)->where('item_user_id', $item_user_id)->first();
         }
-        if (! $vehicle) {
+        if (!$vehicle) {
             UnavailableVehicle::create($search_insert_data);
         }
     }
@@ -244,7 +240,7 @@ class VehicleService
      */
     public function calculateBookingAmount($start_date, $end_date, $vehicle)
     {
-        $booking_calculated_details = [];
+        $booking_calculated_details = array();
         $date_diff = $this->getDateDiff($start_date, $end_date);
         $booking_calculated_details['total_days'] = $date_diff['total_days'];
         $booking_calculated_details['total_hours'] = $date_diff['total_hours'];
@@ -256,7 +252,7 @@ class VehicleService
             $booking_calculated_details['is_day_price'] = 1;
         }
         if ($booking_calculated_details['total_hours'] > 0) {
-            if (! empty($vehicle->per_hour_amount)) {
+            if (!empty($vehicle->per_hour_amount)) {
                 $hour_amount = $booking_calculated_details['total_hours'] * $vehicle->per_hour_amount;
             } else {
                 $hour_amount = $vehicle->per_day_amount;
@@ -265,7 +261,6 @@ class VehicleService
         $booking_calculated_details['booking_amount'] = $day_amount + $hour_amount;
         $booking_calculated_details['special_price_discount_amount'] = $this->vehicleSpecialPriceService->processSpecialPriceAmount($vehicle->vehicle_type_id, $booking_calculated_details['booking_amount'], $start_date, $end_date);
         $booking_calculated_details['type_price_discount_amount'] = $this->vehicleTypePriceService->processTypePriceAmount($vehicle->vehicle_type_id, $booking_calculated_details['booking_amount'], $date_diff);
-
         return $booking_calculated_details;
     }
 
@@ -282,18 +277,16 @@ class VehicleService
         }
         $vehicle_rental_data['host_service_amount'] = ($vehicle_rental_data['total_amount'] + $vehicle_rental->paid_deposit_amount) - ($vehicle_rental_data['admin_commission_amount'] + $vehicle_rental->deposit_amount);
         $vehicle_rental->update($vehicle_rental_data);
-
         return $vehicle_rental;
     }
 
     public function getDateDiff($start_date, $end_date)
     {
-        $date_diff = [];
+        $date_diff = array();
         $hour_diff = round((strtotime($end_date) - strtotime($start_date)) / 3600, 1);
         $hour_diff = ceil($hour_diff);
         $date_diff['total_days'] = floor($hour_diff / 24);
         $date_diff['total_hours'] = ceil($hour_diff % 24);
-
         return $date_diff;
     }
 
@@ -310,7 +303,6 @@ class VehicleService
 
     /**
      * Update Vehicle count in related table
-     *
      * @param $make_id
      * @param $model_id
      * @param $type_id
@@ -345,13 +337,12 @@ class VehicleService
     {
         $vehicle = Vehicle::with('user')->where('id', $vehicleId)->first();
         if (empty($vehicle)) {
-            return $this->response->errorNotFound('Invalid Request');
+            return $this->response->errorNotFound("Invalid Request");
         }
-        if (! $vehicle['is_paid']) {
-            $this->transactionService->log($vehicle->user->id, config('constants.ConstUserIds.Admin'), config('constants.ConstTransactionTypes.VehicleListingFee'), config('vehicle.listing_fee'), $vehicle->id, 'Vehicles', $gateway_id, $transaction_fee, 'Vehicle listing Fee');
+        if (!$vehicle['is_paid']) {
+            $this->transactionService->log($vehicle->user->id, config('constants.ConstUserIds.Admin'), config('constants.ConstTransactionTypes.VehicleListingFee'), config('vehicle.listing_fee'), $vehicle->id, 'Vehicles', $gateway_id, $transaction_fee, "Vehicle listing Fee");
             $vehicle->is_paid = true;
             $vehicle->save();
-
             return true;
         } else {
             return true;
@@ -360,6 +351,7 @@ class VehicleService
 
     public function updateFeedbackDetails($vehicle, $average_rating)
     {
+     
         $vehicle->feedback_count = \Plugins\VehicleFeedbacks\Model\VehicleFeedback::where('feedbackable_id', $vehicle->id)->count();
         // update average rating
         $vehicle->feedback_rating = $average_rating;
@@ -368,7 +360,7 @@ class VehicleService
 
     public function processCheckoutLateFee($vehicle_rental, $claim_request_amount)
     {
-        $late_fee_details = [];
+        $late_fee_details = array();
         $late_fee_details['late_checkout_days_fee'] = $late_fee_details['late_checkout_hours_fee'] = $late_fee_details['late_checkout_hours'] = $late_fee_details['revised_late_hours_from_gracetime'] = $late_fee_details['late_checkout_days'] = 0;
         $late_fee_details['grace_time'] = config('vehicle_rental.late_checkout_grace_time');
         $checkout_time = Carbon::now()->toDateTimeString();
@@ -403,12 +395,12 @@ class VehicleService
             if ($booker_manual_payable >= $vehicle_rental->deposit_amount) {
                 $late_fee_details['paid_deposit_amount'] = $vehicle_rental->deposit_amount;
                 $late_fee_details['paid_manual_amount'] = $booker_manual_payable - $vehicle_rental->deposit_amount;
-            } elseif ($vehicle_rental->deposit_amount > $booker_manual_payable) {
+            } else if ($vehicle_rental->deposit_amount > $booker_manual_payable) {
                 $late_fee_details['paid_deposit_amount'] = $booker_manual_payable;
                 $late_fee_details['paid_manual_amount'] = 0;
             }
         }
-
         return $late_fee_details;
     }
+
 }

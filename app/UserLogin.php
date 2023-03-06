@@ -5,25 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class UserLogin extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'user_logins';
+    protected $table = "user_logins";
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,7 @@ class UserLogin extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'user_login_ip_id', 'role_id', 'user_agent',
+        'user_id', 'user_login_ip_id', 'role_id', 'user_agent'
     ];
 
     /**
@@ -59,8 +59,8 @@ class UserLogin extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -74,15 +74,15 @@ class UserLogin extends Model
         }
         if ($request->has('q')) {
             $query->whereHas('user', function ($q) use ($request) {
-                $q->where('username', 'like', '%'.$request->input('q').'%');
+                $q->where('username', 'like', '%' . $request->input('q') . '%');
             });
         }
-        if ($request->has('user_id') && ! empty($request->user_id)) {
+		if($request->has('user_id') && !empty($request->user_id)) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('id', '=', $request->user_id);
             });
         }
-
         return $query;
     }
+
 }

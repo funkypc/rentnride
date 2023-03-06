@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateDisputeClosedTypesTable extends Migration
 {
@@ -14,7 +14,7 @@ class CreateDisputeClosedTypesTable extends Migration
     {
         Schema::create('dispute_closed_types', function (Blueprint $table) {
             $table->bigIncrements('id')->index();
-            $table->timestamps();
+            $table->timestamps();            
             $table->string('name');
             $table->bigInteger('dispute_type_id')->unsigned()->nullable()->index();
             $table->foreign('dispute_type_id')

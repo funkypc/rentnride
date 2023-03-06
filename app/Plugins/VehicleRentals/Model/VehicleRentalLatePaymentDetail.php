@@ -5,35 +5,38 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleRentals\Model;
 
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+
+use Illuminate\Support\Facades\Auth;
+
 
 /**
  * Class VehicleRentalLatePaymentDetail
+ * @package Plugins\VehicleRentals\Model
  */
 class VehicleRentalLatePaymentDetail extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'late_payment_details';
-
+    protected $table = "late_payment_details";
     /**
      * The attributes that are mass assignable.
-     *
      * @var array
      */
     protected $fillable = [
-        'item_user_id', 'booking_start_date', 'booking_end_date', 'checkin_date', 'checkout_date', 'booking_amount', 'late_checkout_fee', 'extra_time_taken',
+        'item_user_id', 'booking_start_date', 'booking_end_date', 'checkin_date', 'checkout_date', 'booking_amount', 'late_checkout_fee', 'extra_time_taken'
     ];
 
     /**
@@ -43,4 +46,5 @@ class VehicleRentalLatePaymentDetail extends Model
     {
         return $this->belongsTo(VehicleRental::class);
     }
+
 }

@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleFuelOptions\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Plugins\VehicleFuelOptions\Model\VehicleFuelOption;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleFuelOptions\Transformers\VehicleFuelOptionTransformer;
 
 /**
  * VehicleFuelOptions resource representation.
- *
  * @Resource("VehicleFuelOptions")
  */
 class VehicleFuelOptionsController extends Controller
@@ -51,7 +53,6 @@ class VehicleFuelOptionsController extends Controller
     public function index(Request $request)
     {
         $fuel_options = VehicleFuelOption::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($fuel_options, (new VehicleFuelOptionTransformer));
     }
 }

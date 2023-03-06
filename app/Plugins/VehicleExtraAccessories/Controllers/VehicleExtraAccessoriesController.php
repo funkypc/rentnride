@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleExtraAccessories\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Plugins\VehicleExtraAccessories\Model\VehicleExtraAccessory;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleExtraAccessories\Transformers\VehicleExtraAccessoryTransformer;
 
 /**
  * VehicleExtraAccessories resource representation.
- *
  * @Resource("VehicleExtraAccessories")
  */
 class VehicleExtraAccessoriesController extends Controller
@@ -51,7 +53,6 @@ class VehicleExtraAccessoriesController extends Controller
     public function index(Request $request)
     {
         $extra_accessories = VehicleExtraAccessory::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($extra_accessories, (new VehicleExtraAccessoryTransformer));
     }
 }

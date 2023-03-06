@@ -5,30 +5,35 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\User;
-use DB;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleCompany;
-use Plugins\Vehicles\Transformers\AdminVehicleCompanyTransformer;
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\User;
+use Plugins\Vehicles\Transformers\AdminVehicleCompanyTransformer;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
+use DB;
 
 /**
  * Class AdminVehicleCompaniesController
+ * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminVehicleCompaniesController extends Controller
 {
+
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -59,13 +64,11 @@ class AdminVehicleCompaniesController extends Controller
             ->select(DB::raw('vehicle_companies.*'))
             ->leftJoin(DB::raw('(select id,username from users) as user'), 'user.id', '=', 'vehicle_companies.user_id')
             ->filterByRequest($request)->paginate($vehicle_company_count);
-
         return $this->response->paginator($vehicle_companies, (new AdminVehicleCompanyTransformer)->setDefaultIncludes(['user']));
     }
 
     /**
      * Store a new vehicle company.
-     *
      * @Post("/vehicle_companies")
      * @Transaction({
      *      @Request({"name":"compan", "address":"chennai", "latitude":"45.1265", "longitude":"45.1325", "fax":"d336256", "phone":"546546546", "mobile":"54654654", "email":"sdfds@df.cin", "is_active":"1", "user_id":1}),
@@ -75,7 +78,7 @@ class AdminVehicleCompaniesController extends Controller
      */
     public function store(Request $request)
     {
-        $vehicle_company_data = $request->only('user_id', 'name', 'address', 'latitude', 'longitude', 'phone', 'fax', 'mobile', 'email', 'is_active');
+        $vehicle_company_data = $request->only('user_id','name', 'address', 'latitude', 'longitude', 'phone', 'fax', 'mobile', 'email', 'is_active');
         $vehicle_company_data['slug'] = EasySlug::generateUniqueSlug($request->name, 'vehicle_companies');
         $validator = Validator::make($vehicle_company_data, VehicleCompany::GetValidationRule(), VehicleCompany::GetValidationMessage());
         if ($validator->passes()) {
@@ -88,7 +91,7 @@ class AdminVehicleCompaniesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle company could not be added. Please, try again.',
-                    [$e->getMessage()]);
+                    array($e->getMessage()));
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle company could not be added. Please, try again.', $validator->errors());
@@ -98,7 +101,6 @@ class AdminVehicleCompaniesController extends Controller
     /**
      * Edit the specified vehicle_company.
      * Edit the vehicle_company with a `id`.
-     *
      * @Get("/vehicle_companies/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -109,17 +111,15 @@ class AdminVehicleCompaniesController extends Controller
     public function edit($id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_company, (new AdminVehicleCompanyTransformer));
     }
 
     /**
      * Update the specified Vehicle Company.
      * Update the Vehicle Company with a `id`.
-     *
      * @Put("/vehicle_companies/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name":"compan", "address":"chennai", "latitude":"45.1265", "longitude":"45.1325", "fax":"d336256", "phone":"546546546", "mobile":"54654654", "email":"sdfds@df.cin", "is_active":"1", "user_id":1}),
@@ -148,11 +148,10 @@ class AdminVehicleCompaniesController extends Controller
         if ($validator->passes() && $vehicle_company) {
             try {
                 $vehicle_company->update($vehicle_company_data);
-
                 return response()->json(['Success' => 'Vehicle Company has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle company could not be updated. Please, try again.',
-                    [$e->getMessage()]);
+                    array($e->getMessage()));
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Company could not be updated. Please, try again.', $validator->errors());
@@ -162,7 +161,6 @@ class AdminVehicleCompaniesController extends Controller
     /**
      * Delete the specified Vehicle Company.
      * Delete the Vehicle Company with a `id`.
-     *
      * @Delete("/vehicle_companies/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -173,19 +171,17 @@ class AdminVehicleCompaniesController extends Controller
     public function destroy($id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $vehicle_company->delete();
         }
-
         return response()->json(['Success' => 'Vehicle company deleted'], 200);
     }
 
     /**
      * Show the specified Vehicle Company.
      * Show the Vehicle Company with a `id`.
-     *
      * @Get("/vehicle_companies/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -196,16 +192,14 @@ class AdminVehicleCompaniesController extends Controller
     public function show($id)
     {
         $vehicle_company = VehicleCompany::with('user')->find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_company, (new AdminVehicleCompanyTransformer)->setDefaultIncludes(['user']));
     }
 
     /**
      * Deactivate the company.
-     *
      * @Put("/vehicle_companies/{id}/deactive")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -216,8 +210,8 @@ class AdminVehicleCompaniesController extends Controller
     public function deactive(Request $request, $id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $user_data['is_active'] = 0;
             if ($vehicle_company->update($user_data)) {
@@ -228,7 +222,6 @@ class AdminVehicleCompaniesController extends Controller
 
     /**
      * Activate the company.
-     *
      * @Put("/vehicle_companies/{id}/active")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -239,8 +232,8 @@ class AdminVehicleCompaniesController extends Controller
     public function active(Request $request, $id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $user_data['is_active'] = 1;
             if ($vehicle_company->update($user_data)) {
@@ -251,7 +244,6 @@ class AdminVehicleCompaniesController extends Controller
 
     /**
      * Rejected the company.
-     *
      * @Put("/vehicle_companies/{id}/reject")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -262,8 +254,8 @@ class AdminVehicleCompaniesController extends Controller
     public function reject(Request $request, $id)
     {
         $vehicle_company = VehicleCompany::find($id);
-        if (! $vehicle_company) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_company) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $user_data['is_active'] = 2;
             if ($vehicle_company->update($user_data)) {

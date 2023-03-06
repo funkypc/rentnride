@@ -5,26 +5,31 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\FuelType;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Vehicles\Transformers\FuelTypeTransformer;
 
 /**
  * Class FuelTypesController
+ * @package Plugins\Vehicles\Controllers
  */
 class FuelTypesController extends Controller
 {
+
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -50,7 +55,7 @@ class FuelTypesController extends Controller
             $fuel_type_count = FuelType::count();
         }
         $fuel_types = FuelType::filterByRequest($request)->paginate($fuel_type_count);
-
         return $this->response->paginator($fuel_types, new FuelTypeTransformer);
     }
+
 }

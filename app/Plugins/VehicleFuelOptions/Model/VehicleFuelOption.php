@@ -5,29 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleFuelOptions\Model;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class VehicleFuelOption extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'fuel_options';
+    protected $table = "fuel_options";
 
     protected $fillable = [
-        'name', 'short_description', 'description', 'is_active', 'slug',
+        'name', 'short_description', 'description', 'is_active', 'slug'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -36,28 +37,26 @@ class VehicleFuelOption extends Model
     {
         return $this->hasMany(VehicleTypeFuelOption::class);
     }
-
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      */
     public function scopeFilterByActiveRecord($query, Request $request)
     {
         $query->where('is_active', '=', 1);
     }
-
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
     {
         $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'asc'));
         if ($request->has('q')) {
-            $query->where('name', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('short_description', 'LIKE', '%'.$request->input('q').'%')
-                ->orWhere('description', 'LIKE', '%'.$request->input('q').'%');
+            $query->where('name', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('short_description', 'LIKE', '%' . $request->input('q') . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->input('q') . '%');
         }
         if ($request->has('filter')) {
             $filter = false;
@@ -66,7 +65,6 @@ class VehicleFuelOption extends Model
             }
             $query->where('is_active', '=', $filter);
         }
-
         return $query;
     }
 
@@ -79,7 +77,7 @@ class VehicleFuelOption extends Model
             'name' => 'required|min:5',
             'short_description' => 'required|min:10',
             'description' => 'required|min:15',
-            'is_active' => 'sometimes|required|boolean',
+            'is_active' => 'sometimes|required|boolean'
         ];
     }
 
@@ -96,7 +94,8 @@ class VehicleFuelOption extends Model
             'description.required' => 'Required',
             'description.min' => 'Description - Minimum length is 15',
             'is_active.required' => 'Required',
-            'is_active.boolean' => 'Possible values to be entered is 0 or 1',
+            'is_active.boolean' => 'Possible values to be entered is 0 or 1'
         ];
     }
+
 }

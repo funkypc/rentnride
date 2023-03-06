@@ -5,29 +5,33 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use EasySlug\EasySlug\EasySlugFacade as EasySlug;
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleMake;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Vehicles\Transformers\AdminVehicleMakeTransformer;
 use Plugins\Vehicles\Transformers\VehicleMakeTransformer;
-use Validator;
+use EasySlug\EasySlug\EasySlugFacade as EasySlug;
 
 /**
  * Class AdminVehicleMakesController
+ * @package Plugins\Vehicles\Controllers\Admin
  */
 class AdminVehicleMakesController extends Controller
 {
+
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -54,14 +58,12 @@ class AdminVehicleMakesController extends Controller
         if ($request->has('type') && $request->type == 'list') {
             $vehicle_make_count = VehicleMake::count();
         }
-        if ($request->has('limit') && $request->limit == 'all') {
+        if($request->has('limit') && $request->limit == 'all') {
             $vehicle_make_count = VehicleMake::count();
             $vehicle_makes = VehicleMake::filterByRequest($request)->select('id', 'name')->paginate($vehicle_make_count);
-
             return $this->response->paginator($vehicle_makes, new VehicleMakeTransformer);
         } else {
             $vehicle_makes = VehicleMake::filterByRequest($request)->paginate($vehicle_make_count);
-
             return $this->response->paginator($vehicle_makes, new AdminVehicleMakeTransformer);
         }
     }
@@ -69,7 +71,6 @@ class AdminVehicleMakesController extends Controller
     /**
      * Store a new vehicle make.
      * Store a new vehicle make with a 'amount', 'user_id', 'name', 'booking_type_id', 'description'.
-     *
      * @Post("/vehicle_makes")
      * @Transaction({
      *      @Request({"name":"maruti", "is_active": 1}),
@@ -92,7 +93,7 @@ class AdminVehicleMakesController extends Controller
                 }
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle make could not be added. Please, try again.',
-                    [$e->getMessage()]);
+                    array($e->getMessage()));
             }
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle make could not be added. Please, try again.', $validator->errors());
@@ -102,7 +103,6 @@ class AdminVehicleMakesController extends Controller
     /**
      * Edit the specified vehicle make.
      * Edit the vehicle make with a `id`.
-     *
      * @Get("/vehicle_makes/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -113,17 +113,15 @@ class AdminVehicleMakesController extends Controller
     public function edit($id)
     {
         $vehicle_make = VehicleMake::find($id);
-        if (! $vehicle_make) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_make) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_make, (new AdminVehicleMakeTransformer));
     }
 
     /**
      * Update the specified vehicle make.
      * Update the vehicle make with a `id`.
-     *
      * @Put("/vehicle_makes/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name":"maruti", "is_active": 1}),
@@ -148,7 +146,6 @@ class AdminVehicleMakesController extends Controller
         if ($validator->passes() && $vehicle_make) {
             try {
                 $vehicle_make->update($vehicle_make_data);
-
                 return response()->json(['Success' => 'Vehicle Make has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Vehicle Make could not be updated. Please, try again.');
@@ -161,7 +158,6 @@ class AdminVehicleMakesController extends Controller
     /**
      * Delete the specified vehicle make.
      * Delete the vehicle make with a `id`.
-     *
      * @Delete("/vehicle_makes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -172,19 +168,17 @@ class AdminVehicleMakesController extends Controller
     public function destroy($id)
     {
         $vehicle_make = VehicleMake::find($id);
-        if (! $vehicle_make) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_make) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $vehicle_make->delete();
         }
-
         return response()->json(['Success' => 'Vehicle Make deleted'], 200);
     }
 
     /**
      * Show the specified vehicle make.
      * Show the vehicle make with a `id`.
-     *
      * @Get("/vehicle_makes/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -195,10 +189,9 @@ class AdminVehicleMakesController extends Controller
     public function show($id)
     {
         $vehicle_make = VehicleMake::find($id);
-        if (! $vehicle_make) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$vehicle_make) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($vehicle_make, (new AdminVehicleMakeTransformer));
     }
 }

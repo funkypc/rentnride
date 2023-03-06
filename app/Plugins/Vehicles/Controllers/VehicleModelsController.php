@@ -5,26 +5,32 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Controllers;
 
-use App\Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 use Plugins\Vehicles\Model\VehicleModel;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Vehicles\Transformers\VehicleModelTransformer;
 
 /**
  * Class VehicleModelsController
+ * @package Plugins\Vehicles\Controllers
  */
 class VehicleModelsController extends Controller
 {
+
     public function __construct()
     {
         // check whether the user is logged in or not.
@@ -50,7 +56,7 @@ class VehicleModelsController extends Controller
             $vehicle_model_count = VehicleModel::count();
         }
         $vehicle_models = VehicleModel::with('vehicle_make')->filterByRequest($request)->paginate($vehicle_model_count);
-
         return $this->response->paginator($vehicle_models, (new VehicleModelTransformer)->setDefaultIncludes(['vehicle_make']));
     }
+
 }

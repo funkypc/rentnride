@@ -5,26 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Services\TransactionService;
-use App\Transaction;
-use App\Transformers\TransactionTransformer;
-use DB;
 use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use App\Transformers\TransactionTransformer;
+use App\Transaction;
+use App\Services\TransactionService;
+use DB;
 
 /**
  * Transactions resource representation.
- *
  * @Resource("Admin/AdminTransactions")
  */
 class AdminTransactionsController extends Controller
@@ -69,7 +71,6 @@ class AdminTransactionsController extends Controller
             ->paginate(config('constants.ConstPageLimit'));
         $converted_transactions = $this->transactionService->transactionDescription($transactions);
         $transaction_details = $this->response->paginator($converted_transactions, (new TransactionTransformer)->setDefaultIncludes(['from_user', 'to_user', 'transaction_type']));
-
         return $transaction_details;
     }
 }

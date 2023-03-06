@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleRentals\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Plugins\VehicleRentals\Model\VehicleRentalStatus;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleRentals\Transformers\VehicleRentalStatusTransformer;
+use Plugins\VehicleRentals\Model\VehicleRentalStatus;
 
 /**
  * VehicleRentalStatuses resource representation.
- *
  * @Resource("Admin/VehicleRentalStatuses")
  */
 class AdminVehicleRentalStatusesController extends Controller
@@ -56,7 +58,6 @@ class AdminVehicleRentalStatusesController extends Controller
     public function index(Request $request)
     {
         $vehicle_rental_statuses = VehicleRentalStatus::filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($vehicle_rental_statuses, (new VehicleRentalStatusTransformer));
     }
 }

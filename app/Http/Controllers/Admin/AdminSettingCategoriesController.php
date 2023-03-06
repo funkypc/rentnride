@@ -5,25 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Setting;
-use App\SettingCategory;
-use App\Transformers\SettingCategoryTransformer;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+
+use App\SettingCategory;
+use App\Setting;
+
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use App\Transformers\SettingCategoryTransformer;
 
 /**
  * SettingCategories resource representation.
- *
  * @Resource("Admin/AdminSettingCategories")
  */
 class AdminSettingCategoriesController extends Controller
@@ -53,41 +58,38 @@ class AdminSettingCategoriesController extends Controller
     public function index(Request $request)
     {
         $setting_plugin = Setting::select('value')->where('name', 'site.enabled_plugins')->first();
-        $notInCategories = [];
+        $notInCategories = array();
         $notInCategories[] = config('constants.ConstSettingCategories.Plugins');
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Analytics') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Analytics') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Analytics');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Withdrawals') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Withdrawals') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Withdrawal');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Banner') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Banner') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Banner');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Sudopays') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Sudopays') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Sudopay');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Paypal') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Paypal') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.PayPal');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'Vehicles') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'Vehicles') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Vehicles');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'VehicleRentals') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'VehicleRentals') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.VehicleRentals');
         }
-        if (! empty($setting_plugin) && strpos($setting_plugin['value'], 'VehicleDisputes') === false) {
+        if (!empty($setting_plugin) && strpos($setting_plugin['value'], 'VehicleDisputes') === false) {
             $notInCategories[] = config('constants.ConstSettingCategories.Disputes');
         }
         $setting_categories = SettingCategory::filterByRequest($request, $notInCategories)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($setting_categories, new SettingCategoryTransformer);
     }
-
     /**
      * Show the specified setting category.
      * Show the setting category with a `id`.
-     *
      * @Get("/setting_categories/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -98,10 +100,10 @@ class AdminSettingCategoriesController extends Controller
     public function show($id)
     {
         $setting_category = SettingCategory::find($id);
-        if (! $setting_category) {
-            return $this->response->errorNotFound('Invalid Request');
+        if(!$setting_category){
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($setting_category, new SettingCategoryTransformer);
     }
+
 }

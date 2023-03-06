@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Services;
 
 use App\Country;
@@ -25,12 +25,11 @@ class CountryService
         if ($country) {
             return $country->id;
         } else {
-            $country_obj = [];
+            $country_obj = array();
             $country_obj['iso2'] = strtoupper($code);
             $country_obj['name'] = $name;
             $country_obj['is_active'] = true;
             $country = Country::create($country_obj);
-
             return $country->id;
         }
     }

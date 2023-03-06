@@ -5,26 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\CurrencyConversions\Model;
 
-use App\Currency;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
+use App\Currency;
 
 class CurrencyConversion extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'currency_conversions';
+    protected $table = "currency_conversions";
 
     /**
      * The attributes that are mass assignable.
@@ -32,8 +32,9 @@ class CurrencyConversion extends Model
      * @var array
      */
     protected $fillable = [
-        'currency_id', 'converted_currency_id', 'rate',
+        'currency_id', 'converted_currency_id', 'rate'
     ];
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -52,8 +53,8 @@ class CurrencyConversion extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -61,10 +62,10 @@ class CurrencyConversion extends Model
         $query->orderBy($request->input('sort', 'id'), $request->input('sortby', 'desc'));
         if ($request->has('q')) {
             $query->orWhereHas('Currency', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orWhereHas('ConvertedCurrency', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
         if ($request->has('from_currency')) {
@@ -73,7 +74,6 @@ class CurrencyConversion extends Model
         if ($request->has('to_currency')) {
             $query->where('converted_currency_id', '=', $request->input('to_currency'));
         }
-
         return $query;
     }
 
@@ -85,7 +85,7 @@ class CurrencyConversion extends Model
         return [
             'currency_id' => 'required|integer|exists:currencies,id',
             'converted_currency_id' => 'required|integer|exists:currencies,id',
-            'rate' => 'required|numeric',
+            'rate' => 'required|numeric'
         ];
     }
 
@@ -99,7 +99,7 @@ class CurrencyConversion extends Model
             'converted_currency_id.integer' => 'Converted currency id must be a number!',
             'converted_currency_id.exists' => 'Invalid converted currency id',
             'rate.required' => 'Required',
-            'rate.numeric' => 'Rate must be a number!',
+            'rate.numeric' => 'Rate must be a number!'
         ];
     }
 }

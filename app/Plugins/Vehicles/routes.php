@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -103,6 +103,7 @@ $api->version(['v1'], function ($api) {
         $api->put('unavailable_vehicles/{id}', 'AdminUnavailableVehiclesController@update');
         $api->delete('unavailable_vehicles/{id}', 'AdminUnavailableVehiclesController@destroy');
         $api->get('unavailable_vehicles/{id}', 'AdminUnavailableVehiclesController@show');
+
     });
     $api->group(['namespace' => 'Plugins\Vehicles\Controllers', 'middleware' => 'apitracking'], function () use ($api) {
         $api->get('vehicles/filters', 'VehiclesController@getVehicleRelatedFilters');
@@ -115,6 +116,7 @@ $api->version(['v1'], function ($api) {
         $api->get('vehicles/{id}', 'VehiclesController@show');
         $api->delete('vehicles/{id}', 'VehiclesController@destroy');
         $api->get('vehicle/add', 'VehiclesController@getVehicleRelatedDetail');
+
 
         $api->get('vehicle_type_prices', 'VehicleTypePricesController@index');
         $api->get('vehicle_type_prices/{id}/edit', 'VehicleTypePricesController@edit');

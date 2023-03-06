@@ -5,17 +5,18 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Vehicles\Services;
 
 use Plugins\Vehicles\Model\CounterLocation;
+use Plugins\Vehicles\Model\CounterLocationVehicle;
 use Plugins\Vehicles\Model\Vehicle;
 
 class CounterLocationService
@@ -33,14 +34,13 @@ class CounterLocationService
     public function getCounterLocationList()
     {
         $counter_location_list = CounterLocation::pluck('id', 'address');
-
         return $counter_location_list;
     }
 
     public function getVehicleCounterLocation($vehicle_id)
     {
-        $vehicle_locations = Vehicle::with(['counter_location'])->where('id', '=', $vehicle_id)->first();
-        $vehicle_counter_locations = [];
+        $vehicle_locations = Vehicle::with(array('counter_location'))->where('id', '=', $vehicle_id)->first();
+        $vehicle_counter_locations = array();
         $i = 0;
 
         foreach ($vehicle_locations->counter_location as $counter_location) {
@@ -58,7 +58,7 @@ class CounterLocationService
             }
             $i++;
         }
-
         return $vehicle_counter_locations;
+
     }
 }

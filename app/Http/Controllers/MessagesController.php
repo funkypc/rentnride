@@ -5,35 +5,34 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers;
 
-use App\Message;
-use App\MessageContent;
-use App\Services\MessageService;
-use App\Transformers\MessageTransformer;
+use Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Message;
+use App\MessageContent;
 use Validator;
+use App\Transformers\MessageTransformer;
+use App\Services\MessageService;
 
 /**
  * Messages resource representation.
- *
  * @Resource("Messages")
  */
 class MessagesController extends Controller
 {
     /**
      * MessagesController constructor.
-     *
-     * @param  MessageService  $msgService
+     * @param MessageService $msgService
      */
     public function __construct()
     {
@@ -78,12 +77,11 @@ class MessagesController extends Controller
      */
     public function inbox(Request $request)
     {
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'message_folder_id' => config('constants.ConstMessageFolder.Inbox')];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->paginator($messages, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
@@ -102,15 +100,13 @@ class MessagesController extends Controller
      */
     public function sentMessage(Request $request)
     {
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'message_folder_id' => config('constants.ConstMessageFolder.SentMail')];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->paginator($messages, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
-
     /**
      * Show all starred Messages
      * Get a JSON representation of all the starred Messages.
@@ -126,15 +122,13 @@ class MessagesController extends Controller
      */
     public function starMessage(Request $request)
     {
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $user = Auth::guard()->user();
         $data = ['to_user_id' => $user->id, 'is_starred' => 1];
         $messages = Message::with($enabledIncludes)->where($data)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->paginator($messages, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
-
     /**
      * Get item activities
      *
@@ -147,13 +141,12 @@ class MessagesController extends Controller
      */
     public function itemActivities($item_id)
     {
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $item_messages = Message::with($enabledIncludes)->where('messageable_id', $item_id)->get();
-        if (! $item_messages) {
+        if (!$item_messages) {
             return $this->response->errorNotFound('Invalid Request');
         }
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->Collection($item_messages, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
@@ -170,11 +163,10 @@ class MessagesController extends Controller
     public function bookerActivities($item_user_id)
     {
         $user = Auth::guard()->user();
-        $enabledIncludes = ['user', 'message', 'item_user_status'];
+        $enabledIncludes = array('user', 'message', 'item_user_status');
         (isPluginEnabled('VehicleFeedbacks')) ? $enabledIncludes[] = 'vehicle_feedback' : '';
         $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::with($enabledIncludes)->where('id', $item_user_id)->first();
         $messages = $this->msgService->getMessages($vehicle_rental, $user);
-
         return response()->json(['messages' => $messages]);
     }
 
@@ -196,14 +188,14 @@ class MessagesController extends Controller
             $user = Auth::guard()->user();
             //if to user and current user equal could not send message
             if ($user->id == $request->to_user_id) {
-                return $this->response->errorNotFound('Message could not be sent');
+                return $this->response->errorNotFound("Message could not be sent");
             }
-            if (! $user) {
-                return $this->response->errorNotFound('User not found');
+            if (!$user) {
+                return $this->response->errorNotFound("User not found");
             }
             $message_content = MessageContent::create($message_data);
             if ($message_content) {
-                $message_array = [];
+                $message_array = array();
                 $message_array['message_content_id'] = $message_content->id;
                 $message_array['user_id'] = $user->id;
                 $message_array['to_user_id'] = $request->to_user_id;
@@ -214,7 +206,6 @@ class MessagesController extends Controller
                 $message_array['message_folder_id'] = config('constants.ConstMessageFolder.SentMail');
                 $this->msgService->saveMessage($message_array, $user->id, 'User');
             }
-
             return response()->json(['Success' => 'Message has been sent'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Message could not be added. Please, try again.', $validator->errors());
@@ -224,7 +215,6 @@ class MessagesController extends Controller
     /**
      * show the specified message.
      * show the message with a `id`.
-     *
      * @get("messages/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -235,13 +225,12 @@ class MessagesController extends Controller
     public function show($id)
     {
         $user = Auth::guard()->user();
-        $enabledIncludes = ['from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status'];
+        $enabledIncludes = array('from_user', 'to_user', 'message_content', 'item_user_status', 'dispute_status');
         $message = Message::with($enabledIncludes)->find($id);
-        if (! $message || ($user->role_id != config('constans.ConstUserTypes.Admin') && ($user->id != $message->user_id && $user->id != $message->to_user_id))) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$message || ($user->role_id != config('constans.ConstUserTypes.Admin') && ($user->id != $message->user_id && $user->id != $message->to_user_id))) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-        $enabledIncludes = array_merge($enabledIncludes, ['messageable']);
-
+        $enabledIncludes = array_merge($enabledIncludes, array('messageable'));
         return $this->response->item($message, (new MessageTransformer)->setDefaultIncludes($enabledIncludes));
     }
 
@@ -258,8 +247,8 @@ class MessagesController extends Controller
     public function reply(Request $request)
     {
         $message = Message::find($request->message_id);
-        if (! $message) {
-            return $this->response->errorNotFound('Invalid request');
+        if (!$message) {
+            return $this->response->errorNotFound("Invalid request");
         }
         $message_data = $request->only('message', 'subject');
         $validator = Validator::make($message_data, Message::GetValidationRule(), Message::GetValidationMessage());
@@ -267,14 +256,14 @@ class MessagesController extends Controller
             $user = Auth::guard()->user();
             //if to user and current user equal could not send message
             if ($user->id == $request->to_user_id) {
-                return $this->response->errorNotFound('Message could not be sent');
+                return $this->response->errorNotFound("Message could not be sent");
             }
-            if (! $user) {
-                return $this->response->errorNotFound('User not found');
+            if (!$user) {
+                return $this->response->errorNotFound("User not found");
             }
             $message_content = MessageContent::create($message_data);
             if ($message_content) {
-                $message_array = [];
+                $message_array = array();
                 $message_array['message_content_id'] = $message_content->id;
                 $message_array['user_id'] = $user->id;
                 $message_array['to_user_id'] = $request->to_user_id;
@@ -287,7 +276,6 @@ class MessagesController extends Controller
                 $message_array['message_id'] = $request->message_id;
                 $this->msgService->saveMessage($message_array);
             }
-
             return response()->json(['Success' => 'Message has been added'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Message could not be added. Please, try again.', $validator->errors());
@@ -297,7 +285,6 @@ class MessagesController extends Controller
     /**
      * Store private note.
      * Store the private note with a `id`, `message`.
-     *
      * @post("private_notes/{id}")
      * @Transaction({
      *      @Request({"id": 1, "message":"XXXX"}),
@@ -315,7 +302,7 @@ class MessagesController extends Controller
             $item_id = '';
             $vehicle_rental_id = '';
             if (isPluginEnabled('VehicleRentals') && $request->has('id')) {
-                $enabledIncludes = ['user'];
+                $enabledIncludes = array('user');
                 (isPluginEnabled('VehicleDisputes')) ? $enabledIncludes[] = 'item_user_dispute' : '';
                 $vehicle_rental = \Plugins\VehicleRentals\Model\VehicleRental::with($enabledIncludes)->find($request->id);
                 $item_id = $vehicle_rental->item_userable_id;
@@ -334,7 +321,6 @@ class MessagesController extends Controller
                     $this->vehicleDisputeService->updateConversation($vehicle_rental, $request->message);
                 }
             }
-
             return response()->json(['Success' => 'Private Note has been added'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Private Note could not be added. Please, try again.', $validator->errors());
@@ -344,7 +330,6 @@ class MessagesController extends Controller
     /**
      * update message as starred message.
      * update the message with a `id`.
-     *
      * @put("messages/{id}")
      * @Transaction({
      *      @Request({"id": 1,"stared":0}),
@@ -355,10 +340,10 @@ class MessagesController extends Controller
     public function update($id, Request $request)
     {
         $message = Message::find($id);
-        if ($request->has('stared')) {
+        if($request->has('stared')) {
             $message['is_starred'] = ($request['stared'] == 0) ? 1 : 0;
         }
-        if ($message->save()) {
+        if($message->save()) {
             return response()->json(['Success' => 'Message updated successfully'], 200);
         } else {
             throw new \Dingo\Api\Exception\StoreResourceFailedException('Message could not be updated. Please, try again.');

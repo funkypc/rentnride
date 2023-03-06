@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class Apirequests extends Migration
 {
@@ -16,8 +16,8 @@ class Apirequests extends Migration
             $table->bigIncrements('id')->index();
             $table->timestamps();
             $table->string('path');
-            $table->string('method');
-            $table->string('http_response_code');
+			$table->string('method');
+			$table->string('http_response_code');
             $table->bigInteger('user_id')->unsigned()->nullable()->index();
             $table->foreign('user_id')
                 ->references('id')->on('users')

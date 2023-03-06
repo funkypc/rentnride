@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\Contacts\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
 use Plugins\Contacts\Model\Contact;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Contacts\Transformers\ContactTransformer;
 
 /**
  * Contacts resource representation.
- *
  * @Resource("Admin/AdminContacts")
  */
 class AdminContactsController extends Controller
@@ -53,14 +55,12 @@ class AdminContactsController extends Controller
     public function index(Request $request)
     {
         $contacts = Contact::with('user', 'ip')->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($contacts, (new ContactTransformer)->setDefaultIncludes(['user', 'ip']));
     }
 
     /**
      * Edit the specified contact.
      * Edit the contact with a `id`.
-     *
      * @Get("/contacts/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -71,17 +71,15 @@ class AdminContactsController extends Controller
     public function edit($id)
     {
         $contact = Contact::with('user', 'ip')->find($id);
-        if (! $contact) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$contact) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($contact, (new ContactTransformer)->setDefaultIncludes(['user', 'ip']));
     }
 
     /**
      * Delete the specified contact.
      * Delete the contact with a `id`.
-     *
      * @Delete("/contacs/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -92,12 +90,11 @@ class AdminContactsController extends Controller
     public function destroy($id)
     {
         $contact = Contact::find($id);
-        if (! $contact) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$contact) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $contact->delete();
         }
-
         return response()->json(['Success' => 'Contact deleted'], 200);
     }
 }

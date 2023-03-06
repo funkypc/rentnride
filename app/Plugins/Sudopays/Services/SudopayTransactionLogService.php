@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Sudopays\Services;
 
 use Plugins\Sudopays\Model\SudopayTransactionLog;
@@ -35,9 +35,8 @@ class SudopayTransactionLogService
     {
         if ($payId) {
             $log = SudopayTransactionLog::where('payment_id', '=', $payId)->first();
-            if ($log) {
+            if ($log)
                 $log->update($data);
-            }
         }
     }
 
@@ -45,9 +44,9 @@ class SudopayTransactionLogService
     {
         if ($id) {
             $log = SudopayTransactionLog::where('id', '=', $id)->first();
-            if ($log) {
+            if ($log)
                 $log->update($data);
-            }
         }
     }
+
 }

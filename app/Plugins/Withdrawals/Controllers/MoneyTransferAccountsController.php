@@ -5,26 +5,28 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Withdrawals\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
+
+
+use App\Http\Controllers\Controller;
 use Plugins\Withdrawals\Model\MoneyTransferAccount;
 use Plugins\Withdrawals\Transformers\MoneyTransferAccountTransformer;
+use Illuminate\Support\Facades\Auth;
 use Validator;
 
 /**
  * Money Transfer Accounts resource representation.
- *
  * @Resource("MoneyTransferAccounts")
  */
 class MoneyTransferAccountsController extends Controller
@@ -51,14 +53,12 @@ class MoneyTransferAccountsController extends Controller
     {
         $user = Auth::guard()->user();
         $money_transfer_accounts = MoneyTransferAccount::with('user')->where('user_id', '=', $user->id)->get();
-
         return $this->response->collection($money_transfer_accounts, (new MoneyTransferAccountTransformer)->setDefaultIncludes(['user']));
     }
 
     /**
      * Store a new money transfer account.
      * Store a new money transfer account with a a `user_id` and `account`.
-     *
      * @Post("/money_transfer_accounts")
      * @Transaction({
      *      @Request({"user_id": 1, "account": "XXXXXX"}),
@@ -89,7 +89,6 @@ class MoneyTransferAccountsController extends Controller
     /**
      * Delete the specified money transfer account.
      * Delete the money transfer account with a `id`.
-     *
      * @Delete("/money_transfer_accounts/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -102,18 +101,18 @@ class MoneyTransferAccountsController extends Controller
         $money_transfer_account = MoneyTransferAccount::find($id);
         $user = Auth::guard()->user();
         if ($money_transfer_account && $money_transfer_account->user_id == $user->id) {
-            $money_transfer_account_verify = MoneyTransferAccount::with('user_cash_withdrawal')->where('id', $id)->whereHas('user_cash_withdrawal', function ($query) {
+            $money_transfer_account_verify = MoneyTransferAccount::with('user_cash_withdrawal')->where("id", $id)->whereHas('user_cash_withdrawal', function ($query) {
                 $query->whereIn('withdrawal_status_id', [config('constants.ConstWithdrawalStatus.Pending'), config('constants.ConstWithdrawalStatus.Approved')]);
             })->first();
-            if (! $money_transfer_account_verify) {
+            if (!$money_transfer_account_verify) {
                 $money_transfer_account->delete();
             } else {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('One of your withdrawal request is in pending status,So you can\'t delete this now.');
             }
         } else {
-            return $this->response->errorNotFound('Invalid Request');
-        }
+            return $this->response->errorNotFound("Invalid Request");
 
+        }
         return response()->json(['Success' => 'MoneyTransferAccount deleted'], 200);
     }
 }

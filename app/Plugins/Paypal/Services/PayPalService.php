@@ -5,20 +5,22 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\Paypal\Services;
 
-use Paypal;
-use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
+use PayPal\Auth\OAuthTokenCredential;
+use Paypal;
+use App\User;
 use Plugins\Paypal\Model\PaypalTransactionLog;
+use Log;
 
 class PayPalService
 {
@@ -50,34 +52,34 @@ class PayPalService
             $item1->setName($desc)
                 ->setCurrency(config('site.currency_code'))
                 ->setQuantity(1)
-                ->setPrice((float) $transaction_log->amount);
+                ->setPrice((double)$transaction_log->amount);
             $itemList = PayPal::ItemList();
-            $itemList->setItems([$item1]);
+            $itemList->setItems(array($item1));
             $cancel_url = '/#/wallets/fail';
         }
         if ($transaction_log->paypal_transaction_logable_type == 'MorphVehicle') {
-            $desc = 'Vehicle listing Fee';
+            $desc = "Vehicle listing Fee";
             $item1 = PayPal::Item();
             $item1->setName($desc)
                 ->setCurrency(config('site.currency_code'))
                 ->setQuantity(1)
-                ->setPrice((float) $transaction_log->amount);
+                ->setPrice((double)$transaction_log->amount);
             $itemList = PayPal::ItemList();
-            $itemList->setItems([$item1]);
+            $itemList->setItems(array($item1));
             $cancel_url = '/#/vehicle/fail';
         }
         if ($transaction_log->paypal_transaction_logable_type == 'MorphVehicleRental') {
-            if (! is_null($transaction_log->paypal_transaction_logable) && ! is_null($transaction_log->paypal_transaction_logable->item_userable)) {
+            if (!is_null($transaction_log->paypal_transaction_logable) && !is_null($transaction_log->paypal_transaction_logable->item_userable)) {
                 $item1 = PayPal::Item();
                 $item1->setName($transaction_log->paypal_transaction_logable->item_userable->name)
                     ->setCurrency(config('site.currency_code'))
-                    ->setQuantity((int) $transaction_log->paypal_transaction_logable->quantity)
-                    ->setPrice((float) $transaction_log->amount);
+                    ->setQuantity((int)$transaction_log->paypal_transaction_logable->quantity)
+                    ->setPrice((double)$transaction_log->amount);
                 $itemList = PayPal::ItemList();
-                $itemList->setItems([$item1]);
+                $itemList->setItems(array($item1));
                 $cancel_url = '/#/vehicle_rental/status/fail';
             } else {
-                return ['error' => 1, 'error_message' => 'unable to get item detail'];
+                return array('error' => 1, 'error_message' => "unable to get item detail");
             }
         }
 
@@ -86,14 +88,14 @@ class PayPalService
 
         $amount = PayPal::Amount();
         $amount->setCurrency(config('site.currency_code'));
-        $amount->setTotal((float) $transaction_log->amount);
+        $amount->setTotal((double)$transaction_log->amount);
 
         $transaction = PayPal::Transaction();
         $transaction->setItemList($itemList);
         $transaction->setAmount($amount);
         $transaction->setDescription($desc);
 
-        $redirectUrls = PayPal::RedirectUrls();
+        $redirectUrls = PayPal:: RedirectUrls();
         $redirectUrls->setReturnUrl(url('api/paypal/process_payment'));
         $redirectUrls->setCancelUrl(url($cancel_url));
 
@@ -101,22 +103,21 @@ class PayPalService
         $payment->setIntent($payment_type);
         $payment->setPayer($payer);
         $payment->setRedirectUrls($redirectUrls);
-        $payment->setTransactions([$transaction]);
+        $payment->setTransactions(array($transaction));
         try {
             $response = $payment->create($this->_api_context);
             if ($payment->getState() == 'created') {
-                $data = [];
+                $data = array();
                 $data['payment_id'] = $payment->getId();
                 $data['status'] = $payment->getState();
                 $data['payment_type'] = 'initiated';
                 $transaction_log->update($data);
-
                 return $payment->getApprovalLink();
             } else {
-                return ['error' => 1, 'error_message' => 'Payment could not be initialized, please try again'];
+                return array('error' => 1, 'error_message' => "Payment could not be initialized, please try again");
             }
         } catch (Exception $ex) {
-            return ['error' => 1, 'error_message' => $ex->getMessage()];
+            return array('error' => 1, 'error_message' => $ex->getMessage());
         }
     }
 
@@ -128,7 +129,7 @@ class PayPalService
         $transaction_log = PaypalTransactionLog::where('payment_id', '=', $payID)->first();
         if ($transaction_log) {
             try {
-                $data = [];
+                $data = array();
                 $payment = Paypal::getById($payID, $this->_api_context);
                 $paymentExecution = Paypal::PaymentExecution();
                 $paymentExecution->setPayerId($payerID);
@@ -144,9 +145,9 @@ class PayPalService
                     $data['capture_id'] = $sale->getId();
                     $data['payment_type'] = $sale->getState();
                     $process = true;
-                    if ($transaction_log->paypal_transaction_logable_type == 'MorphWallet') {
+                    if ($transaction_log->paypal_transaction_logable_type == "MorphWallet") {
                         $transaction_log->paypal_transaction_fee = 0.00;
-                        if ($transaction_log->fee_payer == 'User' && ! is_null($transaction_fee)) {
+                        if ($transaction_log->fee_payer == 'User' && !is_null($transaction_fee)) {
                             $transaction_log->paypal_transaction_fee = $transaction_fee->getValue();
                             $transaction_log->save();
                         }
@@ -154,10 +155,10 @@ class PayPalService
                         $walletService->processAddToWallet($transaction_log->paypal_transaction_logable_id, config('constants.ConstPaymentGateways.PayPal'), $transaction_log->paypal_transaction_fee);
                         $returnUrl = '/#/wallets/success';
                     }
-                    if ($transaction_log->paypal_transaction_logable_type == 'MorphVehicle') {
+                    if ($transaction_log->paypal_transaction_logable_type == "MorphVehicle") {
                         $transaction_log->paypal_transaction_fee = 0.00;
                         if (isPluginEnabled('Vehicles')) {
-                            if ($transaction_log->fee_payer == 'User' && ! is_null($transaction_fee)) {
+                            if ($transaction_log->fee_payer == 'User' && !is_null($transaction_fee)) {
                                 $transaction_log->paypal_transaction_fee = $transaction_fee->getValue();
                                 $transaction_log->save();
                             }
@@ -166,14 +167,14 @@ class PayPalService
                             $returnUrl = '/#/vehicle/success';
                         }
                     }
-                    if ($transaction_log->paypal_transaction_logable_type == 'MorphVehicleRental') {
+                    if ($transaction_log->paypal_transaction_logable_type == "MorphVehicleRental") {
                         if (isPluginEnabled('VehicleRentals')) {
                             $vehicleRentalService = new \Plugins\VehicleRentals\Services\VehicleRentalService();
                             $vehicleRentalService->updateVehicleRental($transaction_log->paypal_transaction_logable_id, config('constants.ConstPaymentGateways.PayPal'));
                             $returnUrl = '/#/vehicle_rental/status/success';
                         }
                     }
-                } elseif ($payment->getIntent() == 'authorize' && $payment->getState() == 'approved') {
+                } else if ($payment->getIntent() == 'authorize' && $payment->getState() == 'approved') {
                     $transactions = $payment->getTransactions();
                     $relatedResources = $transactions[0]->getRelatedResources();
                     $authorization = $relatedResources[0]->getAuthorization();
@@ -181,9 +182,9 @@ class PayPalService
                     $data['authorization_id'] = $authorization->getId();
                     $data['payment_type'] = $authorization->getState();
                     $process = true;
-                    if ($transaction_log->paypal_transaction_logable_type == 'MorphWallet') {
+                    if ($transaction_log->paypal_transaction_logable_type == "MorphWallet") {
                         $returnUrl = '/#/wallets/success';
-                    } elseif ($transaction_log->paypal_transaction_logable_type == 'MorphVehicleRental') {
+                    } elseif ($transaction_log->paypal_transaction_logable_type == "MorphVehicleRental") {
                         if (isPluginEnabled('VehicleRentals')) {
                             $vehicleRentalService = new \Plugins\VehicleRentals\Services\VehicleRentalService();
                             $vehicleRentalService->updateVehicleRental($transaction_log->paypal_transaction_logable_id, config('constants.ConstPaymentGateways.PayPal'));
@@ -193,26 +194,25 @@ class PayPalService
                         $returnUrl = '/#/';
                     }
                 }
-                if (! empty($data)) {
+                if (!empty($data))
                     $transaction_log->update($data);
-                }
             } catch (\PayPal\Exception\PayPalConnectionException $ex) {
-                if ($transaction_log->paypal_transaction_logable_type == 'MorphWallet') {
+                if ($transaction_log->paypal_transaction_logable_type == "MorphWallet") {
                     $returnUrl = '/#/wallets/fail';
-                } elseif ($transaction_log->paypal_transaction_logable_type == 'MorphVehicleRental') {
+                } elseif ($transaction_log->paypal_transaction_logable_type == "MorphVehicleRental") {
                     $returnUrl = '/#/vehicle_rental/status/fail';
-                } elseif ($transaction_log->paypal_transaction_logable_type == 'MorphVehicle') {
+                }elseif ($transaction_log->paypal_transaction_logable_type == "MorphVehicle") {
                     $returnUrl = '/#/vehicle/fail';
                 } else {
                     $returnUrl = '/#/';
                 }
                 $error_message = $ex->getMessage();
             } catch (Exception $ex) {
-                if ($transaction_log->paypal_transaction_logable_type == 'MorphWallet') {
+                if ($transaction_log->paypal_transaction_logable_type == "MorphWallet") {
                     $returnUrl = '/#/wallets/fail';
-                } elseif ($transaction_log->paypal_transaction_logable_type == 'MorphVehicleRental') {
+                } elseif ($transaction_log->paypal_transaction_logable_type == "MorphVehicleRental") {
                     $returnUrl = '/#/vehicle_rental/status/fail';
-                } elseif ($transaction_log->paypal_transaction_logable_type == 'MorphVehicle') {
+                }elseif ($transaction_log->paypal_transaction_logable_type == "MorphVehicle") {
                     $returnUrl = '/#/vehicle/fail';
                 } else {
                     $returnUrl = '/#/';
@@ -220,27 +220,25 @@ class PayPalService
                 $error_message = $ex->getMessage();
             }
         }
-
-        return [
+        return array(
             'status' => $process,
             'returnUrl' => $returnUrl,
-            'message' => $error_message,
-        ];
+            'message' => $error_message
+        );
     }
 
     public function getPaypalDetails()
     {
         try {
-            $paypal_gateway_response = [
-                'error' => [
-                    'code' => 0,
-                ],
-                'paypal_enabled' => true,
-            ];
-
+            $paypal_gateway_response = array(
+                'error' => array(
+                    'code' => 0
+                ),
+                'paypal_enabled' => true
+            );
             return $paypal_gateway_response;
         } catch (Exception $e) {
-            return ['error' => 1, 'error_message' => $e->getMessage()];
+            return array('error' => 1, 'error_message' => $e->getMessage());
         }
     }
 
@@ -249,10 +247,9 @@ class PayPalService
         try {
             $authorization = Paypal::Authorization();
             $result = $authorization->get($id, $this->_api_context);
-
             return $result;
         } catch (Exception $e) {
-            return ['error' => 1, 'error_message' => $e->getMessage()];
+            return array('error' => 1, 'error_message' => $e->getMessage());
         }
     }
 
@@ -261,15 +258,14 @@ class PayPalService
         try {
             $amt = Paypal::Amount();
             $amt->setCurrency(config('site.currency_code'))
-                ->setTotal((float) $transaction_log->amount);
+                ->setTotal((double)$transaction_log->amount);
             $capture = Paypal::Capture();
             $capture->setAmount($amt);
             $capture->setIsFinalCapture(true);
             $getCapture = $authorization->capture($capture, $this->_api_context);
-
             return $getCapture;
         } catch (Exception $e) {
-            return ['error' => 1, 'error_message' => $e->getMessage()];
+            return array('error' => 1, 'error_message' => $e->getMessage());
         }
     }
 
@@ -279,10 +275,9 @@ class PayPalService
             $authorization = Paypal::Authorization();
             $getAuth = $authorization->get($authorization_id, $this->_api_context);
             $voidedAuth = $getAuth->void($this->_api_context);
-
             return $voidedAuth;
         } catch (Exception $e) {
-            return ['error' => 1, 'error_message' => $e->getMessage()];
+            return array('error' => 1, 'error_message' => $e->getMessage());
         }
     }
 
@@ -290,7 +285,7 @@ class PayPalService
     {
         $amt = Paypal::Amount();
         $amt->setCurrency(config('site.currency_code'))
-            ->setTotal((float) $transaction_log->amount);
+            ->setTotal((double)$transaction_log->amount);
         $refund = Paypal::Refund();
         $refund->setAmount($amt);
         try {
@@ -298,17 +293,15 @@ class PayPalService
                 $capture = Paypal::Capture();
                 $capture_details = $capture->get($transaction_log->capture_id, $this->_api_context);
                 $captureRefund = $capture_details->refund($refund, $this->_api_context);
-
                 return $captureRefund;
             } else {
                 $sale = Paypal::Sale();
                 $sale->setId($transaction_log->capture_id);
                 $refundedSale = $sale->refund($refund, $this->_api_context);
-
                 return $refundedSale;
             }
         } catch (Exception  $ex) {
-            return ['error' => 1, 'error_message' => $ex->getMessage()];
+            return array('error' => 1, 'error_message' => $ex->getMessage());
         }
     }
 }

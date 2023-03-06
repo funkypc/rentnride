@@ -5,25 +5,25 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
 class Ip extends Model
 {
     /**
      * @var string
      */
-    protected $table = 'ips';
+    protected $table = "ips";
 
     protected $fillable = ['city_id', 'state_id', 'country_id', 'host', 'ip', 'latitude', 'longitude', 'user_agent', 'timezone', 'is_checked'];
 
@@ -76,8 +76,8 @@ class Ip extends Model
     }
 
     /**
-     * @param    $query
-     * @param  Request  $request
+     * @param         $query
+     * @param Request $request
      * @return mixed
      */
     public function scopeFilterByRequest($query, Request $request)
@@ -94,16 +94,16 @@ class Ip extends Model
 
         if ($request->has('q')) {
             $query->whereHas('City', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orwhereHas('State', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
             $query->orwhereHas('Country', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->input('q').'%');
+                $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
-
         return $query;
     }
+
 }

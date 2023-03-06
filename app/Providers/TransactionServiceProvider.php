@@ -5,18 +5,18 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Providers;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class TransactionServiceProvider extends ServiceProvider
 {
@@ -37,7 +37,7 @@ class TransactionServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $enabledIncludes = [];
+        $enabledIncludes = array();
         $enabledIncludes['MorphWallet'] = \App\Wallet::class;
         if (isPluginEnabled('VehicleRentals')) {
             $enabledIncludes['MorphVehicleRental'] = \Plugins\VehicleRentals\Model\VehicleRental::class;
@@ -48,7 +48,7 @@ class TransactionServiceProvider extends ServiceProvider
         if (isPluginEnabled('Withdrawals')) {
             $enabledIncludes['MorphWithdrawals'] = \Plugins\Withdrawals\Model\UserCashWithdrawal::class;
         }
-        if (! empty($enabledIncludes)) {
+        if (!empty($enabledIncludes)) {
             Relation::morphMap($enabledIncludes);
         }
     }

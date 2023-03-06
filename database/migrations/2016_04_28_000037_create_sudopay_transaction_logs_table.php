@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateSudopayTransactionLogsTable extends Migration
 {
@@ -12,8 +12,8 @@ class CreateSudopayTransactionLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('sudopay_transaction_logs', function (Blueprint $table) {
-            $table->bigIncrements('id')->index();
+        Schema::create("sudopay_transaction_logs", function(Blueprint $table){
+           $table->bigIncrements('id')->index();
             $table->timestamps();
             $table->double('amount', 10, 2)->default(0.00);
             $table->bigInteger('payment_id');
@@ -28,7 +28,7 @@ class CreateSudopayTransactionLogsTable extends Migration
             $table->bigInteger('buyer_id');
             $table->string('buyer_email');
             $table->string('buyer_address');
-            $table->double('sudopay_transaction_fee', 10, 2)->default(0.00);
+            $table->double('sudopay_transaction_fee', 10,2)->default(0.00);
         });
     }
 

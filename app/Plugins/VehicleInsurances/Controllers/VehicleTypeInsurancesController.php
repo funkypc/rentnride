@@ -5,24 +5,26 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleInsurances\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Plugins\VehicleInsurances\Model\VehicleTypeInsurance;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Plugins\VehicleInsurances\Transformers\VehicleTypeInsuranceTransformer;
 
 /**
  * VehicleInsurances resource representation.
- *
  * @Resource("VehicleInsurances")
  */
 class VehicleTypeInsurancesController extends Controller
@@ -50,9 +52,8 @@ class VehicleTypeInsurancesController extends Controller
      */
     public function index(Request $request)
     {
-        $enabled_includes = ['vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type'];
+        $enabled_includes = array('vehicle_insurance', 'discount_type', 'duration_type', 'vehicle_type');
         $vehicle_type_insurances = VehicleTypeInsurance::with($enabled_includes)->filterByRequest($request)->paginate(config('constants.ConstPageLimit'));
-
         return $this->response->paginator($vehicle_type_insurances, (new VehicleTypeInsuranceTransformer)->setDefaultIncludes($enabled_includes));
     }
 }

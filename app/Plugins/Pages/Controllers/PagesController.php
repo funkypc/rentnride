@@ -5,26 +5,30 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace Plugins\Pages\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Language;
 use Illuminate\Http\Request;
+
+use App\Http\Controllers\Controller;
 use Plugins\Pages\Model\Page;
+use App\Language;
+
+use Illuminate\Support\Facades\Auth;
+use Validator;
 use Plugins\Pages\Transformers\PageLanguageTransformer;
 use Plugins\Pages\Transformers\PageTransformer;
 
+
 /**
  * Pages resource representation.
- *
  * @Resource("/Pages")
  */
 class PagesController extends Controller
@@ -55,7 +59,6 @@ class PagesController extends Controller
     /**
      * Show the specified page.
      * Show the page with a `id`.
-     *
      * @Get("/pages/{slug}/{iso2}")
      * @Transaction({
      *      @Request({"slug": "term-and-conditions", "iso2": "en"}),
@@ -66,16 +69,16 @@ class PagesController extends Controller
     public function show($slug, $iso2)
     {
         $language = Language::where('iso2', '=', $iso2)->first();
-        if (! $language) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$language) {
+            return $this->response->errorNotFound("Invalid Request");
         }
         $page = Page::where('slug', '=', $slug)
             ->where('language_id', '=', $language->id)
             ->first();
-        if (! $page) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$page) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($page, new PageTransformer);
     }
+
 }

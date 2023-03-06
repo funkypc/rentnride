@@ -5,25 +5,31 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Services\TransactionService;
-use App\Services\UserLoginService;
-use App\Services\UserService;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+
+use App\Dashboard;
+
+use Illuminate\Support\Facades\Auth;
+
+use App\Services\UserService;
+use App\Services\UserLoginService;
+use App\Services\TransactionService;
 
 /**
  * Dashboards resource representation.
- *
  * @Resource("Admin/AdminDashboards")
  */
 class AdminDashboardsController extends Controller
@@ -32,12 +38,10 @@ class AdminDashboardsController extends Controller
      * @var UserService
      */
     protected $UserService;
-
     /**
      * @var UserLoginService
      */
     protected $UserLoginService;
-
     /**
      * @var
      */
@@ -78,7 +82,7 @@ class AdminDashboardsController extends Controller
      */
     public function stats(Request $request)
     {
-        if (! $request->has('filter')) {
+        if (!$request->has('filter')) {
             $last_user_login = $this->UserLoginService->getLastLogin();
             $last_register = $this->UserService->getLastRegistered();
             $total_users = $this->UserService->getTotalUsers();
@@ -99,6 +103,7 @@ class AdminDashboardsController extends Controller
                 $last_feedback = $this->feedbackService->getLastFeedback();
                 $total_feedback_count = $this->feedbackService->getFeedbackCount($request, 'total');
             }
+
         }
         $user_login = $this->UserService->getLoginCount($request);
         $user_register = $this->UserService->getRegisterCount($request);
@@ -116,10 +121,11 @@ class AdminDashboardsController extends Controller
             $feedback_count = $this->feedbackService->getFeedbackCount($request);
         }
 
-        if (! $request->has('filter')) {
+        if (!$request->has('filter')) {
             return response()->json(compact('user_login', 'user_register', 'last_user_login', 'last_register', 'total_users', 'site_version', 'last_vehicle_rental', 'last_item', 'last_feedback', 'total_booking_count', 'booking_count', 'vehicle_count', 'total_vehicle_count', 'total_feedback_count', 'feedback_count', 'transaction_count', 'total_revenue'));
         } else {
             return response()->json(compact('user_login', 'user_register', 'booking_count', 'vehicle_count', 'feedback_count', 'transaction_count'));
         }
+
     }
 }

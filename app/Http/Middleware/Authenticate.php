@@ -5,14 +5,14 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Http\Middleware;
 
 use Closure;
@@ -29,8 +29,7 @@ class Authenticate
 
     /**
      * Authenticate constructor.
-     *
-     * @param  Auth  $auth
+     * @param Auth $auth
      */
     public function __construct(Auth $auth)
     {
@@ -40,9 +39,9 @@ class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
+     * @param  string|null $guard
      * @return mixed
      */
     public function handle($request, Closure $next, $guard = null)

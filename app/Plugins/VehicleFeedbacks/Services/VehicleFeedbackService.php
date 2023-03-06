@@ -5,19 +5,20 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace Plugins\VehicleFeedbacks\Services;
 
+
 use App\Services\MailService;
-use Carbon;
 use Plugins\VehicleFeedbacks\Model\VehicleFeedback;
+use Carbon;
 use Validator;
 
 class VehicleFeedbackService
@@ -37,19 +38,17 @@ class VehicleFeedbackService
 
     /**
      * get last Feedback record for admin dashboard
-     *
      * @return mixed
      */
     public function getLastFeedback()
     {
         $feedback_details = VehicleFeedback::select('created_at')->where('feedbackable_type', '=', 'MorphVehicle')->orderBy('created_at', 'desc')->first();
-
         return ($feedback_details) ? $feedback_details->created_at->diffForHumans() : '-';
     }
 
     /**
-     * @param    $request
-     * @param  string  $type
+     * @param        $request
+     * @param string $type
      * @return mixed
      */
     public function getFeedbackCount($request, $type = 'filter')
@@ -61,13 +60,11 @@ class VehicleFeedbackService
         } else {
             $booking_count = VehicleFeedback::count();
         }
-
         return $booking_count;
     }
 
     /**
      * get the date filter
-     *
      * @return $check_date
      */
     public function getDateFilter($request)
@@ -76,15 +73,14 @@ class VehicleFeedbackService
         if ($request->has('filter')) {
             if ($request->filter == 'lastDays') {
                 $check_date = Carbon::now()->subDays(7);
-            } elseif ($request->filter == 'lastWeeks') {
+            } else if ($request->filter == 'lastWeeks') {
                 $check_date = Carbon::now()->subWeeks(4);
-            } elseif ($request->filter == 'lastMonths') {
+            } else if ($request->filter == 'lastMonths') {
                 $check_date = Carbon::now()->subMonths(3);
-            } elseif ($request->filter == 'lastYears') {
+            } else if ($request->filter == 'lastYears') {
                 $check_date = Carbon::now()->subYears(3);
             }
         }
-
         return $check_date;
     }
 
@@ -97,15 +93,15 @@ class VehicleFeedbackService
         if ($reviewer == 'booker') {
             $template = $this->mailService->getTemplate('Feedback to Host');
         }
-        $user_link = '<a href="'.url('/#/user/'.$from_user).'">'.$from_user.'</a>';
-        $emailFindReplace = [
+        $user_link = '<a href="' . url('/#/user/' . $from_user) . '">' . $from_user . '</a>';
+        $emailFindReplace = array(
             '##USERNAME##' => $username,
             '##BOOKER##' => $from_user,
             '##BOOKER_URL##' => $user_link,
             '##HOST##' => $from_user,
             '##HOST_URL##' => $user_link,
-            '##MESSAGE##' => $feedback,
-        ];
+            '##MESSAGE##' => $feedback
+        );
         $this->mailService->sendMail($template, $emailFindReplace, $email, $username);
     }
 
@@ -125,8 +121,8 @@ class VehicleFeedbackService
                 $vehicle_feedback->update($vehicle_feedback_data);
                 if ($request->has('dispute_closed_type_id')) {
                     if (isPluginEnabled('VehicleRentals')) {
-                        if (! $vehicle_rental) {
-                            return $this->response->errorNotFound('Invalid Request');
+                        if (!$vehicle_rental) {
+                            return $this->response->errorNotFound("Invalid Request");
                         }
                     }
                     if (isPluginEnabled('VehicleDisputes')) {
@@ -135,7 +131,6 @@ class VehicleFeedbackService
                         $VehicleDisputeService->closeDispute($vehicle_dispute_data, $vehicle_rental, 0);
                     }
                 }
-
                 return response()->json(['Success' => 'Feedback has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Feedback could not be updated. Please, try again.');

@@ -5,29 +5,33 @@
  * PHP version 5
  *
  * @category   PHP
- *
+ * @package    RENT&RIDE
+ * @subpackage Core
  * @author     Agriya <info@agriya.com>
  * @copyright  2018 Agriya Infoway Private Ltd
  * @license    http://www.agriya.com/ Agriya Infoway Licence
- *
  * @link       http://www.agriya.com
  */
-
+ 
 namespace App\Http\Controllers\Admin;
 
-use App\Country;
-use App\Http\Controllers\Controller;
-use App\Transformers\CountryTransformer;
 use Illuminate\Http\Request;
+
+
+use App\Http\Controllers\Controller;
+use App\Country;
+
+use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\Transformers\CountryTransformer;
 
 /**
  * Countries resource representation.
- *
  * @Resource("Admin/AdminCountries")
  */
 class AdminCountriesController extends Controller
 {
+
     /**
      * AdminCountriesController constructor.
      */
@@ -59,14 +63,12 @@ class AdminCountriesController extends Controller
             $country_count = Country::count();
         }
         $countries = Country::filterByRequest($request)->paginate($country_count);
-
         return $this->response->paginator($countries, new CountryTransformer);
     }
 
     /**
      * Store a new country.
      * Store a new country with a `name`, `iso2`, and `iso3`.
-     *
      * @Post("/countries")
      * @Transaction({
      *      @Request({"name": "india", "iso2": "IN", "iso3": "IND"}),
@@ -94,7 +96,6 @@ class AdminCountriesController extends Controller
     /**
      * Edit the specified country.
      * Edit the country with a `id`.
-     *
      * @Get("/countries/{id}/edit")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -105,17 +106,15 @@ class AdminCountriesController extends Controller
     public function edit($id)
     {
         $country = Country::find($id);
-        if (! $country) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$country) {
+            return $this->response->errorNotFound("Invalid Request");
         }
-
         return $this->response->item($country, new CountryTransformer);
     }
 
     /**
      * Update the specified country
      * Update the country with a `id`.
-     *
      * @Put("/countries/{id}")
      * @Transaction({
      *      @Request({"id": 1, "name": "india", "iso2": "IN", "iso3": "IND", "is_active": 1}),
@@ -135,7 +134,6 @@ class AdminCountriesController extends Controller
         if ($validator->passes() && $country) {
             try {
                 $country->update($country_data);
-
                 return response()->json(['Success' => 'Country has been updated'], 200);
             } catch (\Exception $e) {
                 throw new \Dingo\Api\Exception\StoreResourceFailedException('Country could not be updated. Please, try again.');
@@ -148,7 +146,6 @@ class AdminCountriesController extends Controller
     /**
      * Delete the specified country
      * Delete the country with a `id`.
-     *
      * @Delete("/countries/{id}")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -159,18 +156,15 @@ class AdminCountriesController extends Controller
     public function destroy($id)
     {
         $country = Country::find($id);
-        if (! $country) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$country) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $country->delete();
         }
-
         return response()->json(['Success' => 'Country deleted'], 200);
     }
-
-    /**
+	/**
      * Deactivate the country.
-     *
      * @Put("/countries/{id}/deactive")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -181,8 +175,8 @@ class AdminCountriesController extends Controller
     public function deactive(Request $request, $id)
     {
         $country = Country::find($id);
-        if (! $country) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$country) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $country_data['is_active'] = false;
             if ($country->update($country_data)) {
@@ -193,7 +187,6 @@ class AdminCountriesController extends Controller
 
     /**
      * Activate the country.
-     *
      * @Put("/countries/{id}/active")
      * @Transaction({
      *      @Request({"id": 1}),
@@ -204,8 +197,8 @@ class AdminCountriesController extends Controller
     public function active(Request $request, $id)
     {
         $country = Country::find($id);
-        if (! $country) {
-            return $this->response->errorNotFound('Invalid Request');
+        if (!$country) {
+            return $this->response->errorNotFound("Invalid Request");
         } else {
             $country_data['is_active'] = true;
             if ($country->update($country_data)) {
