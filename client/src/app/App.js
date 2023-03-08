@@ -295,6 +295,10 @@
             promiseSettings: promiseSettings
         };
     });
+    //Configure no hash-prefix
+    app.config(['$locationProvider', function($locationProvider) {
+        $locationProvider.hashPrefix('');
+    }]);
     /**
      * @ngdoc function
      * @name App.function:growlProvider

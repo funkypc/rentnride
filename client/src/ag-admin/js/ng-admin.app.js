@@ -275,6 +275,10 @@ ngapp.config(function ($stateProvider) {
         }
     });
 });
+//Configure no hash-prefix
+app.config(['$locationProvider', function($locationProvider) {
+    $locationProvider.hashPrefix('');
+}]);
 //Customize API Mapping
 //Referenced Document Link: http://ng-admin-book.marmelab.com/doc/API-mapping.html
 ngapp.config(['RestangularProvider', function (RestangularProvider) {
