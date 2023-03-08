@@ -69,7 +69,7 @@ var lLAsyncSync = function (libs, cb) {
     var libraries = [];
     libraries.push('../vendor/moment/min/moment-with-locales.min.js');
     libraries.push('../vendor/ng-admin/build/ng-admin.min.js');
-    libraries.push('../vendor/angular-google-places-autocomplete/src/autocomplete.js');
+    libraries.push('../vendor/angular-google-places-autocomplete/dist/autocomplete.min.js');
     libraries.push('../vendor/bootstrap/dist/js/bootstrap.min.js');
     libraries.push('../vendor/ng-file-upload/ng-file-upload.min.js');
     libraries.push('../vendor/angular-bootstrap-calendar/dist/js/angular-bootstrap-calendar-tpls.min.js');
