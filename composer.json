@@ -16,19 +16,19 @@
   ],
   "require": {
     "php": ">=7.4.0",
-    "laravel/lumen-framework": "^6.0",
+    "laravel/lumen-framework": "^7.0",
     "laravel/helpers": "^1.6",
-    "vlucas/phpdotenv": "~3.6",
+    "vlucas/phpdotenv": "^4.0",
     "league/flysystem": "~2.5",
-    "php-open-source-saver/jwt-auth": "1.1.*",
+    "php-open-source-saver/jwt-auth": "^1.1",
     "lcobucci/jwt": "^4.0.0",
-    "illuminate/routing": "^6.0",
-    "illuminate/hashing": "^6.0",
-    "illuminate/cookie": "^6.0",
-    "dingo/api": "2.4.7",
-    "barryvdh/laravel-cors": "^2.0.1",
-    "doctrine/dbal": "3.3.*",
-    "illuminate/mail": "^6.0",
+    "illuminate/routing": "^7.0",
+    "illuminate/hashing": "^7.0",
+    "illuminate/cookie": "^7.0",
+    "dingo/api": "^3.0",
+    "barryvdh/laravel-cors": "^2.2",
+    "doctrine/dbal": "^2.6",
+    "illuminate/mail": "^7.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
     "ext-fileinfo": "*",
     "intervention/image": "^2.7",
@@ -41,7 +41,7 @@
     "easy-slug/easy-slug": "2.0.*",
     "paypal/rest-api-sdk-php": "^1.13",
     "netshell/paypal": "dev-master",
-    "php-http/guzzle6-adapter": "*"
+    "php-http/guzzle6-adapter": "^2.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",
@@ -71,7 +71,10 @@
   "config": {
       "preferred-install": "dist",
       "sort-packages": true,
-      "optimize-autoloader": true
+      "optimize-autoloader": true,
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true
