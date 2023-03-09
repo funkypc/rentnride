@@ -30,7 +30,7 @@ class AdminVehicleTypeTransformer extends Fractal\TransformerAbstract
      * List of resources possible to include
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'VehicleTypeExtraAccessory', 'VehicleTypeFuelOption', 'VehicleTypeInsurance', 'VehicleTypeSurcharge', 'VehicleTypeTax'
     ];
 

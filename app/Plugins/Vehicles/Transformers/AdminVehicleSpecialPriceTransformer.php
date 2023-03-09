@@ -32,7 +32,7 @@ class AdminVehicleSpecialPriceTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'VehicleType'
     ];
 

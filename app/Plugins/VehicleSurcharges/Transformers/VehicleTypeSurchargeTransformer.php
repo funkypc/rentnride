@@ -31,7 +31,7 @@ class VehicleTypeSurchargeTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'VehicleSurcharge', 'VehicleType', 'DurationType', 'DiscountType'
     ];
 

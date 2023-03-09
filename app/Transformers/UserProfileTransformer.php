@@ -29,7 +29,7 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'User'
     ];
 

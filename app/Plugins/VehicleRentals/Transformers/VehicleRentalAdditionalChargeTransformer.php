@@ -29,7 +29,7 @@ class VehicleRentalAdditionalChargeTransformer extends Fractal\TransformerAbstra
      * List of resources possible to include
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
 
     ];
 

@@ -29,7 +29,7 @@ class UnavailableVehicleTransformer extends Fractal\TransformerAbstract
     /**
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'Vehicle'
     ];
 

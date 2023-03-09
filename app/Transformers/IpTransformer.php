@@ -29,7 +29,7 @@ class IpTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'City', 'State', 'Country'
     ];
 

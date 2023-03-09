@@ -26,7 +26,7 @@ class UserTransformer extends Fractal\TransformerAbstract
      * List of resources possible to include
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'RegisterIp', 'LastLoginIp', 'UserProfile', 'Attachmentable', 'ProviderUser', 'Vehicle'
     ];
 

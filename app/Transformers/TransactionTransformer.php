@@ -30,7 +30,7 @@ class TransactionTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'FromUser', 'ToUser', 'TransactionType'
     ];
 

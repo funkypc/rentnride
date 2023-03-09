@@ -28,7 +28,7 @@ class VehicleFeedbackTransformer extends Fractal\TransformerAbstract
     /**
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'User', 'Feedbackable', 'Ip', 'ToUser', 'VehicleRental'
     ];
 

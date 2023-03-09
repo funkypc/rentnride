@@ -25,7 +25,7 @@ class UserSimpleFeedbackTransformer extends Fractal\TransformerAbstract
      * List of resources possible to include
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'Attachmentable'
     ];
 

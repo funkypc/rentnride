@@ -23,6 +23,8 @@ try {
     //
 }
 
+date_default_timezone_set(env('APP_TIMEZONE', 'UTC'));
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application

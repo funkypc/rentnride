@@ -26,7 +26,7 @@ class VehicleDisputeTransformer extends Fractal\TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [
+    protected array $availableIncludes = [
         'user', 'dispute_status', 'dispute_type', 'dispute_closed_type', 'LastRepliedUser', 'item_user_disputable', 'message'
     ];
 
