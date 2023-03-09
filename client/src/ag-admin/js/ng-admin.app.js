@@ -276,7 +276,7 @@ ngapp.config(function ($stateProvider) {
     });
 });
 //Configure no hash-prefix
-app.config(['$locationProvider', function($locationProvider) {
+ngapp.config(['$locationProvider', function($locationProvider) {
     $locationProvider.hashPrefix('');
 }]);
 //Customize API Mapping
