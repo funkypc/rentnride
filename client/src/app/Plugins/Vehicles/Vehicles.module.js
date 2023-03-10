@@ -23,7 +23,7 @@
  *            'angulartics.facebook.pixel',
  *            'ui.bootstrap'
  *            'ui.bootstrap.datetimepicker',
- *            'rzModule',
+ *            'rzSlider',
  *            'ngFileUpload',
  *            'google.places'
  *        ]
@@ -385,7 +385,7 @@
     'angulartics.facebook.pixel',
     'ui.bootstrap',
     'ui.bootstrap.datetimepicker',
-    'rzModule',
+    'rzSlider',
     'ngFileUpload',
     'google.places',
     '720kb.socialshare'
