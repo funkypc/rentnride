@@ -69,6 +69,10 @@
 	    close: {
 		show: true,
 		text: $filter('translate')('Close')
+	    },
+	    cancel: {
+		show: false,
+		text: $filter('translate')('Close')
 	    }
 	};
 
