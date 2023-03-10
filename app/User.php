@@ -29,7 +29,8 @@ class User extends Model implements AuthenticatableContract, JWTSubject
 
     /**
      * The attributes that are mass assignable.
-     * @var array
+     *
+     * @var string[]
      */
     protected $fillable = [
         'role_id', 'username', 'email', 'password', 'available_wallet_amount', 'blocked_amount', 'Vehicle_count', 'vehicle_rental_count', 'vehicle_rental_order_count', 'user_login_count', 'is_agree_terms_conditions', 'is_active', 'is_email_confirmed', 'register_ip_id', 'last_login_ip_id', 'user_avatar_source_id', 'activate_hash'
@@ -37,7 +38,8 @@ class User extends Model implements AuthenticatableContract, JWTSubject
 
     /**
      * The attributes excluded from the model's JSON form.
-     * @var array
+     *
+     * @var string[]
      */
     protected $hidden = [
         'password', 'remember_token',
