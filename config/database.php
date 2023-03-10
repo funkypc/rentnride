@@ -13,6 +13,8 @@
  * @link       http://www.agriya.com
  */
  
+ use Illuminate\Support\Str;
+ 
  return [
 
     /*
