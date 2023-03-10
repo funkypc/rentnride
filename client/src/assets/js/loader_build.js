@@ -60,7 +60,7 @@ var lLAsyncSync = function (libs, cb) {
     libraries.push('vendor/angular-ui-router/release/angular-ui-router.min.js');
     libraries.push('vendor/angular-animate/angular-animate.min.js');
     libraries.push('vendor/angular-translate/angular-translate.min.js');
-    libraries.push('vendor/satellizer/satellizer.min.js');
+    libraries.push('vendor/satellizer/dist/satellizer.min.js');
     libraries.push('vendor/angular-growl-v2/build/angular-growl.min.js');
     libraries.push('vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js');
     libraries.push('vendor/angular-dynamic-locale/tmhDynamicLocale.min.js');
@@ -71,7 +71,7 @@ var lLAsyncSync = function (libs, cb) {
     libraries.push('vendor/angular-slugify/angular-slugify.js');
     libraries.push('vendor/bootstrap/dist/js/bootstrap.min.js');
     libraries.push('vendor/angulartics/dist/angulartics.min.js');
-    libraries.push('vendor/angulartics-google-analytics/dist/angulartics-google-analytics.min.js');
+    libraries.push('vendor/angulartics-google-analytics/dist/angulartics-ga.min.js');
     libraries.push('vendor/angulartics-facebook-pixel/dist/angulartics-facebook-pixel.min.js');
     libraries.push('vendor/angular-recaptcha/release/angular-recaptcha.min.js');
     libraries.push('vendor/angular-credit-cards/release/angular-credit-cards.js');
