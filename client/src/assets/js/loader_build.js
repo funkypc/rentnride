@@ -55,7 +55,7 @@ var lLAsyncSync = function (libs, cb) {
     libraries.push('vendor/angular-sanitize/angular-sanitize.min.js');
     libraries.push('vendor/angular-resource/angular-resource.min.js');
     libraries.push('vendor/angular-bootstrap/ui-bootstrap-tpls.min.js');
-    libraries.push('vendor/ng-file-upload-shim/angular-file-upload-shim.min.js');
+    libraries.push('vendor/ng-file-upload-shim/ng-file-upload-shim.min.js');
     libraries.push('vendor/ng-file-upload/ng-file-upload.min.js');
     libraries.push('vendor/angular-ui-router/release/angular-ui-router.min.js');
     libraries.push('vendor/angular-animate/angular-animate.min.js');

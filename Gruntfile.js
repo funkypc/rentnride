@@ -97,7 +97,7 @@ module.exports = function (grunt) {
                 'vendor/angular-sanitize/angular-sanitize.min.js',
                 'vendor/angular-resource/angular-resource.min.js',
                 'vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-                'vendor/ng-file-upload-shim/angular-file-upload-shim.min.js',
+                'vendor/ng-file-upload-shim/ng-file-upload-shim.min.js',
                 'vendor/ng-file-upload/ng-file-upload.min.js',
                 'vendor/angular-ui-router/release/angular-ui-router.min.js',
                 'vendor/angular-animate/angular-animate.min.js',
