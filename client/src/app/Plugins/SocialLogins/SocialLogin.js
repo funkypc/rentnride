@@ -19,8 +19,8 @@
             angular.forEach(response.data, function (res, i) {
                 credentials = {
                     clientId: res.api_key,
-                    redirectUri: url + angular.lowercase(res.name),
-                    url: GENERAL_CONFIG.api_url + '/auth/' + angular.lowercase(res.name)
+                    redirectUri: url + res.name.toLowerCase(),
+                    url: GENERAL_CONFIG.api_url + '/auth/' + res.name.toLowerCase()
                 };
                 if (res.name === 'Facebook') {
                     $authProvider.facebook(credentials);
