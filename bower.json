@@ -22,7 +22,7 @@
     "angular-translate-storage-cookie": "~2.19.0",
     "angular-translate-storage-local": "~2.19.0",
     "angular-translate-handler-log": "~2.19.0",
-    "jquery": "~2.2.2",
+    "jquery": "~3.6.4",
     "angular-slugify": "1.0.1",
     "angulartics": "~1.6.0",
     "angulartics-facebook-pixel": "~0.2.0",

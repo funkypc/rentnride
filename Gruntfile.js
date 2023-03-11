@@ -32,7 +32,7 @@ module.exports = function (grunt) {
          * stylesheet, and 'unit' contains our app's unit tests.
          */
         app_files: {
-            js: ['./client/src/assets/js/loader_build.js', '/client/src/assets/js/loader.js', 'vendor/jquery/dist/jquery.min.js', '/client/src/assets/js/ag-admin/loader_build.js', '/client/src/assets/js/ag-admin/loader.js'],
+            js: ['./client/src/assets/js/loader_build.js', '/client/src/assets/js/loader.js', 'vendor/jquery/dist/jquery.min.js', '/client/src/assets/js/default_passive.js', '/client/src/assets/js/ag-admin/loader_build.js', '/client/src/assets/js/ag-admin/loader.js'],
             copy_js: [
                 './client/src/app/App.js',
                 'client/src/app/Constant.js',
@@ -92,6 +92,7 @@ module.exports = function (grunt) {
             js: [
                 'vendor/moment/min/moment-with-locales.min.js',
                 'vendor/jquery/dist/jquery.min.js',
+                'client/src/assets/js/default_passive.js',
                 'vendor/angular/angular.min.js',
                 'vendor/angular-moment/angular-moment.min.js',
                 'vendor/angular-sanitize/angular-sanitize.min.js',
@@ -139,6 +140,7 @@ module.exports = function (grunt) {
             js: [
                 'vendor/moment/min/moment-with-locales.min.js',
                 'vendor/jquery/dist/jquery.min.js',
+                'client/src/assets/js/default_passive.js',
                 'vendor/ng-admin/build/ng-admin.min.js',
                 'vendor/angular-google-places-autocomplete/dist/autocomplete.min.js',
                 'vendor/bootstrap/dist/js/bootstrap.min.js',
@@ -526,6 +528,7 @@ module.exports = function (grunt) {
                 dir: '<%= build_dir %>',
                 src: [
                     '<%= build_dir %>/assets/js/jquery.min.js',
+                    '<%= build_dir %>/assets/js/default_passive.js',
                     '<%= build_dir %>/assets/js/loader_build.js',
                     '<%= build_dir %>/assets/css/<%= pkg.name %>-<%= pkg.version %>.css'
                 ]
@@ -540,6 +543,7 @@ module.exports = function (grunt) {
                 dir: '<%= compile_dir %>',
                 src: [
                     '<%= build_dir %>/assets/js/jquery.min.js',
+                    '<%= build_dir %>/assets/js/default_passive.js',
                     '<%= build_dir %>/assets/js/loader.js',
                     '<%= build_dir %>/assets/css/<%= pkg.name %>-<%= pkg.version %>.css'
                 ]
@@ -561,6 +565,7 @@ module.exports = function (grunt) {
                 dir: '<%= build_dir %>',
                 src: [
                     '<%= build_dir %>/assets/js/jquery.min.js',
+                    '<%= build_dir %>/assets/js/default_passive.js',
                     '<%= build_dir %>/assets/js/ag-admin/loader_build.js',
                     '<%= build_dir %>/assets/css/<%= pkg.name %>-admin-<%= pkg.version %>.css'
                 ]
@@ -570,6 +575,7 @@ module.exports = function (grunt) {
                 dir: '<%= compile_dir %>',
                 src: [
                     '<%= build_dir %>/assets/js/jquery.min.js',
+                    '<%= build_dir %>/assets/js/default_passive.js',
                     '<%= build_dir %>/assets/js/ag-admin/loader.js',
                     '<%= build_dir %>/assets/css/<%= pkg.name %>-admin-<%= pkg.version %>.css'
                 ]
