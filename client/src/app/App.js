@@ -313,6 +313,10 @@
         growlProvider.globalDisableCountDown(true);
         //growlProvider.globalEnableHtml(true);
     }]);
+    // Hide 401 unhandled rejection error
+    app.config(['$qProvider', function ($qProvider) {
+        $qProvider.errorOnUnhandledRejections(false);
+    }]);
     /**
      * @ngdoc function
      * @name App.function:cfpLoadingBarProvider
