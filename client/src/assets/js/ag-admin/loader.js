@@ -8,7 +8,7 @@ var lLAsyncSync = function (libs, cb) {
             $.getScript(lib, function () {
                 counter++;
                 if (counter == libs.length) {
-                    $.get(admin_api_url + '/api/settings?type=public_settings').success(function (response) {
+                    $.get(admin_api_url + '/api/settings?type=public_settings').done(function (response) {
                         if (response) {
                             $.each(response.currencies, function (i, currencyData) {
                                 if (response.default_currency_code == currencyData.code) {
