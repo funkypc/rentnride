@@ -21,7 +21,7 @@
  *            'angulartics',
  *            'angulartics.google.analytics',
  *            'angulartics.facebook.pixel',
- *            'fayzaan.gRecaptcha.v3'
+ *            'vcRecaptcha'
  *        ]
  * @param {string} stateProvider State provider is used to provide a corresponding model and template.
  * @param {string} analyticsProvider This service lets you integrate google analytics tracker in your AngularJS applications easily.

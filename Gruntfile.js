@@ -116,7 +116,7 @@ module.exports = function (grunt) {
                 'vendor/angulartics/dist/angulartics.min.js',
                 'vendor/angulartics-google-analytics/dist/angulartics-ga.min.js',
                 'vendor/angulartics-facebook-pixel/dist/angulartics-facebook-pixel.min.js',
-                'vendor/angularjs-google-recaptcha-v3/release/angularjs-google-recaptcha-v3.min.js',
+                'vendor/angular-recaptcha/release/angular-recaptcha.min.js',
                 'vendor/angular-credit-cards/release/angular-credit-cards.js',
                 'vendor/angular-loading-bar/build/loading-bar.min.js',
                 'vendor/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js',

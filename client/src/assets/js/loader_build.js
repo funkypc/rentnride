@@ -73,7 +73,7 @@ var lLAsyncSync = function (libs, cb) {
     libraries.push('vendor/angulartics/dist/angulartics.min.js');
     libraries.push('vendor/angulartics-google-analytics/dist/angulartics-ga.min.js');
     libraries.push('vendor/angulartics-facebook-pixel/dist/angulartics-facebook-pixel.min.js');
-    libraries.push('vendor/angularjs-google-recaptcha-v3/release/angularjs-google-recaptcha-v3.min.js');
+    libraries.push('vendor/angular-recaptcha/release/angular-recaptcha.min.js');
     libraries.push('vendor/angular-credit-cards/release/angular-credit-cards.js');
     libraries.push('vendor/angular-loading-bar/build/loading-bar.min.js');
     libraries.push('vendor/bootstrap-ui-datetime-picker/dist/datetime-picker.min.js');

@@ -29,7 +29,7 @@
      * This is contactUs controller having the methods init(), setMetaData(), and contactFormSubmit().
      * It controls the functionality of contact us.
      **/
-    module.controller('ContactUsController', function ($scope, $rootScope, ContactsFactory, $filter, Flash, $state, $location, gRecaptcha) {
+    module.controller('ContactUsController', function ($scope, $rootScope, ContactsFactory, $filter, Flash, $state, $location, vcRecaptchaService) {
         var model = this;
         /**
          * @ngdoc method
@@ -57,7 +57,6 @@
         model.init = function () {
             model.setMetaData();
             model.captcha_site_key = $rootScope.settings['captcha.site_key'];
-            gRecaptcha.initialize({key: model.captcha_site_key}); // returns a promise
             if($location.path() == '/contactus') {
                 $rootScope.pageTitle = $rootScope.settings['site.name'] + " | " + $filter("translate")("Contact Us");
             }
@@ -79,7 +78,7 @@
         model.contactFormSubmit = function ($valid) {
             model.emailErr = '';
             model.captchaErr = '';
-            var response = gRecaptcha.getResponse($scope.widgetId);
+            var response = vcRecaptchaService.getResponse($scope.widgetId);
             if (response.length === 0) {
                 model.captchaErr = $filter("translate")("Please resolve the captcha and submit");
             } else {

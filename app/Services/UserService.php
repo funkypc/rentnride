@@ -172,19 +172,10 @@ class UserService extends MailService
 
     public function captchaCheck($captcha)
     {
-        error_log( print_r('checking captcha...', true) );
-        error_log( print_r($captcha, true) );
         $remoteip = $_SERVER['REMOTE_ADDR'];
-        error_log( print_r($remoteip, true) );
         $secret = config('captcha.secret_key');
-        error_log( print_r($secret, true) );
         $recaptcha = new ReCaptcha($secret);
         $response = $recaptcha->verify($captcha, $remoteip);
-        error_log( print_r($recaptcha, true) );
-        error_log( print_r($response, true) );
-        // $result = $this->reCaptcha
-        //     ->setExpectedHostname($request->getHost())
-        //     ->verify($request->request->get('g-recaptcha-response'), $request->getClientIp());
         if ($response->isSuccess()) {
             return true;
         } else {
