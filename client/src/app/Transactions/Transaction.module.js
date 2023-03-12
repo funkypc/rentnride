@@ -19,7 +19,7 @@
  *            'angulartics.facebook.pixel',
  *            'satellizer',
  *            'ngFileUpload',
- *            'vcRecaptcha'
+ *            'fayzaan.gRecaptcha.v3'
  *        ]
  * @param {Function=} configFn Optional configuration function for the module.
  * @returns {angular.Module} new BookorRent.transaction module with the angular.Module api.
@@ -57,6 +57,6 @@
     'angulartics.facebook.pixel',
     'satellizer',
     'ngFileUpload',
-    'vcRecaptcha'
+    'fayzaan.gRecaptcha.v3'
 ])));
 
