@@ -125,9 +125,12 @@ class UsersController extends Controller
             $user_data['register_ip_id'] = $this->IpService->getIpId($request->ip());
             $user_data['is_email_confirmed'] = 1;
             $user_data['user_avatar_source_id'] = config('constants.ConstSocialLogin.User');
+            $user_data['pwd_reset_token'] = '';
             if (config('user.is_email_verification_for_register')) {
                 $user_data['is_email_confirmed'] = 0;
                 $user_data['activate_hash'] = rand(1,100);
+            } else {
+                $user_data['activate_hash'] = 0;
             }
             if (config('user.is_admin_activate_after_register')) {
                 $user_data['is_active'] = 0;
