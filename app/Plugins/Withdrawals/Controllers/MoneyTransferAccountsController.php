@@ -72,6 +72,7 @@ class MoneyTransferAccountsController extends Controller
         $user = Auth::guard()->user();
         if ($user) {
             $money_transfer_account_data['user_id'] = $user->id;
+            $money_transfer_account_data['is_primary'] = 0;
         }
         $validator = Validator::make($money_transfer_account_data, MoneyTransferAccount::GetValidationRule(), MoneyTransferAccount::GetValidationMessage());
         if ($validator->passes()) {

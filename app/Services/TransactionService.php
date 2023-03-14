@@ -43,7 +43,8 @@ class TransactionService
      */
     public function log($booker_id, $host_id, $transaction_type_id, $amount, $foreign_id, $plugin_name, $payment_gateway_id = null, $gateway_fees = 0.00, $description = null)
     {
-
+        $transaction_arr['transactionable_id'] = 0;
+        $transaction_arr['transactionable_type'] = '';
         $transaction_arr['user_id'] = (!is_null($booker_id)) ? $booker_id : '';
         $transaction_arr['receiver_user_id'] = (!is_null($host_id)) ? $host_id : '';
         $transaction_type = TransactionType::find($transaction_type_id);
