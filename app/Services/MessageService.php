@@ -41,6 +41,9 @@ class MessageService
     public function saveMessageContent($message_content_arr, $item_id, $vehicle_rental_id, $from_user_id, $to_user_id, $status_id, $morph_type, $dispute_status_id = null)
     {
         //Save Message Contents
+        $message_content_arr['admin_suspend'] = 0;
+        $message_content_arr['is_system_flagged'] = 0;
+        $message_content_arr['detected_suspicious_words'] = '';
         $message_content = MessageContent::create($message_content_arr);
         //get message content id and save to message table
         $message_array = array();
@@ -52,6 +55,15 @@ class MessageService
         $message_array['is_sender'] = 0;
         $message_array['is_read'] = 0;
         $message_array['message_folder_id'] = config('constants.ConstMessageFolder.Inbox');
+        $message_array['messageable_id'] = 0;
+        $message_array['messageable_type'] = '';
+        $message_array['is_starred'] = 0;
+        $message_array['is_deleted'] = 0;
+        $message_array['is_archived'] = 0;
+        $message_array['is_review'] = 0;
+        $message_array['is_communication'] = 0;
+        $message_array['hash'] = '';
+        $message_array['size'] = 0;
         $this->saveMessage($message_array, $vehicle_rental_id, $morph_type);
         $message_array['user_id'] = $to_user_id;
         $message_array['to_user_id'] = $from_user_id;
