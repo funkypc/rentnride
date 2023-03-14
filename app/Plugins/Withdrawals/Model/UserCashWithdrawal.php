@@ -108,7 +108,7 @@ class UserCashWithdrawal extends Model
                 $q->where('name', 'like', '%' . $request->input('q') . '%');
             });
         }
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = Auth::guard()->user();
         if ($user->id != config('constants.ConstUserTypes.Admin')) {
             $query->where('user_id', '=', $user->id);
         }
