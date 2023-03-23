@@ -46,7 +46,7 @@
                      <div class="clearfix">
                         <!--<h4>{{'Billing Address'|translate}}</h4>-->
                         <div class="form-group" ng-class="{'has-error':(updateBookingForm.$submitted || updateBookingForm.full_address.$touched) && (updateBookingForm.full_address.$pristine || updateBookingForm.full_address.$invalid) && (updateBookingForm.full_address.$error.required)}">
-                            <input type="text" class="form-control" placeholder="{{'Address'|translate}}" name="full_address" g-places-autocomplete ng-model="booker_detail.address" ng-required="true" autocomplete="off">
+                            <input type="text" class="form-control" placeholder="{{'Address'|translate}}" name="full_address" autocomplete="off" g-places-autocomplete ng-model="booker_detail.address" ng-required="true" autocomplete="off">
                             <span class="error" ng-show="(updateBookingForm.$submitted || updateBookingForm.full_address.$touched) && (updateBookingForm.full_address.$pristine || updateBookingForm.full_address.$invalid) && (updateBookingForm.full_address.$error.required)">
                                 {{'Required'|translate}}
                             </span>

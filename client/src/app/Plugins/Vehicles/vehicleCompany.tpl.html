@@ -40,7 +40,7 @@
                                     <div class="form-group col-sm-6" ng-class="{'has-error' : (CompanyAdd.$submitted || CompanyAdd.full_address.$touched) && (CompanyAdd.full_address.$pristine || CompanyAdd.full_address.$invalid) && (CompanyAdd.full_address.$error.required) || (addressErr)}">
                                         <label class="control-label">{{'Address' | translate }}</label>
                                         <div class="clearfix">
-                                            <input type="text" class="form-control" placeholder="{{'Address' | translate }}" name="full_address" id="full_address" g-places-autocomplete ng-model="vehicleCompanies.full_address" ng-required="true" ng-change="addressErr=''">
+                                            <input type="text" class="form-control" placeholder="{{'Address' | translate }}" name="full_address" id="full_address" autocomplete="off" g-places-autocomplete ng-model="vehicleCompanies.full_address" ng-required="true" ng-change="addressErr=''">
                                             <span ng-show="(CompanyAdd.$submitted || CompanyAdd.full_address.$touched) && (CompanyAdd.full_address.$pristine || CompanyAdd.full_address.$invalid) && (CompanyAdd.full_address.$error.required)" class="error">
                                                 {{'Required' | translate }}
                                             </span>

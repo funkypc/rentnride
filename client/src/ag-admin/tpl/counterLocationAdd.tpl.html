@@ -13,7 +13,7 @@
         <form class="form-horizontal" role="form" name="LocationAdd" ng-submit="CounterLocationAdd(LocationAdd.$valid)" novalidate>
             <div class="form-group" ng-class="{'has-error' : ((LocationAdd.$submitted || LocationAdd.full_address.$touched) && (LocationAdd.full_address.$pristine || LocationAdd.full_address.$invalid))|| model.full_addressErr}">
             	<label class="control-label">Address</label>
-                <input type="text" class="form-control" placeholder="Address" name="full_address" g-places-autocomplete ng-model="counterLocation.full_address" ng-required="true" ng-change="model.full_addressErr=''">
+                <input type="text" class="form-control" placeholder="Address" name="full_address" autocomplete="off" g-places-autocomplete ng-model="counterLocation.full_address" ng-required="true" ng-change="model.full_addressErr=''">
                 <div ng-show="((LocationAdd.$submitted || LocationAdd.full_address.$touched) && (LocationAdd.full_address.$pristine || LocationAdd.full_address.$invalid)) || model.full_addressErr">
                     <span class="help-block" ng-show="(LocationAdd.full_address.$error.required)">Required</span>
                     <span class="help-block" ng-show="model.full_addressErr">{{model.full_addressErr}}</span>
