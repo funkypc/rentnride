@@ -4778,7 +4778,7 @@ ngapp.config(['NgAdminConfigurationProvider', 'RestangularProvider', 'ngAdminJWT
                 .attributes({
                     placeholder: 'Vehicle Make'
                 })
-                .targetEntity(nga.entity('vehicle_makes?filter=active'))
+                .targetEntity(nga.entity('vehicle_makes'))
                 .perPage('all')
                 .targetField(nga.field('name').map(truncate)),
             nga.field('is_active', 'choice').label('Active?')
