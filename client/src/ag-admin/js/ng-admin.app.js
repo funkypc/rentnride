@@ -1287,6 +1287,12 @@ ngapp.directive('createPage', ['$location', '$state', function ($location, $stat
         }
     };
 }]);
+//Filter to return trusted resource url.
+ngapp.filter('url', function ($sce) {
+    return function (val) {
+        return $sce.trustAsResourceUrl(val);
+    };
+});
 function vehicleViewController($state, $scope, $http, $location, notification) {
     var model = this;
     var vehicle_id = 0;

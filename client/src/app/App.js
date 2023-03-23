@@ -231,6 +231,17 @@
         };
     });
     /**
+     * @ngdoc filter
+     * @name App.filter:url
+     * @description
+     * It returns the filtered url.
+     */
+    app.filter('url', function ($sce) {
+        return function (val) {
+            return $sce.trustAsResourceUrl(val);
+        };
+    });
+    /**
      * @ngdoc service
      * @name App.service.ResolveService
      * @module App

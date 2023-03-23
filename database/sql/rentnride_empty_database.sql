@@ -1870,7 +1870,8 @@ INSERT INTO `settings` (`id`, `created_at`, `updated_at`, `setting_category_id`,
 (96, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 17, 'dispute.discussion_threshold_for_admin_decision', '8', 'Discussion Threshold for Admin Decision', 'Admin will take decision, after given number of conversation between booker and host.', 1),
 (97, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 17, 'dispute.days_left_for_disputed_user_to_reply', '5', 'Number of days to reply a dispute', 'Maximum number of days to reply for a dispute raised in booking', 2),
 (98, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 17, 'dispute.refund_amount_during_dispute_cancellation', '5', 'Refund Percentage to Booker for Specification Dispute', 'Given percentage will be deduct from booking amount and refund to booker when booker raised dispute if "Doesn''t match the specification as mentioned by the host" and admin decision favored to booker.', 3),
-(99, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 17, 'dispute.rating_limit_to_raise_dispute', '3', 'Rating limit to raise Feedback issue', 'Host can only raise the feedback dispute, if the booker rating is below ths limit.', 4);
+(99, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 17, 'dispute.rating_limit_to_raise_dispute', '3', 'Rating limit to raise Feedback issue', 'Host can only raise the feedback dispute, if the booker rating is below ths limit.', 4),
+(100, '2016-09-09 17:46:34', '2016-09-09 17:46:34', 1, 'maps.api_url', 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCAx9oX5ZjV5m_MQeqw8LwTdo8g_mft9uc', 'Google Maps Places API URL', 'This is used for address validation. https://maps.googleapis.com/maps/api/js?libraries=places&key=YOUR_API_KEY', 7);
 
 -- --------------------------------------------------------
 
