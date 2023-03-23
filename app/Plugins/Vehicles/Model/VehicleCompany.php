@@ -34,7 +34,7 @@ class VehicleCompany extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'name', 'address', 'latitude', 'longitude', 'fax', 'phone', 'mobile', 'email', 'is_active', 'vehicle_count'
+        'user_id', 'name', 'address', 'latitude', 'longitude', 'fax', 'phone', 'mobile', 'email', 'is_active', 'vehicle_count', 'slug'
     ];
 
     /**
