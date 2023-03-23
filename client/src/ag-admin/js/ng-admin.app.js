@@ -3013,28 +3013,28 @@ ngapp.config(['NgAdminConfigurationProvider', 'RestangularProvider', 'ngAdminJWT
                 .attributes({
                     placeholder: 'Company'
                 })
-                .targetEntity(nga.entity('vehicle_companies?filter=active'))
+                .targetEntity(nga.entity('vehicle_companies'))
                 .targetField(nga.field('name'))
                 .label('Company'),
             nga.field('vehicle_make_id', 'reference')
                 .attributes({
                     placeholder: 'Make'
                 })
-                .targetEntity(nga.entity('vehicle_makes?filter=active'))
+                .targetEntity(nga.entity('vehicle_makes'))
                 .targetField(nga.field('name'))
                 .label('Make'),
             nga.field('vehicle_model_id', 'reference')
                 .attributes({
                     placeholder: 'Model'
                 })
-                .targetEntity(nga.entity('vehicle_models?filter=active'))
+                .targetEntity(nga.entity('vehicle_models'))
                 .targetField(nga.field('name'))
                 .label('Model'),
             nga.field('vehicle_type_id', 'reference')
                 .attributes({
                     placeholder: 'Type'
                 })
-                .targetEntity(nga.entity('vehicle_types?filter=active'))
+                .targetEntity(nga.entity('vehicle_types'))
                 .targetField(nga.field('name'))
                 .label('Type')
         ])
