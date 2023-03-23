@@ -24,7 +24,7 @@
                         </div>
                         <div class="row">
                             <div class="form-group col-sm-6" ng-class="{'has-error':(updateBookingForm.$submitted || updateBookingForm.mobile.$touched) && (updateBookingForm.mobile.$pristine || updateBookingForm.mobile.$invalid) && (updateBookingForm.mobile.$error.required || updateBookingForm.mobile.$error.pattern)}">
-                                <input type="text" name="mobile" ng-pattern="/^[0-9]*$/" ng-model="booker_detail.mobile" id="mobile" class="form-control" placeholder="{{'Mobile no'|translate}}" ng-required="true">
+                                <input type="text" name="mobile" ng-pattern="/^\(?\d{3}\)?-? *\d{3}-? *-?\d{4}$/" ng-model="booker_detail.mobile" id="mobile" class="form-control" placeholder="{{'Mobile no'|translate}}" ng-required="true">
                                 <span class="error" ng-show="(updateBookingForm.$submitted || updateBookingForm.mobile.$touched) && (updateBookingForm.mobile.$pristine || updateBookingForm.mobile.$invalid) && (updateBookingForm.mobile.$error.required)">
                                     {{'Required'|translate}}
                                 </span>

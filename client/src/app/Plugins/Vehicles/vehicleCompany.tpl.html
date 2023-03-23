@@ -69,7 +69,7 @@
                                     <div class="form-group col-sm-6" ng-class="{'has-error' : (CompanyAdd.$submitted || CompanyAdd.mobile.$touched) && (CompanyAdd.mobile.$pristine || CompanyAdd.mobile.$invalid) && (CompanyAdd.mobile.$error.required || CompanyAdd.mobile.$error.pattern)}">
                                         <label class="control-label">{{'Mobile' | translate }}</label>
                                         <div class="clearfix">
-                                            <input type="text" class="form-control" placeholder="{{'Mobile' | translate }}" name="mobile" ng-model="vehicleCompanies.mobile" ng-required="true" ng-pattern="/^[0-9]*$/" ng-change="model.mobileErr=''">
+                                            <input type="text" class="form-control" placeholder="{{'Mobile' | translate }}" name="mobile" ng-model="vehicleCompanies.mobile" ng-required="true" ng-pattern="/^\(?\d{3}\)?-? *\d{3}-? *-?\d{4}$/" ng-change="model.mobileErr=''">
                                             <span ng-show="(CompanyAdd.$submitted || CompanyAdd.mobile.$touched) && (CompanyAdd.mobile.$pristine || CompanyAdd.mobile.$invalid) && (CompanyAdd.mobile.$error.required)" class="error">
                                                 {{'Required' | translate }}
                                             </span>
