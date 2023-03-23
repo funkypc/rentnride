@@ -214,6 +214,8 @@ class VehicleService
         $search_insert_data['is_dummy'] = $is_dummy;
         if ($start_date) {
             $search_insert_data['start_date'] = $start_date;
+        } else {
+            $search_insert_data['start_date'] = Carbon::now()->toDateTimeString();
         }
         if ($end_date) {
             $search_insert_data['end_date'] = $end_date;
@@ -221,6 +223,8 @@ class VehicleService
                 $grace_time_added_end_date = Carbon::createFromTimeStamp(strtotime($end_date))->addHours(config('vehicle_rental.late_checkout_grace_time'));
                 $search_insert_data['end_date'] = $grace_time_added_end_date->toDateTimeString();
             }
+        } else {
+            $search_insert_data['end_date'] = Carbon::now()->toDateTimeString();
         }
         if ($is_dummy && !$item_user_id) {
             $vehicle = UnavailableVehicle::where('vehicle_id', $vehicle_id)->where('is_dummy', $is_dummy)->first();
