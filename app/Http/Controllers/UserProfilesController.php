@@ -54,7 +54,7 @@ class UserProfilesController extends Controller
         $user = Auth::guard()->user();
         $user_profile = UserProfile::with('User.attachments')->where('user_id', '=', $user->id)->first();
         if (!$user_profile) {
-            UserProfile::create(['first_name' => $user->username, 'user_id' => $user->id]);
+            UserProfile::create(['first_name' => $user->username, 'last_name' => '', 'user_id' => $user->id]);
             $user_profile = UserProfile::with('User.attachments')->where('user_id', '=', $user->id)->first();
         }
         return $this->response->item($user_profile, (new UserProfileTransformer)->setDefaultIncludes(['User']));
