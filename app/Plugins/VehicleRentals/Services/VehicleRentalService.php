@@ -346,7 +346,7 @@ class VehicleRentalService
             VehicleRentalStatus::where('id', '=', $key)->update(['booking_count' => $value]);
         }
         foreach ($vehicle_rental_status as $value) {
-            if (!array_key_exists($value->id, $status_count)) {
+            if (!property_exists($status_count, $value->id)) {
                 VehicleRentalStatus::where('id', '=', $value->id)->update(['booking_count' => 0]);
             }
         }
