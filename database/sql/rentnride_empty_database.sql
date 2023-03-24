@@ -51,14 +51,14 @@ CREATE TABLE IF NOT EXISTS `attachments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `attachmentable_id` bigint(20) NOT NULL,
+  `attachmentable_id` bigint(20) DEFAULT NULL,
   `attachmentable_type` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `filename` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `dir` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `mimetype` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `filesize` bigint(20) NOT NULL,
-  `height` bigint(20) NOT NULL,
-  `width` bigint(20) NOT NULL,
+  `height` bigint(20) DEFAULT '0',
+  `width` bigint(20) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `attachments_id_index` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;

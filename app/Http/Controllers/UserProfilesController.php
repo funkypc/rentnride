@@ -24,6 +24,7 @@ use Validator;
 use App\Transformers\UserProfileTransformer;
 use Image;
 use File;
+use Carbon;
 
 /**
  * UserProfiles resource representation.
@@ -105,10 +106,17 @@ class UserProfilesController extends Controller
                                 $attachment['filename'] = $_FILES['file']['name'];
                                 $attachment['dir'] = 'app/User/' . $user->id . '/';
                                 $attachment['mimetype'] = $request->file('file')->getClientMimeType();
-                                $attachment['filesize'] = $request->file('file')->getClientSize();
+                                $attachment['filesize'] = $request->file('file')->getSize();
+                                [$width, $height] = getimagesize($request->file('file'));
+                                $attachment['width'] = $width;
+                                $attachment['height'] = $height;
+                                $cur_date = Carbon::now()->toDateTimeString();
+                                $attachment['updated_at'] = $cur_date;
                                 if ($curuser->attachments) {
                                     $curuser->attachments()->update($attachment);
                                 } else {
+                                    $attachment['created_at'] = $cur_date;
+                                    $attachment['attachmentable_type'] = 'MorphUser';
                                     $att = Attachment::create($attachment);
                                     $curuser = User::with(['attachments'])->where('id', '=', $user->id)->first();
                                     $curuser->attachments()->save($att);

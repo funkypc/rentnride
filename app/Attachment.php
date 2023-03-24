@@ -12,20 +12,29 @@
  * @license    http://www.agriya.com/ Agriya Infoway Licence
  * @link       http://www.agriya.com
  */
+
 namespace App;
 
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Attachment
+ * @package App
+ */
 class Attachment extends Model
 {
     /**
      * @var string
      */
     protected $table = "attachments";
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
-        'filename', 'dir', 'mimetype', 'filesize', 'height', 'width'
+        'filename', 'dir', 'mimetype', 'filesize', 'height', 'width', 'created_at', 'updated_at', 'attachmentable_type'
     ];
 
 

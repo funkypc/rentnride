@@ -261,7 +261,14 @@ class VehiclesController extends Controller
                             $attachment['filename'] = $_FILES['file']['name'];
                             $attachment['dir'] = 'app/Vehicle/' . $vehicle->id . '/';
                             $attachment['mimetype'] = $request->file('file')->getClientMimeType();
-                            $attachment['filesize'] = $request->file('file')->getClientSize();
+                            $attachment['filesize'] = $request->file('file')->getSize();
+                            [$width, $height] = getimagesize($request->file('file'));
+                            $attachment['width'] = $width;
+                            $attachment['height'] = $height;
+                            $cur_date = Carbon::now()->toDateTimeString();
+                            $attachment['created_at'] = $cur_date;
+                            $attachment['updated_at'] = $cur_date;
+                            $attachment['attachmentable_type'] = 'MorphVehicle';
                             $att = Attachment::create($attachment);
                             $curuser = Vehicle::with(['attachments'])->where('id', '=', $vehicle->id)->first();
                             $curuser->attachments()->save($att);
@@ -369,10 +376,17 @@ class VehiclesController extends Controller
                         $attachment['filename'] = $_FILES['file']['name'];
                         $attachment['dir'] = 'app/Vehicle/' . $vehicle->id . '/';
                         $attachment['mimetype'] = $request->file('file')->getClientMimeType();
-                        $attachment['filesize'] = $request->file('file')->getClientSize();
+                        $attachment['filesize'] = $request->file('file')->getSize();
+                        [$width, $height] = getimagesize($request->file('file'));
+                        $attachment['width'] = $width;
+                        $attachment['height'] = $height;
+                        $cur_date = Carbon::now()->toDateTimeString();
+                        $attachment['updated_at'] = $cur_date;
                         if ($curVehicle->attachments) {
                             $curVehicle->attachments()->update($attachment);
                         } else {
+                            $attachment['created_at'] = $cur_date;
+                            $attachment['attachmentable_type'] = 'MorphVehicle';
                             $att = Attachment::create($attachment);
                             $curVehicle = Vehicle::with(['attachments'])->where('id', '=', $vehicle->id)->first();
                             $curVehicle->attachments()->save($att);
