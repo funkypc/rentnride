@@ -551,6 +551,10 @@ class VehiclesController extends Controller
                 $data['amount'] = $listing_fee;
                 // Already user have try and not paid case
                 if (is_null($wallet_vehicle->wallet_transaction_log)) {
+                    $data['wallet_transaction_logable_type'] = '';
+                    $data['wallet_transaction_logable_id'] = 0;
+                    $data['status'] = '';
+                    $data['payment_type'] = '';
                     $wallet_log = $walletLogService->log($data);
                     $wallet_vehicle = Vehicle::with('wallet_transaction_log')->where('id', $request->vehicle_id)->first();
                     $wallet_vehicle->wallet_transaction_log()->save($wallet_log);

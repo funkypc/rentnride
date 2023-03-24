@@ -28,7 +28,7 @@ class WalletTransactionLog extends Model
      * @var array
      */
     protected $fillable = [
-        'amount', 'status', 'payment_type'
+        'amount', 'status', 'payment_type', 'wallet_transaction_logable_type', 'wallet_transaction_logable_id'
     ];
 
     /**
