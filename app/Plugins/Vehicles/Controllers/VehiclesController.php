@@ -321,7 +321,7 @@ class VehiclesController extends Controller
     public function update(Request $request, $id)
     {
         $user = Auth::guard()->user();
-        $vehicle_data = $request->only('id', 'vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'feedback_count');
+        $vehicle_data = $request->only('id', 'vehicle_make_id', 'vehicle_model_id', 'vehicle_type_id', 'pickup_counter_locations', 'drop_counter_locations', 'driven_kilometer', 'vehicle_no', 'no_of_seats', 'no_of_doors', 'no_of_gears', 'is_manual_transmission', 'no_small_bags', 'no_large_bags', 'is_ac', 'minimum_age_of_driver', 'mileage', 'is_km', 'is_airbag', 'no_of_airbags', 'is_abs', 'per_hour_amount', 'per_day_amount', 'fuel_type_id', 'feedback_count');
         $vehicle = false;
         $valid_user = false;
         if ($request->has('id')) {

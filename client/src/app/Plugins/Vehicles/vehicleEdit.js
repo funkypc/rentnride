@@ -261,7 +261,7 @@
                             'is_ac': $scope.vehicle.is_ac,
                             'minimum_age_of_driver': $scope.vehicle.minimum_age_of_driver,
                             'mileage': $scope.vehicle.mileage,
-                            'is_airbag': $scope.vehicle.mileage,
+                            'is_airbag': $scope.vehicle.is_airbag,
                             'no_of_airbags': $scope.vehicle.no_of_airbags,
                             'is_abs': $scope.vehicle.is_abs,
                             'per_hour_amount': $scope.vehicle.per_hour_amount,
