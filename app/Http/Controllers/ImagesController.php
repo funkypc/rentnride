@@ -53,12 +53,6 @@ class ImagesController extends Controller
                         }
                     );
                     $img->save($dest_path . $filename);
-                    // $canvas = Image::canvas(
-                    //     config('constants.thumb.'.$model.'.' . $size . '.width'),
-                    //     config('constants.thumb.'.$model.'.' . $size . '.height')
-                    // );
-                    // $canvas->insert($img, 'center');
-                    // $canvas->save($dest_path . $filename);
                     @chmod($dest_path . $filename, 0777);
                     return redirect(asset('api/img/' . $size . '/' . $model . '/' . $filename));
                 }else {
