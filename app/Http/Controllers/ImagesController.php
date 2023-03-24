@@ -45,8 +45,19 @@ class ImagesController extends Controller
                         File::makeDirectory($dest_path, 0777, true);
                     }
                     $img = Image::make($source_path);
-                    $img->resize(config('constants.thumb.'.$model.'.' . $size . '.width'), config('constants.thumb.'.$model.'.' . $size . '.height'));
-                    $img->save($dest_path . $filename);
+                    $img->resize(
+                        config('constants.thumb.'.$model.'.' . $size . '.width'),
+                        config('constants.thumb.'.$model.'.' . $size . '.height'),
+                        function($constraint){
+                            $constraint->aspectRatio();
+                        }
+                    );
+                    $canvas = Image::canvas(
+                        config('constants.thumb.'.$model.'.' . $size . '.width'),
+                        config('constants.thumb.'.$model.'.' . $size . '.height')
+                    );
+                    $canvas->insert($img, 'center');
+                    $canvas->save($dest_path . $filename);
                     @chmod($dest_path . $filename, 0777);
                     return redirect(asset('api/img/' . $size . '/' . $model . '/' . $filename));
                 }else {
