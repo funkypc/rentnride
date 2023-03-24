@@ -884,7 +884,17 @@
 @line-height      :30px;
 
 //** colors
-@black-1c:#1c1c1c;
+@orange:#ff721c;
+@orange-light:lighten(spin(@orange, 12.5319), 22.1569); // #ffd08d
+@orange-ff8:spin(@orange, 3.9648); // #ff811c
+@orange-ffc:lighten(spin(@orange, 9.7687), 20.9804); // #ffc887
+@orange-hover:darken(shade(@orange, 9), 0.3); // #e86718
+@btn-green:#4fc98e;
+@btn-dark-green:saturate(shade(@btn-green, 21.3), 3); // #3ba170
+@green-light:lighten(spin(@btn-dark-green, 25.1454), 43.8); // #ceedeb
+@btn-green-hover:shade(@btn-green, 10); // #47b580
+@btn-green-d:darken(desaturate(spin(@btn-green, 5.7906), 0.9426), 8.2353); // #39b585
+@btn-green-d-hover:saturate(shade(@btn-green-d, 11), 5.5); // #2da778
 @grey-6c:#6c6c6c;
 @white:#ffffff;
 @black:#000000;
@@ -897,21 +907,10 @@
 @grey-8c:#8c8c8c;
 @grey-a8:#a8a8a8;
 @grey-57:#575757;
-@black-71:#716761;
+@black-71:shade(desaturate(@orange, 91), 25.8); // #716761
 @black-1a:#1a1a1a;
 @black-49:#494949;
 @black-54:#545454;
-@orange:#ff721c;
-@orange-light:#ffd08d;
-@orange-ff8:#ff811c;
-@orange-ffc:#ffc887;
-@orange-hover:#e86718;
-@green-light:#ceedeb;
-@btn-green:#4fc98e;
-@btn-green-hover:#47b580;
-@btn-dark-green:#3ba170;
-@btn-green-d:#39b585;
-@btn-green-d-hover:#2da778;
 @whitesmoke-f2:#f2f2f2;
 @whitesmoke-f7:#f7f7f7;
 @whitesmoke-f6:#f6f6f6;
