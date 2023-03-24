@@ -43,7 +43,7 @@ class VehicleRental extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'item_booking_start_date', 'item_booking_end_date', 'pickup_counter_location_id', 'drop_counter_location_id', 'coupon_code', 'item_user_status_id', 'status_updated_at', 'is_payment_cleared', 'booking_amount', 'deposit_amount', 'surcharge_amount', 'extra_accessory_amount', 'tax_amount', 'insurance_amount', 'fuel_option_amount', 'drop_location_differ_charges', 'additional_fee', 'total_amount', 'payment_gateway_id', 'coupon_id', 'coupon_discount_amount', 'special_discount_amount', 'type_discount_amount', 'admin_commission_amount', 'host_service_amount', 'late_fee', 'claim_request_amount', 'quantity', 'is_dispute', 'paid_deposit_amount', 'paid_manual_amount', 'booker_amount'
+        'user_id', 'item_booking_start_date', 'item_booking_end_date', 'pickup_counter_location_id', 'drop_counter_location_id', 'coupon_code', 'item_user_status_id', 'status_updated_at', 'is_payment_cleared', 'booking_amount', 'deposit_amount', 'surcharge_amount', 'extra_accessory_amount', 'tax_amount', 'insurance_amount', 'fuel_option_amount', 'drop_location_differ_charges', 'additional_fee', 'total_amount', 'payment_gateway_id', 'coupon_id', 'coupon_discount_amount', 'special_discount_amount', 'type_discount_amount', 'admin_commission_amount', 'host_service_amount', 'late_fee', 'claim_request_amount', 'quantity', 'is_dispute', 'paid_deposit_amount', 'paid_manual_amount', 'booker_amount', 'item_userable_id', 'item_userable_type', 'reason_for_cancellation'
     ];
 
     /**

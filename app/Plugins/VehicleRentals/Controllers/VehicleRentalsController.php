@@ -260,6 +260,12 @@ class VehicleRentalsController extends Controller
     public function store(Request $request)
     {
         $vehicle_rental_data = $request->only('vehicle_id', 'item_booking_start_date', 'item_booking_end_date', 'pickup_counter_location_id', 'drop_counter_location_id');
+        $vehicle_rental_data['item_userable_id'] = 0;
+        $vehicle_rental_data['item_userable_type'] = '';
+        $vehicle_rental_data['reason_for_cancellation'] = '';
+        $vehicle_rental_data['is_payment_cleared'] = 0;
+        $vehicle_rental_data['is_dispute'] = 0;
+        $vehicle_rental_data['status_updated_at'] = Carbon::now()->toDateTimeString();
         $vehicle_rental_data['item_booking_start_date'] = $request->item_booking_start_date = date("Y-m-d H:i:s", strtotime($vehicle_rental_data['item_booking_start_date']));
         $vehicle_rental_data['item_booking_end_date'] = $request->item_booking_end_date = date("Y-m-d H:i:s", strtotime($vehicle_rental_data['item_booking_end_date']));
         $user = Auth::guard()->user();

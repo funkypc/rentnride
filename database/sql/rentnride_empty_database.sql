@@ -1097,7 +1097,7 @@ CREATE TABLE IF NOT EXISTS `item_users` (
   `cancellation_deduct_amount` double(10,2) DEFAULT '0.00',
   `total_amount` double(10,2) NOT NULL DEFAULT '0.00',
   `reason_for_cancellation` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `cancellation_date` datetime NOT NULL,
+  `cancellation_date` datetime DEFAULT NULL,
   `is_payment_cleared` tinyint(1) NOT NULL,
   `is_dispute` tinyint(1) NOT NULL,
   `claim_request_amount` double(10,2) DEFAULT '0.00',
